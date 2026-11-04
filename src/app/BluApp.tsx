@@ -15,6 +15,7 @@ import {
 import { respondToMessage } from "@/lib/conversation";
 import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
 import { eraseAllLocalData } from "@/lib/erase";
+import { summarizeDays } from "@/lib/history";
 import {
   DAY_NAMES,
   buildDefaultPlan,
@@ -73,6 +74,7 @@ export default function Home() {
   const goalDecisions = useSyncExternalStore(subscribeGoals, getGoalsSnapshot, getServerGoalsSnapshot);
   const weeklyPlan = useSyncExternalStore(subscribePlans, getPlanSnapshot, getServerPlanSnapshot);
   const [planNotice, setPlanNotice] = useState("");
+  const [historyPeriod, setHistoryPeriod] = useState<7 | 14 | 30>(7);
   const reviews = reviewState.reviews;
   const [reviewDraft, setReviewDraft] = useState<{
     felt: Felt | null;
@@ -164,6 +166,7 @@ export default function Home() {
 
   const weekKey = getISOWeekKey(today);
   const thisWeekReview = reviews?.find((review) => review.weekKey === weekKey) ?? null;
+  const historySummary = summarizeDays(state, today, historyPeriod);
   const acceptedGoals = (goalDecisions?.accepted ?? []).filter((goal) =>
     HABITS.some((habit) => habit.id === goal.habitId),
   );
@@ -670,6 +673,37 @@ export default function Home() {
                 <span>días con algún registro</span>
               </div>
             </div>
+            <fieldset>
+              <legend className="tiny-note">Período del resumen</legend>
+              {([7, 14, 30] as const).map((days) => (
+                <label key={days} className="consent-row">
+                  <input
+                    checked={historyPeriod === days}
+                    name="history-period"
+                    onChange={() => setHistoryPeriod(days)}
+                    type="radio"
+                  />
+                  <span>{days} días</span>
+                </label>
+              ))}
+            </fieldset>
+            <p className="review-note" role="status" aria-live="polite">
+              Últimos {historySummary.periodDays} días: {historySummary.totalActions} acciones en{" "}
+              {historySummary.activeDays} días con registro.
+            </p>
+            <div tabIndex={0} style={{ maxHeight: "9rem", overflowY: "auto" }}>
+              <ul role="list">
+                {historySummary.days.map((day) => (
+                  <li key={day.date}>
+                    <span className="tiny-note">{day.date.split("-").reverse().join("/")}</span>{" "}
+                    {day.count === 0 ? <span className="muted">sin registros</span> : `${day.count} acción/es`}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <p className="tiny-note">
+              Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).
+            </p>
             <p className="review-note">
               Es un registro personal, no una medida de salud. ¿Te gustaría hacer más pequeño alguno de tus pasos?
             </p>

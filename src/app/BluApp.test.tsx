@@ -394,6 +394,16 @@ describe("Blu user flows", () => {
     expect(saved.selectedHabitIds).toHaveLength(3);
   });
 
+  it("history panel: switch period to 30 days and shows usage-not-efficacy label", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.getByText(/Métricas de uso del producto/i)).toBeTruthy();
+    await user.click(screen.getByRole("radio", { name: "30 días" }));
+    expect(screen.getByRole("status").textContent).toMatch(/Últimos 30 días/i);
+    expect(screen.getByText(/no miden salud ni eficacia/i)).toBeTruthy();
+  });
+
   it("suggests a weekly plan, shows intentions and removes them", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
