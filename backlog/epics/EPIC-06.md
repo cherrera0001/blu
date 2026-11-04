@@ -81,6 +81,8 @@ Escenario: .env.example honesto
 
 ### BLU-1404 — Observabilidad y telemetría sin PII
 
+> **Estado (2026-11-04, ciclo V1-prep):** Diseño completo en `specs/011-v1-observability/ (lista blanca cerrada de eventos, filtrado en el borde, retención 90 días, separación uso/eficacia, 4 pruebas)`. Implementación GATED a PRD §8.
+
 **Historia:** Como equipo, queremos entender el funcionamiento del producto con telemetría mínima y sin datos personales, para operar sin violar privacidad.
 **Prioridad:** P2 · **Tamaño:** M · **Fase:** V1
 **Dependencias:** ADR (BLU-1401).

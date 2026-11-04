@@ -132,6 +132,8 @@ Escenario: Token de otra sesión
 > **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-105 — Cierre de sesión y caducidad segura
 
+> **Estado (2026-11-04, ciclo V1-prep):** Diseño completo en `specs/010-v1-sessions/ (politica: 15 min/30 días, rotación con detección de reuso, inactividad 7 días, tokens en memoria, 4 pruebas)`. Implementación GATED a PRD §8.
+
 **Historia:** Como persona usuaria, quiero cerrar sesión y que mi sesión caduque sola, para proteger mi información en dispositivos compartidos.
 **Valor/contexto:** STRIDE (suplantación). En MVP local equivale a "salir" que limpia la vista sin borrar datos; en V1, tokens con caducidad y revocación.
 **Prioridad:** P2 · **Tamaño:** S · **Fase:** V1
