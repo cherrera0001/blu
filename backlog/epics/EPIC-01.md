@@ -102,6 +102,8 @@ Escenario: Borrado fallido
 
 ### BLU-104 — Aislamiento de datos entre personas (backend V1)
 
+> **Estado (2026-11-04, ciclo V1-prep):** Diseño completo en `specs/009-v1-isolation-rls/` (propiedad por `owner_id`, políticas RLS ejecutables sin bypass de servicio, matriz de 6 pruebas de aislamiento, migración desde export v1.0.0, preguntas para aprobadores). Implementación sigue **GATED** a PRD §8.
+
 **Historia:** Como persona usuaria, quiero que nadie más vea mis datos, para confiar en Blu.
 **Valor/contexto:** cuando exista backend, el aislamiento se garantiza con autorización en servidor y RLS; sin esto no hay V1 con cuentas.
 **Prioridad:** P0 · **Tamaño:** L · **Fase:** V1
