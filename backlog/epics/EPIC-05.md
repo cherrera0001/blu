@@ -331,6 +331,8 @@ de forma trazable; sin fuente aprobada no hay afirmación de eficacia.
 
 ### BLU-1301 — Registro de fuentes con campos obligatorios completos
 
+> **Estado (2026-11-04):** Diseño preparatorio completo en `specs/008-evidence-registry/` (esquema EvidenceSource, ciclo de vida, reglas deny-by-default, migración desde contenido actual con sourceStatus pendiente, plan de pruebas). Implementación **GATED** a V1 (PRD §8).
+
 **Historia:** Como revisor científico, quiero registrar fuentes con metadatos completos y obligatorios, para que cada recomendación sea trazable.
 **Prioridad:** P0 · **Tamaño:** M · **Fase:** V1 (esquema desde MVP)
 **Dependencias:** diseño en SCIENTIFIC_VALIDATION.md.
