@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HABITS } from "@/lib/blu";
 import { validateBank } from "./bank";
 import { answerQuestion, createAssessment, skipQuestion, type Assessment } from "./engine";
@@ -110,7 +110,10 @@ describe("goals-storage — decisiones (FR-005, FR-007)", () => {
   const suggestion = suggestGoals(bank, base.assessment, base.profile)[0];
 
   it("aceptar persiste con trazabilidad y verifica escritura", () => {
-    const decisions = acceptSuggestion(suggestion, base.profile.computedAt, "2026-11-04T10:00:00.000Z");
+    const result = acceptSuggestion(suggestion, base.profile.computedAt, "2026-11-04T10:00:00.000Z");
+    expect(result.ok).toBe(true);
+    expect(result.error).toBeNull();
+    const decisions = result.decisions;
     expect(decisions.accepted).toHaveLength(1);
     expect(decisions.accepted[0].suggestionId).toBe(suggestion.id);
     expect(decisions.accepted[0].decidedAt).toBe("2026-11-04T10:00:00.000Z");
@@ -121,9 +124,22 @@ describe("goals-storage — decisiones (FR-005, FR-007)", () => {
 
   it("rechazar queda registrado y no pasa a aceptados", () => {
     let d: GoalDecisions = { ...emptyDecisions(), profileComputedAt: base.profile.computedAt };
-    d = rejectSuggestion(d, suggestion.id, base.profile.computedAt, "2026-11-04T10:01:00.000Z");
+    const result = rejectSuggestion(d, suggestion.id, base.profile.computedAt, "2026-11-04T10:01:00.000Z");
+    expect(result.ok).toBe(true);
+    d = result.decisions;
     expect(d.rejected).toContain(suggestion.id);
     expect(d.accepted).toEqual([]);
+  });
+
+  it("propaga el fallo de almacenamiento sin marcar como persistido", () => {
+    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("quota");
+    });
+    const result = acceptSuggestion(suggestion, base.profile.computedAt, "t");
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/no pudo guardar/i);
+    expect(window.localStorage.getItem("blu.goals.v1")).toBeNull();
+    spy.mockRestore();
   });
 
   it("estado corrupto produce error visible", () => {

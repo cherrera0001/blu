@@ -22,11 +22,12 @@ function stateWithHabits(): BluState {
 }
 
 describe("buildExportBundle", () => {
-  it("incluye formato, app y las tres secciones (FR-001)", () => {
+  it("incluye formato, app y todas las categorías (FR-001)", () => {
     const bundle = buildExportBundle({
       state: stateWithHabits(),
       onboarding: null,
       goals: null,
+      reviews: null,
       exportedAt: "2026-11-04T12:00:00.000Z",
     });
     expect(bundle.formatVersion).toBe("1.0.0");
@@ -35,12 +36,31 @@ describe("buildExportBundle", () => {
     expect(bundle.state?.selectedHabitIds).toEqual(["movement", "rest"]);
     expect(bundle).toHaveProperty("onboarding");
     expect(bundle).toHaveProperty("goals");
+    expect(bundle).toHaveProperty("reviews");
   });
 
   it("estado vacío exporta sin errores (SC-003)", () => {
-    const bundle = buildExportBundle({ state: null, onboarding: null, goals: null, exportedAt: "t" });
+    const bundle = buildExportBundle({ state: null, onboarding: null, goals: null, reviews: null, exportedAt: "t" });
     expect(bundle.state).toBeNull();
     expect(bundle.errors).toEqual([]);
+  });
+
+  it("incluye la revisión semanal como categoría y declara secciones ilegibles en errors", () => {
+    const reviews = [
+      { weekKey: "2026-W45", felt: "better" as const, decision: "keep" as const, updatedAt: "t" },
+    ];
+    const complete = buildExportBundle({
+      state: stateWithHabits(), onboarding: null, goals: null, reviews, exportedAt: "t",
+    });
+    expect(complete.reviews).toHaveLength(1);
+    expect(complete.errors).toEqual([]);
+
+    const partial = buildExportBundle({
+      state: stateWithHabits(), onboarding: null, goals: null, reviews: null, exportedAt: "t",
+      errors: ["reviews: Las revisiones guardadas no se pueden leer."],
+    });
+    expect(partial.reviews).toBeNull();
+    expect(partial.errors.join(" ")).toMatch(/reviews/);
   });
 
   it("incluye onboarding y goals cuando existen", () => {
@@ -48,12 +68,13 @@ describe("buildExportBundle", () => {
     const profile = scoreAssessment(bank, assessment);
     const suggestion = suggestGoals(bank, assessment, profile)[0];
     const goals = suggestion
-      ? acceptSuggestion(suggestion, profile.computedAt, "2026-11-04T12:00:00.000Z")
+      ? acceptSuggestion(suggestion, profile.computedAt, "2026-11-04T12:00:00.000Z").decisions
       : emptyDecisions();
     const bundle = buildExportBundle({
       state: stateWithHabits(),
       onboarding: assessment,
       goals,
+      reviews: null,
       exportedAt: "t",
     });
     expect(bundle.onboarding?.bankVersion).toBe("1.0.0");
@@ -61,7 +82,7 @@ describe("buildExportBundle", () => {
   });
 
   it("no contiene texto del chat (los mensajes nunca se persisten)", () => {
-    const bundle = buildExportBundle({ state: stateWithHabits(), onboarding: null, goals: null, exportedAt: "t" });
+    const bundle = buildExportBundle({ state: stateWithHabits(), onboarding: null, goals: null, reviews: null, exportedAt: "t" });
     expect(JSON.stringify(bundle)).not.toContain("chatMessages");
   });
 });
@@ -79,7 +100,7 @@ describe("downloadBundle", () => {
     const appendSpy = vi.spyOn(document.body, "appendChild");
     const removeSpy = vi.spyOn(document.body, "removeChild");
 
-    const bundle = buildExportBundle({ state: stateWithHabits(), onboarding: null, goals: null, exportedAt: "t" });
+    const bundle = buildExportBundle({ state: stateWithHabits(), onboarding: null, goals: null, reviews: null, exportedAt: "t" });
     const ok = downloadBundle(bundle, "blu-export-2026-11-04.json");
 
     expect(ok).toBe(true);

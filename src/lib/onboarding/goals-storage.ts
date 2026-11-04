@@ -100,6 +100,7 @@ export function saveGoalDecisions(decisions: GoalDecisions): { ok: boolean; erro
     if (window.localStorage.getItem(STORAGE_KEY) !== raw) {
       throw new Error("El navegador no confirmó el guardado.");
     }
+    invalidateGoals();
     return { ok: true, error: null };
   } catch {
     return {
@@ -125,11 +126,17 @@ export interface SuggestionLike {
   action: string;
 }
 
+export interface DecisionResult {
+  decisions: GoalDecisions;
+  ok: boolean;
+  error: string | null;
+}
+
 export function acceptSuggestion(
   suggestion: SuggestionLike,
   profileComputedAt: string,
   now: string,
-): GoalDecisions {
+): DecisionResult {
   const current = loadGoalDecisions().decisions ?? emptyDecisions();
   const accepted = [
     ...current.accepted.filter((goal) => goal.suggestionId !== suggestion.id),
@@ -147,8 +154,8 @@ export function acceptSuggestion(
     rejected: current.rejected.filter((id) => id !== suggestion.id),
     updatedAt: now,
   };
-  saveGoalDecisions(next);
-  return next;
+  const saved = saveGoalDecisions(next);
+  return { decisions: next, ok: saved.ok, error: saved.error };
 }
 
 export function rejectSuggestion(
@@ -156,7 +163,7 @@ export function rejectSuggestion(
   suggestionId: string,
   profileComputedAt: string,
   now: string,
-): GoalDecisions {
+): DecisionResult {
   const next: GoalDecisions = {
     profileComputedAt,
     accepted: decisions.accepted.filter((goal) => goal.suggestionId !== suggestionId),
@@ -165,6 +172,35 @@ export function rejectSuggestion(
       : [...decisions.rejected, suggestionId],
     updatedAt: now,
   };
-  saveGoalDecisions(next);
-  return next;
+  const saved = saveGoalDecisions(next);
+  return { decisions: next, ok: saved.ok, error: saved.error };
+}
+
+// ---- store con patrón useSyncExternalStore (misma convención que review.ts) ----
+
+let cachedDecisions: GoalDecisions | null | undefined;
+const goalsListeners = new Set<() => void>();
+
+export function getGoalsSnapshot(): GoalDecisions | null {
+  if (typeof window === "undefined") return null;
+  if (cachedDecisions === undefined) {
+    cachedDecisions = loadGoalDecisions().decisions;
+  }
+  return cachedDecisions;
+}
+
+export function getServerGoalsSnapshot(): GoalDecisions | null {
+  return null;
+}
+
+export function subscribeGoals(listener: () => void): () => void {
+  goalsListeners.add(listener);
+  return () => {
+    goalsListeners.delete(listener);
+  };
+}
+
+export function invalidateGoals(): void {
+  cachedDecisions = undefined;
+  for (const listener of goalsListeners) listener();
 }

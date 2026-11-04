@@ -57,3 +57,21 @@ La revisión alimenta el motor de hábitos: "ajustar" propone aplicar una versi�
 ## Assumptions
 
 - "Ajustar" reutiliza el flujo de adaptación del prototipo (versión más pequeña); la revisión no cambia hábitos por sí sola.
+
+## Estado de implementación (actualizado 2026-11-04, revisión de correcciones)
+
+Verificado contra el código y las pruebas vigentes:
+
+- **Aceptado con pruebas**: semana ISO determinística; persistencia `blu.review.v1` con tope 12;
+  upsert por semana; listas cerradas sin texto libre; omisión válida; errores de JSON con
+  mensaje estable («Las revisiones guardadas no se pueden leer.»).
+- **Aceptado con pruebas (esta revisión)**: errores de lectura visibles en la interfaz
+  (`role="alert"` en la tarjeta, sin ocultarse tras un estado vacío); historial visible con
+  fecha tras guardar.
+- **Aceptado con pruebas (esta revisión) — historia «ajustar»**: cuando la decisión es
+  `adjust`, la tarjeta muestra el camino manual: en la pantalla principal, dentro de «Tus
+  últimos siete días», elegir el hábito y «Probar más pequeño». **No se modifica ningún hábito
+  automáticamente** ni se presupone cuál ajustar (prueba: tras decidir `adjust` no hay
+  adaptaciones nuevas y el enlace «Ir a mis hábitos» apunta a `/`).
+- **Pendiente (fuera de esta historia)**: métricas de retención sobre revisiones (EPIC-12,
+  BLU-1203) y notificaciones de recordatorio (EPIC-15, BLU-1502).

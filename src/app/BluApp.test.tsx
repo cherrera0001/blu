@@ -3,12 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import BluApp from "./BluApp";
 import { clearBluState } from "@/lib/storage";
+import { invalidateReviews } from "@/lib/review";
+import { invalidateGoals } from "@/lib/onboarding/goals-storage";
 
 afterEach(cleanup);
 
 beforeEach(() => {
   window.localStorage.clear();
   clearBluState();
+  invalidateReviews();
+  invalidateGoals();
   vi.spyOn(window, "confirm").mockReturnValue(true);
 });
 
@@ -83,9 +87,25 @@ describe("Blu user flows", () => {
     expect((await screen.findByText(/No asumiré qué necesitas/)).textContent).toBeTruthy();
     expect(window.localStorage.getItem("blu.local.v1")).not.toContain("Estoy ocupada");
 
+    for (const key of [
+      "blu.onboarding.v1",
+      "blu.goals.v1",
+      "blu.review.v1",
+      "blu.onboarding.notice.v1",
+    ]) {
+      window.localStorage.setItem(key, '"x"');
+    }
     await user.click(screen.getByRole("button", { name: "Borrar mis datos" }));
     expect(window.confirm).toHaveBeenCalledOnce();
-    expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
+    for (const key of [
+      "blu.local.v1",
+      "blu.onboarding.v1",
+      "blu.goals.v1",
+      "blu.review.v1",
+      "blu.onboarding.notice.v1",
+    ]) {
+      expect(window.localStorage.getItem(key)).toBeNull();
+    }
     expect(await screen.findByRole("heading", { name: "Un cambio pequeño también cuenta." }))
       .toBeTruthy();
   });
@@ -123,12 +143,32 @@ describe("Blu user flows", () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
+    window.localStorage.setItem(
+      "blu.review.v1",
+      JSON.stringify([{ weekKey: "2026-W45", updatedAt: "t" }]),
+    );
+    let captured = "";
+    const OriginalBlob = Blob;
+    vi.stubGlobal(
+      "Blob",
+      class extends OriginalBlob {
+        constructor(parts: BlobPart[], options?: BlobPropertyBag) {
+          captured = String(parts[0]);
+          super(parts, options);
+        }
+      },
+    );
     const createObjectURL = vi.fn(() => "blob:fake");
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
     vi.stubGlobal("URL", { ...URL, createObjectURL, revokeObjectURL: vi.fn() });
     await user.click(screen.getByRole("button", { name: /Exportar mis datos/i }));
     expect(createObjectURL).toHaveBeenCalledOnce();
     expect(screen.getByText(/Exportaste tus datos/i)).toBeTruthy();
+    const bundle = JSON.parse(captured) as Record<string, unknown>;
+    for (const category of ["state", "onboarding", "goals", "reviews"]) {
+      expect(bundle).toHaveProperty(category);
+    }
+    expect((bundle.reviews as unknown[]).length).toBe(1);
     vi.unstubAllGlobals();
     clickSpy.mockRestore();
   });
@@ -155,6 +195,31 @@ describe("Blu user flows", () => {
     expect(saved[0].updatedAt).toBeTruthy();
   });
 
+  it("offers the manual adjust flow when the review decision is adjust", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.click(screen.getByRole("radio", { name: /Se me hizo difícil/i }));
+    await user.click(screen.getByRole("radio", { name: /Ajustar un hábito/i }));
+    await user.click(screen.getByRole("button", { name: "Guardar revisión" }));
+    expect(screen.getByText(/Elegiste ajustar un hábito/i)).toBeTruthy();
+    const link = screen.getByRole("link", { name: /Ir a mis hábitos/i });
+    expect(link.getAttribute("href")).toBe("/");
+    // la UI no modifica hábitos por sí sola: no hay adaptaciones nuevas
+    const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
+      adaptations: unknown[];
+    };
+    expect(saved.adaptations).toHaveLength(0);
+  });
+
+  it("surfaces a review storage error instead of showing an empty state", async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem("blu.review.v1", "{mal");
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect((await screen.findByRole("alert")).textContent).toMatch(/revisiones guardadas/i);
+  });
+
   it("skip records an empty review without answers", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -167,6 +232,80 @@ describe("Blu user flows", () => {
     expect(saved).toHaveLength(1);
     expect(saved[0].felt).toBeUndefined();
     expect(screen.getByText(/omitiste esta semana/i)).toBeTruthy();
+  });
+
+  it("shows accepted questionnaire goals and includes them in the plan", async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem(
+      "blu.goals.v1",
+      JSON.stringify({
+        profileComputedAt: "2026-11-04T12:00:00.000Z",
+        accepted: [
+          {
+            suggestionId: "sug-nature",
+            principleId: "nature",
+            habitId: "nature",
+            action: "Observar el entorno durante un minuto.",
+            decidedAt: "2026-11-04T12:05:00.000Z",
+          },
+        ],
+        rejected: [],
+        updatedAt: "2026-11-04T12:05:00.000Z",
+      }),
+    );
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.getByRole("heading", { name: /Objetivos que aceptaste/i })).toBeTruthy();
+    expect(screen.getByText(/Observar el entorno durante un minuto/i)).toBeTruthy();
+    await user.click(
+      screen.getByRole("button", { name: /Incluir en tus hábitos: Conexión con el entorno/i }),
+    );
+    const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
+      selectedHabitIds: string[];
+    };
+    expect(saved.selectedHabitIds).toContain("nature");
+    expect(screen.getByRole("button", { name: /Ya está en tu plan: Conexión con el entorno/i })).toBeTruthy();
+  });
+
+  it("respects the three-habit cap when including an accepted goal", async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem(
+      "blu.goals.v1",
+      JSON.stringify({
+        profileComputedAt: "t",
+        accepted: [
+          {
+            suggestionId: "sug-purpose",
+            principleId: "purpose",
+            habitId: "purpose",
+            action: "Nombrar una cosa que hoy te importa.",
+            decidedAt: "t",
+          },
+        ],
+        rejected: [],
+        updatedAt: "t",
+      }),
+    );
+    window.localStorage.setItem(
+      "blu.local.v1",
+      JSON.stringify({
+        consentAcceptedAt: "2026-11-04T10:00:00.000Z",
+        consent: { version: "2.0.0", purposes: {}, updatedAt: "" },
+        selectedHabitIds: ["movement", "rest", "family"],
+        checkInsByDate: {},
+        adaptations: [],
+      }),
+    );
+    render(<BluApp />);
+    await screen.findByRole("region", { name: "Hábitos que elegiste" });
+    await user.click(
+      screen.getByRole("button", { name: /Incluir en tus hábitos: Propósito/i }),
+    );
+    expect(screen.getByText(/Puedes elegir hasta tres hábitos/i)).toBeTruthy();
+    const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
+      selectedHabitIds: string[];
+    };
+    expect(saved.selectedHabitIds).toHaveLength(3);
   });
 
   it("shows a renewal banner for legacy consent without blocking use", async () => {

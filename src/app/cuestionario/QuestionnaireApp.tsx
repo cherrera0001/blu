@@ -22,6 +22,13 @@ import {
   type GoalDecisions,
 } from "@/lib/onboarding/goals-storage";
 import { clearOnboarding, loadOnboarding, saveOnboarding } from "@/lib/onboarding/storage";
+import {
+  ONBOARDING_NOTICE_VERSION,
+  acceptNotice,
+  clearNotice,
+  loadNotice,
+  type NoticeAcceptance,
+} from "@/lib/onboarding/notice";
 
 const EXPERIMENTAL_NOTICE =
   "Esta autoevaluación es experimental y orientativa: no es un diagnóstico ni una medida de salud.";
@@ -47,6 +54,7 @@ export default function QuestionnaireApp() {
             type="button"
             onClick={() => {
               clearOnboarding();
+              clearNotice();
               window.location.reload();
             }}
           >
@@ -88,6 +96,11 @@ function QuestionnaireSession() {
     return saved.assessment ?? createAssessment(bank);
   });
   const [index, setIndex] = useState(() => firstUnansweredIndex(bank, assessment));
+  const [noticeAcceptance, setNoticeAcceptance] = useState<NoticeAcceptance | null>(
+    () => loadNotice().accepted,
+  );
+  const [noticeChecked, setNoticeChecked] = useState(false);
+  const [noticeGateError] = useState<string | null>(() => loadNotice().error);
   const [decisions, setDecisions] = useState<GoalDecisions | null>(
     () => loadGoalDecisions().decisions,
   );
@@ -128,14 +141,101 @@ function QuestionnaireSession() {
     setNotice("");
   }
 
+  const startAfterNotice = () => {
+    const acceptedAt = new Date().toISOString();
+    const result = acceptNotice(acceptedAt);
+    if (result.ok) {
+      setNoticeAcceptance({ version: ONBOARDING_NOTICE_VERSION, acceptedAt });
+      setNotice("");
+    } else {
+      setNotice(result.error ?? "No se pudo registrar tu aceptación en este navegador.");
+    }
+  };
+
+  if (noticeGateError) {
+    return (
+      <main className="onboarding">
+        <section className="error-card" role="alert">
+          <span className="eyebrow">Autodiagnóstico</span>
+          <h1>No pude leer tu aceptación del aviso</h1>
+          <p>{noticeGateError}</p>
+          <button
+            className="button button-dark"
+            type="button"
+            onClick={() => {
+              clearNotice();
+              window.location.reload();
+            }}
+          >
+            Borrar el aviso y reintentar
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  if (!noticeAcceptance) {
+    return (
+      <main className="onboarding">
+        <section className="onboarding-card" aria-labelledby="notice-heading">
+          <span className="step-label">ANTES DE EMPEZAR</span>
+          <h1 id="notice-heading">Antes del autodiagnóstico</h1>
+          <p>
+            Las respuestas del cuestionario se guardan solo en el almacenamiento local de este
+            navegador.
+          </p>
+          <p>
+            Ese almacenamiento <strong>no está cifrado</strong>: cualquier persona con acceso a
+            este perfil del navegador podría leerlas. No escribas información médica ni datos que
+            te identifiquen.
+          </p>
+          <p>
+            Puedes borrarlas en cualquier momento con «Borrar datos del cuestionario» en esta
+            pantalla o con «Borrar mis datos» en la aplicación.
+          </p>
+          <label className="consent-row">
+            <input
+              checked={noticeChecked}
+              onChange={(event) => setNoticeChecked(event.target.checked)}
+              type="checkbox"
+            />
+            <span>Entiendo dónde se guardan mis respuestas y cómo borrarlas.</span>
+          </label>
+          <div className="adapt-row">
+            <button
+              className="button button-dark"
+              disabled={!noticeChecked}
+              onClick={startAfterNotice}
+              type="button"
+            >
+              Comenzar
+            </button>
+            <Link className="text-button" href="/">
+              Volver sin guardar nada
+            </Link>
+          </div>
+          {notice && (
+            <p className="inline-notice" role="status">
+              {notice}
+            </p>
+          )}
+        </section>
+      </main>
+    );
+  }
+
   if (complete && profile) {
     const activeDecisions =
       decisions && decisions.profileComputedAt === profile.computedAt ? decisions : null;
 
     const decideAccept = (suggestion: Suggestion) => {
       const now = new Date().toISOString();
-      const next = acceptSuggestion(suggestion, profile.computedAt, now);
-      setDecisions(next);
+      const result = acceptSuggestion(suggestion, profile.computedAt, now);
+      if (result.ok) {
+        setDecisions(result.decisions);
+      } else {
+        setNotice(result.error ?? "No se pudo guardar tu decisión en este navegador.");
+      }
     };
 
     const decideReject = (suggestionId: string) => {
@@ -144,7 +244,12 @@ function QuestionnaireSession() {
         ...emptyDecisions(),
         profileComputedAt: profile.computedAt,
       };
-      setDecisions(rejectSuggestion(base, suggestionId, profile.computedAt, now));
+      const result = rejectSuggestion(base, suggestionId, profile.computedAt, now);
+      if (result.ok) {
+        setDecisions(result.decisions);
+      } else {
+        setNotice(result.error ?? "No se pudo guardar tu decisión en este navegador.");
+      }
     };
 
     return (

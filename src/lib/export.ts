@@ -1,6 +1,7 @@
 import type { BluState } from "./blu";
 import type { Assessment } from "./onboarding/engine";
 import type { GoalDecisions } from "./onboarding/goals-storage";
+import type { WeeklyReview } from "./review";
 
 export const EXPORT_FORMAT_VERSION = "1.0.0";
 
@@ -11,6 +12,7 @@ export interface ExportBundle {
   state: BluState | null;
   onboarding: Assessment | null;
   goals: GoalDecisions | null;
+  reviews: WeeklyReview[] | null;
   errors: string[];
 }
 
@@ -18,6 +20,7 @@ export interface ExportInputs {
   state: BluState | null;
   onboarding: Assessment | null;
   goals: GoalDecisions | null;
+  reviews: WeeklyReview[] | null;
   exportedAt: string;
   errors?: string[];
 }
@@ -31,6 +34,7 @@ export function buildExportBundle(inputs: ExportInputs): ExportBundle {
     state: inputs.state,
     onboarding: inputs.onboarding,
     goals: inputs.goals,
+    reviews: inputs.reviews,
     errors: inputs.errors ?? [],
   };
 }

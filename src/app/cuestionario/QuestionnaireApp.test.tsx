@@ -1,12 +1,18 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import QuestionnaireApp from "./QuestionnaireApp";
 
 afterEach(cleanup);
 
 beforeEach(() => {
   window.localStorage.clear();
+  // Aviso del cuestionario ya aceptado para los tests de flujo;
+  // los tests del gate lo eliminan explícitamente.
+  window.localStorage.setItem(
+    "blu.onboarding.notice.v1",
+    JSON.stringify({ version: "1.0.0", acceptedAt: "2026-11-04T00:00:00.000Z" }),
+  );
 });
 
 async function answerCurrentQuestion(user: ReturnType<typeof userEvent.setup>) {
@@ -20,6 +26,36 @@ async function answerCurrentQuestion(user: ReturnType<typeof userEvent.setup>) {
   }
   await user.click(screen.getByRole("button", { name: /^(Siguiente|Ver mi resultado)$/ }));
 }
+
+describe("aviso previo del cuestionario (consentimiento)", () => {
+  it("muestra el aviso y no guarda nada antes de aceptar", async () => {
+    window.localStorage.clear();
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    expect(screen.getByRole("heading", { name: /Antes del autodiagnóstico/i })).toBeTruthy();
+    expect(screen.getByText(/no está cifrado/i)).toBeTruthy();
+    expect(screen.getByText(/Borrar datos del cuestionario|Borrar mis datos/i)).toBeTruthy();
+    const comenzar = screen.getByRole("button", { name: "Comenzar" });
+    expect(comenzar.hasAttribute("disabled")).toBe(true);
+    expect(window.localStorage.getItem("blu.onboarding.v1")).toBeNull();
+    expect(window.localStorage.getItem("blu.onboarding.notice.v1")).toBeNull();
+
+    await user.click(
+      screen.getByRole("checkbox", { name: /Entiendo dónde se guardan mis respuestas/i }),
+    );
+    await user.click(comenzar);
+    expect(await screen.findByText(/¿Cuántos días a la semana caminas/i)).toBeTruthy();
+    expect(window.localStorage.getItem("blu.onboarding.notice.v1")).not.toBeNull();
+  });
+
+  it("ofrece salir sin guardar nada", () => {
+    window.localStorage.clear();
+    render(<QuestionnaireApp />);
+    const salir = screen.getByRole("link", { name: /Volver sin guardar nada/i });
+    expect(salir.getAttribute("href")).toBe("/");
+    expect(window.localStorage.getItem("blu.onboarding.v1")).toBeNull();
+  });
+});
 
 describe("QuestionnaireApp", () => {
   it("muestra la primera pregunta del banco y el avance accesible", () => {
@@ -79,6 +115,29 @@ describe("QuestionnaireApp", () => {
     expect(saved.accepted[0].suggestionId).toMatch(/^sug-/);
     expect(saved.accepted[0].decidedAt).toBeTruthy();
     expect(await screen.findByText(/Guardado en tus objetivos/i)).toBeTruthy();
+  }, 20000);
+
+  it("no muestra persistido si el almacenamiento falla al aceptar", async () => {
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    for (let i = 0; i < 40; i += 1) {
+      if (screen.queryByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })) break;
+      const skip = screen.queryByRole("button", { name: /prefiero no responder/i });
+      if (skip && i % 4 === 0) {
+        await user.click(skip);
+      } else {
+        await answerCurrentQuestion(user);
+      }
+    }
+    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("quota");
+    });
+    const acceptButtons = await screen.findAllByRole("button", { name: /^Aceptar / });
+    await user.click(acceptButtons[0]);
+    expect(await screen.findByText(/no pudo guardar tu decisión/i)).toBeTruthy();
+    expect(screen.queryByText(/Guardado en tus objetivos/i)).toBeNull();
+    expect(window.localStorage.getItem("blu.goals.v1")).toBeNull();
+    spy.mockRestore();
   }, 20000);
 
   it("permite omitir una pregunta omisible y avanza", async () => {

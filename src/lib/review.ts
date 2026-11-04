@@ -111,19 +111,19 @@ export function saveReview(input: ReviewInput, now: string): { ok: boolean; erro
 
 // ---- store con patrón useSyncExternalStore (misma convención que storage.ts) ----
 
-let cached: WeeklyReview[] | null | undefined;
+let cached: ReviewsSnapshot | undefined;
 const listeners = new Set<() => void>();
 
-export function getReviewSnapshot(): WeeklyReview[] | null {
-  if (typeof window === "undefined") return null;
+export function getReviewSnapshot(): ReviewsSnapshot {
+  if (typeof window === "undefined") return { reviews: null, error: null };
   if (cached === undefined) {
-    cached = loadReviews().reviews;
+    cached = loadReviews();
   }
   return cached;
 }
 
-export function getServerReviewSnapshot(): WeeklyReview[] | null {
-  return null;
+export function getServerReviewSnapshot(): ReviewsSnapshot {
+  return { reviews: null, error: null };
 }
 
 export function subscribeReviews(listener: () => void): () => void {

@@ -59,7 +59,9 @@ export function scoreAssessment(bank: QuestionBank, assessment: Assessment): Pro
       };
     }
 
-    const score = Math.round((sum / puntuables.length) * 100);
+    // Solo las respuestas efectivamente contestadas determinan el puntaje:
+    // preguntas sin responder u omitidas no reducen la puntuación (penalización cero).
+    const score = Math.round((sum / answered) * 100);
     const omissionRatio = skipped / puntuables.length;
     return {
       principleId: principle.id,

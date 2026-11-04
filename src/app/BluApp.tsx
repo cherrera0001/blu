@@ -13,8 +13,16 @@ import {
 } from "@/lib/blu";
 import { respondToMessage } from "@/lib/conversation";
 import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
+import { eraseAllLocalData } from "@/lib/erase";
+import { loadReviews } from "@/lib/review";
 import { loadOnboarding } from "@/lib/onboarding/storage";
-import { loadGoalDecisions } from "@/lib/onboarding/goals-storage";
+import {
+  getGoalsSnapshot,
+  getServerGoalsSnapshot,
+  loadGoalDecisions,
+  subscribeGoals,
+  type AcceptedGoal,
+} from "@/lib/onboarding/goals-storage";
 import {
   getISOWeekKey,
   getReviewSnapshot,
@@ -33,7 +41,6 @@ import {
   type PurposeId,
 } from "@/lib/consent";
 import {
-  clearBluState,
   getBluSnapshot,
   getServerBluSnapshot,
   subscribeToBlu,
@@ -52,7 +59,9 @@ export default function Home() {
     investigacion: false,
   });
   const [managingConsent, setManagingConsent] = useState(false);
-  const reviews = useSyncExternalStore(subscribeReviews, getReviewSnapshot, getServerReviewSnapshot);
+  const reviewState = useSyncExternalStore(subscribeReviews, getReviewSnapshot, getServerReviewSnapshot);
+  const goalDecisions = useSyncExternalStore(subscribeGoals, getGoalsSnapshot, getServerGoalsSnapshot);
+  const reviews = reviewState.reviews;
   const [reviewDraft, setReviewDraft] = useState<{
     felt: Felt | null;
     decision: ReviewDecision | null;
@@ -116,14 +125,17 @@ export default function Home() {
     const snapshot = getBluSnapshot();
     const onboarding = loadOnboarding();
     const goals = loadGoalDecisions();
+    const reviews = loadReviews();
     const errors: string[] = [];
     if (snapshot.error) errors.push(`state: ${snapshot.error}`);
     if (onboarding.error) errors.push(`onboarding: ${onboarding.error}`);
     if (goals.error) errors.push(`goals: ${goals.error}`);
+    if (reviews.error) errors.push(`reviews: ${reviews.error}`);
     const bundle = buildExportBundle({
       state: snapshot.error ? null : snapshot.state,
       onboarding: onboarding.assessment,
       goals: goals.decisions,
+      reviews: reviews.reviews,
       exportedAt: new Date().toISOString(),
       errors,
     });
@@ -137,6 +149,24 @@ export default function Home() {
 
   const weekKey = getISOWeekKey(today);
   const thisWeekReview = reviews?.find((review) => review.weekKey === weekKey) ?? null;
+  const acceptedGoals = (goalDecisions?.accepted ?? []).filter((goal) =>
+    HABITS.some((habit) => habit.id === goal.habitId),
+  );
+
+  function includeGoal(goal: AcceptedGoal) {
+    const habitId = goal.habitId as HabitId;
+    if (state.selectedHabitIds.includes(habitId)) return;
+    if (state.selectedHabitIds.length >= 3) {
+      setNotice("Puedes elegir hasta tres hábitos. Quita uno para incluir este.");
+      return;
+    }
+    updateBluState((current) => ({
+      ...current,
+      selectedHabitIds: [...current.selectedHabitIds, habitId],
+    }));
+    const habit = HABITS.find((item) => item.id === habitId);
+    setNotice(`Incluí «${habit?.title ?? goal.habitId}» en tus hábitos.`);
+  }
 
   function submitReview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -241,11 +271,14 @@ export default function Home() {
   function clearData() {
     if (
       state.consentAcceptedAt &&
-      !window.confirm("¿Borrar las preferencias y los registros locales de Blu?")
+      !window.confirm(
+        "¿Borrar de este navegador tus hábitos, registros, cuestionario, objetivos y revisiones de Blu?",
+      )
     ) {
       return;
     }
-    if (clearBluState()) {
+    const erased = eraseAllLocalData();
+    if (erased.ok) {
       setEditingSelection(false);
       setManagingConsent(false);
       setPurposeDraft({ operativo: false, mejora: false, investigacion: false });
@@ -256,7 +289,11 @@ export default function Home() {
           text: "Hola, soy Blu en modo demostración. ¿Qué haría que un hábito se sintiera más posible hoy?",
         },
       ]);
-      setNotice("Se borraron los datos de Blu guardados en este navegador.");
+      setNotice("Se borraron todos los datos de Blu en este navegador.");
+    } else {
+      setNotice(
+        `No se pudieron borrar algunas claves: ${erased.remaining.join(", ")}. Inténtalo desde la configuración del navegador.`,
+      );
     }
   }
 
@@ -489,6 +526,40 @@ export default function Home() {
             })}
           </div>
 
+          {acceptedGoals.length > 0 && (
+            <section aria-labelledby="accepted-goals-heading">
+              <div className="section-heading">
+                <div>
+                  <span className="eyebrow">DE TU AUTODIAGNÓSTICO</span>
+                  <h2 id="accepted-goals-heading">Objetivos que aceptaste</h2>
+                </div>
+              </div>
+              <div className="daily-list">
+                {acceptedGoals.map((goal) => {
+                  const habit = HABITS.find((item) => item.id === goal.habitId);
+                  const already = state.selectedHabitIds.includes(goal.habitId as HabitId);
+                  return (
+                    <article key={goal.suggestionId} className="daily-card">
+                      <div className="daily-copy">
+                        <span className="category-label">{habit?.title ?? goal.habitId}</span>
+                        <p>{goal.action}</p>
+                      </div>
+                      <button
+                        aria-label={`${already ? "Ya está en tu plan" : "Incluir en tus hábitos"}: ${habit?.title ?? goal.habitId}`}
+                        className="check-button"
+                        disabled={already}
+                        onClick={() => includeGoal(goal)}
+                        type="button"
+                      >
+                        {already ? "En tu plan" : "Incluir"}
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           <section className="review-card" aria-labelledby="review-heading">
             <div className="review-top">
               <div>
@@ -574,10 +645,25 @@ export default function Home() {
                 Aún no tienes registros esta semana: también es válido empezar pequeño hoy.
               </p>
             )}
+            {reviewState.error && (
+              <p className="inline-notice" role="alert">
+                No pude leer tus revisiones guardadas: {reviewState.error}
+              </p>
+            )}
             {thisWeekReview && (
               <p className="inline-notice" role="status">
                 Revisión de esta semana guardada ({thisWeekReview.updatedAt.slice(0, 10)}). Puedes
                 actualizarla cuando quieras.
+              </p>
+            )}
+            {thisWeekReview?.decision === "adjust" && (
+              <p className="inline-notice" role="status">
+                Elegiste ajustar un hábito. En la pantalla principal, dentro de «Tus últimos siete
+                días», selecciona el hábito y pulsa «Probar más pequeño». Nada cambia hasta que tú
+                lo confirmes.{" "}
+                <Link className="text-button" href="/">
+                  Ir a mis hábitos
+                </Link>
               </p>
             )}
             <form onSubmit={submitReview}>
@@ -680,6 +766,11 @@ export default function Home() {
 
       <footer className="dashboard-footer">
         <span>Blu es un prototipo local de bienestar; no diagnostica ni trata.</span>
+        <p className="tiny-note">
+          «Exportar mis datos» descarga un JSON con todo lo que Blu guarda en este navegador
+          (hábitos, registros, cuestionario, objetivos y revisiones). «Borrar todos los datos»
+          elimina todas esas claves y verifica el borrado.
+        </p>
         <div className="adapt-row">
           <button className="text-button" onClick={exportData} type="button">
             Exportar mis datos

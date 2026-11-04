@@ -109,6 +109,29 @@ describe("scoreAssessment", () => {
     expect(scoreAssessment(bank, withMulti).results[0].score).toBe(base.score);
   });
 
+  it("omisiones y preguntas sin responder no reducen la puntuación (penalización cero)", () => {
+    // Referencia: solo mov-01 = 2 (máx 3 → 2/3).
+    const base = answerQuestion(bank, createAssessment(bank, "t"), "mov-01", 2);
+    const baseScore = scoreAssessment(bank, base).results[0].score;
+    expect(baseScore).toBe(Math.round((2 / 3) * 100));
+
+    // Caso A: las demás omitidas explícitamente → mismo score, confianza reducida.
+    let omitted = answerQuestion(bank, createAssessment(bank, "t"), "mov-01", 2);
+    omitted = skipQuestion(bank, omitted, "mov-02");
+    omitted = skipQuestion(bank, omitted, "mov-04");
+    omitted = skipQuestion(bank, omitted, "mov-05");
+    const resultA = scoreAssessment(bank, omitted).results[0];
+    expect(resultA.score).toBe(baseScore);
+    expect(resultA.confidence).toBe("reduced");
+
+    // Caso B: las demás nunca contestadas (assessment aún incompleto) → mismo score;
+    // la confianza reducida solo refleja omisiones explícitas, no preguntas pendientes.
+    const untouched = answerQuestion(bank, createAssessment(bank, "t"), "mov-01", 2);
+    const resultB = scoreAssessment(bank, untouched).results[0];
+    expect(resultB.score).toBe(baseScore);
+    expect(resultB.confidence).toBe("normal");
+  });
+
   it("el perfil conserva la versión del banco y marca experimental", () => {
     const profile = scoreAssessment(bank, answerAll(() => 2));
     expect(profile.bankVersion).toBe("1.0.0");
