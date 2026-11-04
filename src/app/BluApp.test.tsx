@@ -119,6 +119,20 @@ describe("Blu user flows", () => {
     expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
   });
 
+  it("exports data as a JSON bundle on explicit click", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    const createObjectURL = vi.fn(() => "blob:fake");
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    vi.stubGlobal("URL", { ...URL, createObjectURL, revokeObjectURL: vi.fn() });
+    await user.click(screen.getByRole("button", { name: /Exportar mis datos/i }));
+    expect(createObjectURL).toHaveBeenCalledOnce();
+    expect(screen.getByText(/Exportaste tus datos/i)).toBeTruthy();
+    vi.unstubAllGlobals();
+    clickSpy.mockRestore();
+  });
+
   it("shows a renewal banner for legacy consent without blocking use", async () => {
     window.localStorage.setItem(
       "blu.local.v1",

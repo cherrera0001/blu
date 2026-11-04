@@ -12,6 +12,9 @@ import {
   type HabitId,
 } from "@/lib/blu";
 import { respondToMessage } from "@/lib/conversation";
+import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
+import { loadOnboarding } from "@/lib/onboarding/storage";
+import { loadGoalDecisions } from "@/lib/onboarding/goals-storage";
 import {
   CONSENT_VERSION,
   acceptPurpose,
@@ -92,6 +95,29 @@ export default function Home() {
     });
     setDraftSelectedHabitIds(state.selectedHabitIds);
     setManagingConsent(true);
+  }
+
+  function exportData() {
+    const snapshot = getBluSnapshot();
+    const onboarding = loadOnboarding();
+    const goals = loadGoalDecisions();
+    const errors: string[] = [];
+    if (snapshot.error) errors.push(`state: ${snapshot.error}`);
+    if (onboarding.error) errors.push(`onboarding: ${onboarding.error}`);
+    if (goals.error) errors.push(`goals: ${goals.error}`);
+    const bundle = buildExportBundle({
+      state: snapshot.error ? null : snapshot.state,
+      onboarding: onboarding.assessment,
+      goals: goals.decisions,
+      exportedAt: new Date().toISOString(),
+      errors,
+    });
+    const ok = downloadBundle(bundle, exportFileName(new Date()));
+    setNotice(
+      ok
+        ? "Exportaste tus datos. Revisa tu carpeta de descargas."
+        : "No pude preparar la exportación en este navegador.",
+    );
   }
 
   function toggleHabit(habitId: HabitId) {
@@ -540,6 +566,9 @@ export default function Home() {
       <footer className="dashboard-footer">
         <span>Blu es un prototipo local de bienestar; no diagnostica ni trata.</span>
         <div className="adapt-row">
+          <button className="text-button" onClick={exportData} type="button">
+            Exportar mis datos
+          </button>
           <button className="text-button" onClick={openConsentManager} type="button">
             Consentimientos
           </button>
