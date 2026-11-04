@@ -31,6 +31,8 @@ Escenario: Contenido invasivo
 
 ### BLU-602 — Check-in de vínculos
 
+> **Estado (2026-11-04):** Implementado: idem BLU-302 (test parametrizado).
+
 **Historia:** Como persona usuaria, quiero registrar si realicé mi gesto de conexión, para observar mis vínculos con amabilidad.
 **Prioridad:** P0 · **Tamaño:** S · **Fase:** MVP
 **Dependencias:** BLU-601, check-in base.

@@ -394,6 +394,32 @@ describe("Blu user flows", () => {
     expect(saved.selectedHabitIds).toHaveLength(3);
   });
 
+  it.each([
+    ["movement", "Movimiento natural"],
+    ["nourishment", "Alimentación consciente"],
+    ["rest", "Descanso y calma"],
+    ["family", "Vínculos cercanos"],
+    ["community", "Comunidad"],
+    ["nature", "Conexión con el entorno"],
+    ["purpose", "Propósito"],
+  ])("check-in works for %s (%s) and persists", async (habitId, habitName) => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await user.click(screen.getByRole("button", { name: habitName }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+    await screen.findByRole("region", { name: "Hábitos que elegiste" });
+    await user.click(screen.getByRole("button", { name: `Marcar ${habitName}` }));
+    const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
+      checkInsByDate: Record<string, string[]>;
+    };
+    const today = new Date().toISOString().slice(0, 10);
+    expect(Object.values(saved.checkInsByDate).flat()).toContain(habitId);
+    expect(saved.checkInsByDate[today]).toContain(habitId);
+  });
+
   it("catalog: shows alternatives and applies one as an adaptation", async () => {
     const user = userEvent.setup();
     render(<BluApp />);

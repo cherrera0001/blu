@@ -28,6 +28,8 @@ Escenario: ADR completo
 
 ### BLU-1402 — CI en GitHub Actions: test, lint, build y evidencia
 
+> **Estado (2026-11-04):** Implementado: CI en GitHub Actions (lint, gitleaks, test, build) verde desde 2026-11-04; Node 24.
+
 **Historia:** Como equipo, queremos que cada cambio ejecute pruebas, lint y build en CI, para que la evidencia sea reproducible.
 **Prioridad:** P0 · **Tamaño:** M · **Fase:** MVP
 **Dependencias:** repo GitHub (existente).

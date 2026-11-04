@@ -34,6 +34,8 @@ Escenario: Catálogo inválido
 
 ### BLU-302 — Check-in de movimiento con fricción mínima
 
+> **Estado (2026-11-04):** Implementado: check-in genérico validado para cada principio (test parametrizado BluApp, 2026-11-04).
+
 **Historia:** Como persona usuaria, quiero registrar en segundos si hice mi microhábito de movimiento, para mantener un registro honesto sin que sea una carga.
 **Valor/contexto:** hereda el check-in diario del prototipo y lo particulariza: registro de la acción concreta (no de "minutos de ejercicio"), desmarcar reversible, fecha local.
 **Prioridad:** P0 · **Tamaño:** S · **Fase:** MVP
@@ -120,6 +122,8 @@ Escenario: Contenido prohibido
 ---
 
 ### BLU-402 — Check-in de alimentación consciente
+
+> **Estado (2026-11-04):** Implementado: idem BLU-302 (test parametrizado).
 
 **Historia:** Como persona usuaria, quiero registrar mi microhábito alimentario del día de forma rápida, para sostener la constancia sin obsesión.
 **Prioridad:** P0 · **Tamaño:** S · **Fase:** MVP

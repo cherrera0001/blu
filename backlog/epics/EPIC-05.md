@@ -149,6 +149,8 @@ Escenario: Sin datos suficientes
 
 ### BLU-1102 — Adaptación explícita con motivo y reversibilidad
 
+> **Estado (2026-11-04):** Implementado desde el prototipo: adaptar/deshacer con motivo cerrado y trazabilidad (src/app/BluApp.tsx + blu.ts; tests en BluApp.test).
+
 **Historia:** Como persona usuaria, quiero hacer más pequeño un hábito cuando no encaja, sabiendo que puedo deshacerlo, para no abandonar.
 **Valor/contexto:** formaliza lo que el prototipo ya hace (adaptación + deshacer) y lo extiende: motivo de lista cerrada, historial visible, trazabilidad respuesta→adaptación.
 **Prioridad:** P0 · **Tamaño:** M · **Fase:** MVP
