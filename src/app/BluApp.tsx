@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   HABITS,
@@ -140,9 +141,12 @@ export default function Home() {
       errors,
     });
     const ok = downloadBundle(bundle, exportFileName(new Date()));
+    const partial = errors.length > 0;
     setNotice(
       ok
-        ? "Exportaste tus datos. Revisa tu carpeta de descargas."
+        ? partial
+          ? "La exportación quedó incompleta: no pude leer algunas categorías. El JSON descargado incluye el detalle en «errors»."
+          : "Exportaste tus datos. Revisa tu carpeta de descargas."
         : "No pude preparar la exportación en este navegador.",
     );
   }
@@ -318,7 +322,7 @@ export default function Home() {
       <main className="onboarding">
         <header className="topbar">
           <a className="brand" href="#" aria-label="Blu, inicio">
-            <span className="brand-mark">b</span>
+            <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
             <span>blu</span>
           </a>
           <span className="prototype-tag">PROTOTIPO LOCAL</span>
@@ -445,7 +449,7 @@ export default function Home() {
     <main className="dashboard">
       <header className="topbar">
         <a className="brand" href="#" aria-label="Blu, inicio">
-          <span className="brand-mark">b</span>
+          <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
           <span>blu</span>
         </a>
         <div className="topbar-right">
@@ -726,7 +730,9 @@ export default function Home() {
         <aside className="side-column">
           <section className="chat-card" aria-labelledby="chat-heading">
             <div className="chat-heading">
-              <div className="blu-avatar" aria-hidden="true">b</div>
+              <div className="blu-avatar" aria-hidden="true">
+                <Image src="/blu-avatar.jpg" alt="" width={38} height={38} />
+              </div>
               <div>
                 <span className="eyebrow">ACOMPAÑAMIENTO</span>
                 <h2 id="chat-heading">Una pausa con Blu</h2>

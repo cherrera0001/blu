@@ -55,6 +55,36 @@ describe("aviso previo del cuestionario (consentimiento)", () => {
     expect(salir.getAttribute("href")).toBe("/");
     expect(window.localStorage.getItem("blu.onboarding.v1")).toBeNull();
   });
+
+  it("con aceptación vigente de la versión actual omite el aviso y va directo al cuestionario", () => {
+    render(<QuestionnaireApp />);
+    expect(screen.queryByRole("heading", { name: /Antes del autodiagnóstico/i })).toBeNull();
+    expect(screen.getByText(/¿Cuántos días a la semana caminas/i)).toBeTruthy();
+  });
+
+  it("con aceptación de versión anterior vuelve a exigir el aviso antes de continuar", async () => {
+    window.localStorage.setItem(
+      "blu.onboarding.notice.v1",
+      JSON.stringify({ version: "0.9.0", acceptedAt: "2026-10-01T00:00:00.000Z" }),
+    );
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    expect(screen.getByRole("heading", { name: /Antes del autodiagnóstico/i })).toBeTruthy();
+    expect(screen.getByText(/Actualizamos el aviso del cuestionario/i)).toBeTruthy();
+    const comenzar = screen.getByRole("button", { name: "Comenzar" });
+    expect(comenzar.hasAttribute("disabled")).toBe(true);
+    expect(window.localStorage.getItem("blu.onboarding.v1")).toBeNull();
+
+    await user.click(
+      screen.getByRole("checkbox", { name: /Entiendo dónde se guardan mis respuestas/i }),
+    );
+    await user.click(comenzar);
+    expect(await screen.findByText(/¿Cuántos días a la semana caminas/i)).toBeTruthy();
+    const saved = JSON.parse(window.localStorage.getItem("blu.onboarding.notice.v1") ?? "null") as {
+      version: string;
+    };
+    expect(saved.version).toBe("1.0.0");
+  });
 });
 
 describe("QuestionnaireApp", () => {

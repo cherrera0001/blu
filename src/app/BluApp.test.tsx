@@ -6,6 +6,26 @@ import { clearBluState } from "@/lib/storage";
 import { invalidateReviews } from "@/lib/review";
 import { invalidateGoals } from "@/lib/onboarding/goals-storage";
 
+// El optimizer de next/image no corre en jsdom: se renderiza un <img> plano.
+vi.mock("next/image", () => ({
+  default: (props: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    className?: string;
+  }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={props.src}
+      alt={props.alt}
+      width={props.width}
+      height={props.height}
+      className={props.className}
+    />
+  ),
+}));
+
 afterEach(cleanup);
 
 beforeEach(() => {
@@ -173,6 +193,39 @@ describe("Blu user flows", () => {
     clickSpy.mockRestore();
   });
 
+  it("marks the export as incomplete when a category cannot be read, in both the JSON and the message", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    window.localStorage.setItem("blu.review.v1", "{mal");
+    let captured = "";
+    const OriginalBlob = Blob;
+    vi.stubGlobal(
+      "Blob",
+      class extends OriginalBlob {
+        constructor(parts: BlobPart[], options?: BlobPropertyBag) {
+          captured = String(parts[0]);
+          super(parts, options);
+        }
+      },
+    );
+    const createObjectURL = vi.fn(() => "blob:fake");
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    vi.stubGlobal("URL", { ...URL, createObjectURL, revokeObjectURL: vi.fn() });
+    await user.click(screen.getByRole("button", { name: /Exportar mis datos/i }));
+    expect(createObjectURL).toHaveBeenCalledOnce();
+    expect(screen.getByText(/exportación (quedó )?incompleta/i)).toBeTruthy();
+    expect(screen.queryByText(/Exportaste tus datos/i)).toBeNull();
+    const bundle = JSON.parse(captured) as {
+      reviews: unknown;
+      errors: string[];
+    };
+    expect(bundle.reviews).toBeNull();
+    expect(bundle.errors.join(" ")).toMatch(/reviews/);
+    vi.unstubAllGlobals();
+    clickSpy.mockRestore();
+  });
+
   it("saves a weekly review with closed-list answers and date", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -265,6 +318,39 @@ describe("Blu user flows", () => {
     };
     expect(saved.selectedHabitIds).toContain("nature");
     expect(screen.getByRole("button", { name: /Ya está en tu plan: Conexión con el entorno/i })).toBeTruthy();
+  });
+
+  it("does not bring back accepted goals after erasing all data, even when restarting onboarding in the same session", async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem(
+      "blu.goals.v1",
+      JSON.stringify({
+        profileComputedAt: "2026-11-04T12:00:00.000Z",
+        accepted: [
+          {
+            suggestionId: "sug-nature",
+            principleId: "nature",
+            habitId: "nature",
+            action: "Observar el entorno durante un minuto.",
+            decidedAt: "2026-11-04T12:05:00.000Z",
+          },
+        ],
+        rejected: [],
+        updatedAt: "2026-11-04T12:05:00.000Z",
+      }),
+    );
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.getByRole("heading", { name: /Objetivos que aceptaste/i })).toBeTruthy();
+
+    await user.click(screen.getByRole("button", { name: "Borrar todos los datos" }));
+    expect(window.localStorage.getItem("blu.goals.v1")).toBeNull();
+    expect(screen.queryByRole("heading", { name: /Objetivos que aceptaste/i })).toBeNull();
+    expect(screen.queryByText(/Observar el entorno durante un minuto/i)).toBeNull();
+
+    await completeOnboarding(user);
+    expect(screen.queryByRole("heading", { name: /Objetivos que aceptaste/i })).toBeNull();
+    expect(screen.queryByText(/Observar el entorno durante un minuto/i)).toBeNull();
   });
 
   it("respects the three-habit cap when including an accepted goal", async () => {

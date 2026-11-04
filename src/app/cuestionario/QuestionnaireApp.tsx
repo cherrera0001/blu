@@ -96,11 +96,13 @@ function QuestionnaireSession() {
     return saved.assessment ?? createAssessment(bank);
   });
   const [index, setIndex] = useState(() => firstUnansweredIndex(bank, assessment));
+  const [noticeSnapshot] = useState(() => loadNotice());
   const [noticeAcceptance, setNoticeAcceptance] = useState<NoticeAcceptance | null>(
-    () => loadNotice().accepted,
+    noticeSnapshot.accepted,
   );
+  const [noticeGateError] = useState<string | null>(noticeSnapshot.error);
+  const [noticeOutdated] = useState(noticeSnapshot.outdated);
   const [noticeChecked, setNoticeChecked] = useState(false);
-  const [noticeGateError] = useState<string | null>(() => loadNotice().error);
   const [decisions, setDecisions] = useState<GoalDecisions | null>(
     () => loadGoalDecisions().decisions,
   );
@@ -193,6 +195,12 @@ function QuestionnaireSession() {
             Puedes borrarlas en cualquier momento con «Borrar datos del cuestionario» en esta
             pantalla o con «Borrar mis datos» en la aplicación.
           </p>
+          {noticeOutdated && (
+            <p className="inline-notice" role="status">
+              Actualizamos el aviso del cuestionario desde tu última aceptación. Márcalo de nuevo
+              para continuar.
+            </p>
+          )}
           <label className="consent-row">
             <input
               checked={noticeChecked}

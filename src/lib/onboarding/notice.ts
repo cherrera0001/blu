@@ -8,6 +8,8 @@ export interface NoticeAcceptance {
 export interface NoticeSnapshot {
   accepted: NoticeAcceptance | null;
   error: string | null;
+  /** Verdadero cuando hay una aceptación guardada de una versión distinta de ONBOARDING_NOTICE_VERSION. */
+  outdated: boolean;
 }
 
 const STORAGE_KEY = "blu.onboarding.notice.v1";
@@ -17,28 +19,49 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export function loadNotice(): NoticeSnapshot {
-  if (typeof window === "undefined") return { accepted: null, error: null };
+  if (typeof window === "undefined") return { accepted: null, error: null, outdated: false };
   let raw: string | null;
   try {
     raw = window.localStorage.getItem(STORAGE_KEY);
   } catch {
-    return { accepted: null, error: "No se pudo acceder al almacenamiento local de este navegador." };
+    return {
+      accepted: null,
+      error: "No se pudo acceder al almacenamiento local de este navegador.",
+      outdated: false,
+    };
   }
-  if (raw === null) return { accepted: null, error: null };
+  if (raw === null) return { accepted: null, error: null, outdated: false };
   let value: unknown;
   try {
     value = JSON.parse(raw);
   } catch {
-    return { accepted: null, error: "El aviso de consentimiento guardado no se puede leer." };
+    return {
+      accepted: null,
+      error: "El aviso de consentimiento guardado no se puede leer.",
+      outdated: false,
+    };
   }
   if (
     !isRecord(value) ||
     typeof value.version !== "string" ||
     typeof value.acceptedAt !== "string"
   ) {
-    return { accepted: null, error: "El aviso de consentimiento guardado no cumple el formato esperado." };
+    return {
+      accepted: null,
+      error: "El aviso de consentimiento guardado no cumple el formato esperado.",
+      outdated: false,
+    };
   }
-  return { accepted: { version: value.version, acceptedAt: value.acceptedAt }, error: null };
+  // La aceptación solo cuenta si corresponde a la versión vigente del aviso:
+  // una aceptación histórica de otra versión no cubre el aviso actual.
+  if (value.version !== ONBOARDING_NOTICE_VERSION) {
+    return { accepted: null, error: null, outdated: true };
+  }
+  return {
+    accepted: { version: value.version, acceptedAt: value.acceptedAt },
+    error: null,
+    outdated: false,
+  };
 }
 
 export function acceptNotice(now: string): { ok: boolean; error: string | null } {

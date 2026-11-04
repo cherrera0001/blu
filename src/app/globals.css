@@ -31,7 +31,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .onboarding, .dashboard { max-width: 1180px; margin: 0 auto; padding: 0 44px; }
 .topbar { height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font: 800 24px/1 "Segoe UI", sans-serif; letter-spacing: -1.5px; text-decoration: none; }
-.brand-mark { width: 35px; height: 35px; display: inline-grid; place-items: center; border-radius: 50% 50% 50% 12px; background: var(--teal); color: white; font: 800 22px/1 "Segoe UI", sans-serif; }
+.brand-mark { width: 35px; height: 35px; object-fit: cover; border-radius: 50% 50% 50% 12px; background: var(--teal); }
 .prototype-tag { padding: 7px 10px; border: 1px solid #c8ddd3; border-radius: 99px; background: #edf7f0; color: #426d60; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
 .topbar-right { display: flex; align-items: center; gap: 22px; }
 .text-button { padding: 8px 0; border: 0; background: transparent; color: var(--teal-dark); cursor: pointer; font-size: 13px; font-weight: 700; }
@@ -110,7 +110,8 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .evidence-note span { color: var(--teal); }
 .chat-card { padding: 20px; }
 .chat-heading { display: flex; align-items: center; gap: 11px; }
-.blu-avatar { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50% 50% 50% 12px; background: var(--teal); color: white; font: 800 21px "Segoe UI", sans-serif; }
+.blu-avatar { width: 38px; height: 38px; overflow: hidden; border-radius: 50% 50% 50% 12px; background: var(--teal); }
+.blu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .chat-heading h2 { margin: 4px 0 0; font-size: 16px; letter-spacing: -.3px; }
 .chat-disclosure { margin: 15px 0 12px; padding: 10px; border-radius: 8px; background: #f1f7f1; color: #5d7169; font-size: 10px; line-height: 1.5; }
 .chat-messages { display: flex; flex-direction: column; gap: 9px; min-height: 150px; max-height: 270px; overflow-y: auto; padding: 3px 1px 10px; }
