@@ -7,6 +7,8 @@ ejecuta la evidencia, secretos bien manejados y observabilidad sin exposición d
 
 ### BLU-1401 — Decisión de arquitectura V1: backend, base de datos y RLS (ADR)
 
+> **Estado (2026-11-04):** Decisión preparatoria documentada en **docs/adr/0002** (regla: Supabase+RLS por defecto al aprobarse PRD §8; FastAPI solo con ADR posterior; ruta de migración vía formato de exportación v1.0.0; preguntas para aprobadores listadas). La implementación sigue **GATED** a las aprobaciones.
+
 **Historia:** Como equipo técnico, queremos decidir con evidencia si V1 requiere FastAPI + PostgreSQL/Supabase, para no sobre-arquitecturar ni subestimar necesidades.
 **Valor/contexto:** ADR que compara: (a) seguir local-first, (b) Next.js + Supabase directo, (c) FastAPI aparte. Criterios: necesidad real de cuentas/sincronización, costo operativo, superficie de seguridad, cumplimiento. Salida: decisión + consecuencias + plan de migración.
 **Prioridad:** P1 · **Tamaño:** M · **Fase:** MVP (decisión), V1 (implementación)
