@@ -1,3 +1,5 @@
+import { emptyConsent, isConsentState, migrateLegacy, type ConsentState } from "./consent";
+
 export const HABITS = [
   {
     id: "movement",
@@ -70,6 +72,7 @@ export interface Adaptation {
 
 export interface BluState {
   consentAcceptedAt: string | null;
+  consent: ConsentState;
   selectedHabitIds: HabitId[];
   checkInsByDate: Record<string, HabitId[]>;
   adaptations: Adaptation[];
@@ -87,6 +90,7 @@ const MAX_ADAPTATIONS = 500;
 export function createInitialState(): BluState {
   return {
     consentAcceptedAt: null,
+    consent: emptyConsent(),
     selectedHabitIds: [],
     checkInsByDate: {},
     adaptations: [],
@@ -156,10 +160,21 @@ export function decodeState(raw: string | null): BluState {
 
   return {
     consentAcceptedAt: consent,
+    consent: resolveConsent(value.consent, consent),
     selectedHabitIds: [...selected],
     checkInsByDate: parsedCheckIns,
     adaptations: parsedAdaptations,
   };
+}
+
+function resolveConsent(raw: unknown, consentAcceptedAt: string | null): ConsentState {
+  if (raw === undefined) {
+    return migrateLegacy(consentAcceptedAt);
+  }
+  if (!isConsentState(raw)) {
+    throw new Error("El consentimiento guardado no cumple el formato esperado.");
+  }
+  return raw;
 }
 
 export function localDateKey(date: Date): string {

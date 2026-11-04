@@ -13,6 +13,14 @@ import {
 } from "@/lib/blu";
 import { respondToMessage } from "@/lib/conversation";
 import {
+  CONSENT_VERSION,
+  acceptPurpose,
+  hasPurpose,
+  needsReconsent,
+  withdrawPurpose,
+  type PurposeId,
+} from "@/lib/consent";
+import {
   clearBluState,
   getBluSnapshot,
   getServerBluSnapshot,
@@ -26,7 +34,12 @@ export default function Home() {
   const snapshot = useSyncExternalStore(subscribeToBlu, getBluSnapshot, getServerBluSnapshot);
   const clockMinute = useSyncExternalStore(subscribeToClock, getClockSnapshot, getServerClockSnapshot);
   const state = snapshot.state;
-  const [consentChecked, setConsentChecked] = useState(false);
+  const [purposeDraft, setPurposeDraft] = useState<Record<PurposeId, boolean>>({
+    operativo: false,
+    mejora: false,
+    investigacion: false,
+  });
+  const [managingConsent, setManagingConsent] = useState(false);
   const [editingSelection, setEditingSelection] = useState(false);
   const [draftSelectedHabitIds, setDraftSelectedHabitIds] = useState<HabitId[]>([]);
   const [chatInput, setChatInput] = useState("");
@@ -42,16 +55,43 @@ export default function Home() {
   const today = new Date(clockMinute * 60_000);
   const todayKey = localDateKey(today);
   const weeklySummary = getWeeklySummary(state, today);
+  const consentReady = hasPurpose(state.consent, "operativo") && !needsReconsent(state.consent);
+  const showConsentEditor = !consentReady || managingConsent;
 
   function continueSelection() {
-    if (!state.consentAcceptedAt && !consentChecked) return;
+    const now = new Date().toISOString();
+    let consent = state.consent;
+    if (!consentReady) {
+      if (!purposeDraft.operativo) return;
+      consent = acceptPurpose(consent, "operativo", now);
+      if (purposeDraft.mejora) consent = acceptPurpose(consent, "mejora", now);
+      if (purposeDraft.investigacion) consent = acceptPurpose(consent, "investigacion", now);
+    } else {
+      for (const purpose of ["mejora", "investigacion"] as PurposeId[]) {
+        if (hasPurpose(consent, purpose) && !purposeDraft[purpose]) {
+          consent = withdrawPurpose(consent, purpose, now);
+        }
+      }
+    }
     updateBluState((current) => ({
       ...current,
-      consentAcceptedAt: current.consentAcceptedAt ?? new Date().toISOString(),
+      consent,
+      consentAcceptedAt: current.consentAcceptedAt ?? now,
       selectedHabitIds: draftSelectedHabitIds,
     }));
     setEditingSelection(false);
+    setManagingConsent(false);
     setNotice("");
+  }
+
+  function openConsentManager() {
+    setPurposeDraft({
+      operativo: true,
+      mejora: hasPurpose(state.consent, "mejora"),
+      investigacion: hasPurpose(state.consent, "investigacion"),
+    });
+    setDraftSelectedHabitIds(state.selectedHabitIds);
+    setManagingConsent(true);
   }
 
   function toggleHabit(habitId: HabitId) {
@@ -136,7 +176,8 @@ export default function Home() {
     }
     if (clearBluState()) {
       setEditingSelection(false);
-      setConsentChecked(false);
+      setManagingConsent(false);
+      setPurposeDraft({ operativo: false, mejora: false, investigacion: false });
       setDraftSelectedHabitIds([]);
       setChatMessages([
         {
@@ -164,7 +205,7 @@ export default function Home() {
     );
   }
 
-  if (!state.consentAcceptedAt || state.selectedHabitIds.length === 0 || editingSelection) {
+  if (!state.consentAcceptedAt || state.selectedHabitIds.length === 0 || editingSelection || managingConsent) {
     return (
       <main className="onboarding">
         <header className="topbar">
@@ -224,24 +265,39 @@ export default function Home() {
             <p aria-live="polite" className="selection-count">
               {draftSelectedHabitIds.length} de 3 elegidos
             </p>
-            {!state.consentAcceptedAt && (
-              <label className="consent-row">
-                <input
-                  checked={consentChecked}
-                  onChange={(event) => setConsentChecked(event.target.checked)}
-                  type="checkbox"
-                />
-                <span>
-                  Entiendo que esto es un prototipo. Mis preferencias y registros quedan en este
-                  navegador, sin cifrado ni sincronización; puedo borrarlos desde Blu.
-                </span>
-              </label>
+            {showConsentEditor && (
+              <fieldset>
+                <legend className="tiny-note">
+                  Consentimientos · aviso versión {CONSENT_VERSION}
+                </legend>
+                {PURPOSES.map((purpose) => (
+                  <label key={purpose.id} className="consent-row">
+                    <input
+                      checked={purposeDraft[purpose.id]}
+                      disabled={purpose.id === "operativo" && consentReady}
+                      onChange={(event) =>
+                        setPurposeDraft((draft) => ({
+                          ...draft,
+                          [purpose.id]: event.target.checked,
+                        }))
+                      }
+                      type="checkbox"
+                    />
+                    <span>{purpose.label}</span>
+                  </label>
+                ))}
+                {consentReady && (
+                  <p className="tiny-note">
+                    Para retirar el propósito operativo usa «Borrar mis datos».
+                  </p>
+                )}
+              </fieldset>
             )}
             <button
               className="button button-dark full-width"
               disabled={
                 draftSelectedHabitIds.length === 0 ||
-                (!state.consentAcceptedAt && !consentChecked)
+                (!consentReady && !purposeDraft.operativo)
               }
               onClick={continueSelection}
               type="button"
@@ -307,6 +363,16 @@ export default function Home() {
       </section>
 
       {notice && <p className="toast" role="status">{notice}</p>}
+
+      {state.consentAcceptedAt && needsReconsent(state.consent) && (
+        <p className="inline-notice" role="status">
+          Actualizamos el aviso de consentimiento (versión {CONSENT_VERSION}). Tu uso sigue
+          igual hasta que renueves.{" "}
+          <button className="text-button" onClick={openConsentManager} type="button">
+            Revisar y renovar
+          </button>
+        </p>
+      )}
 
       <div className="content-grid">
         <section className="main-column" aria-labelledby="habits-heading">
@@ -473,7 +539,14 @@ export default function Home() {
 
       <footer className="dashboard-footer">
         <span>Blu es un prototipo local de bienestar; no diagnostica ni trata.</span>
-        <button className="text-button" onClick={clearData} type="button">Borrar todos los datos</button>
+        <div className="adapt-row">
+          <button className="text-button" onClick={openConsentManager} type="button">
+            Consentimientos
+          </button>
+          <button className="text-button" onClick={clearData} type="button">
+            Borrar todos los datos
+          </button>
+        </div>
       </footer>
     </main>
   );
@@ -491,3 +564,21 @@ function getClockSnapshot(): number {
 function getServerClockSnapshot(): number {
   return 0;
 }
+
+const PURPOSES: Array<{ id: PurposeId; label: string }> = [
+  {
+    id: "operativo",
+    label:
+      "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. (requerido)",
+  },
+  {
+    id: "mejora",
+    label:
+      "Acepto que datos agregados y anónimos orienten la mejora del producto. (opcional)",
+  },
+  {
+    id: "investigacion",
+    label:
+      "Acepto que datos agregados y anónimos se usen en investigación con revisión ética. (opcional)",
+  },
+];

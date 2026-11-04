@@ -74,8 +74,7 @@ describe("Blu user flows", () => {
     ).toHaveLength(0);
   });
 
-  it("keeps conversation in memory and verifies data deletion", async () => {
-    const user = userEvent.setup();
+  it("keeps conversation in memory and verifies data deletion", async () => {    const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
 
@@ -89,6 +88,52 @@ describe("Blu user flows", () => {
     expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
     expect(await screen.findByRole("heading", { name: "Un cambio pequeño también cuenta." }))
       .toBeTruthy();
+  });
+  it("persists separated purposes when accepting operativo and investigacion", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
+    );
+    await user.click(
+      screen.getByRole("checkbox", { name: /investigación con revisión ética/i }),
+    );
+    await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+    await screen.findByRole("region", { name: "Hábitos que elegiste" });
+    const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
+      consent: { version: string; purposes: Record<string, { acceptedAt: string }> };
+    };
+    expect(saved.consent.version).toBe("2.0.0");
+    expect(saved.consent.purposes.operativo.acceptedAt).toBeTruthy();
+    expect(saved.consent.purposes.investigacion.acceptedAt).toBeTruthy();
+    expect(saved.consent.purposes.mejora).toBeUndefined();
+  });
+
+  it("blocks saving until the required operativo purpose is accepted", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
+    const continueButton = screen.getByRole("button", { name: "Empezar con lo que elegí" });
+    expect(continueButton.hasAttribute("disabled")).toBe(true);
+    expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
+  });
+
+  it("shows a renewal banner for legacy consent without blocking use", async () => {
+    window.localStorage.setItem(
+      "blu.local.v1",
+      JSON.stringify({
+        consentAcceptedAt: "2026-11-01T10:00:00.000Z",
+        selectedHabitIds: ["movement"],
+        checkInsByDate: {},
+        adaptations: [],
+      }),
+    );
+    render(<BluApp />);
+    expect(
+      screen.getByText(/Actualizamos el aviso de consentimiento/i),
+    ).toBeTruthy();
+    expect(screen.getByRole("region", { name: "Hábitos que elegiste" })).toBeTruthy();
   });
 });
 
