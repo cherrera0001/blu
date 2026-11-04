@@ -451,6 +451,16 @@ describe("Blu user flows", () => {
     expect(screen.getByText(/quedó como tu versión actual/i)).toBeTruthy();
   });
 
+  it("week bars with accessible labels and a gentle empty state that clears on check-in", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.getByRole("list", { name: /Acciones registradas por día/i })).toBeTruthy();
+    expect(screen.getByText(/tu primer paso puede ser pequeñísimo/i)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Marcar Movimiento natural" }));
+    expect(screen.queryByText(/tu primer paso puede ser pequeñísimo/i)).toBeNull();
+  });
+
   it("history panel: switch period to 30 days and shows usage-not-efficacy label", async () => {
     const user = userEvent.setup();
     render(<BluApp />);

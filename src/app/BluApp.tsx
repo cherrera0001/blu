@@ -16,6 +16,7 @@ import { respondToMessage } from "@/lib/conversation";
 import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
 import { eraseAllLocalData } from "@/lib/erase";
 import { summarizeDays } from "@/lib/history";
+import { WeekBars } from "./WeekBars";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import {
@@ -784,6 +785,12 @@ export default function Home() {
               Últimos {historySummary.periodDays} días: {historySummary.totalActions} acciones en{" "}
               {historySummary.activeDays} días con registro.
             </p>
+            {historyPeriod === 7 && <WeekBars days={summarizeDays(state, today, 7).days} />}
+            {historySummary.totalActions === 0 && (
+              <p className="muted">
+                Aún no hay registros en este período: tu primer paso puede ser pequeñísimo.
+              </p>
+            )}
             <div tabIndex={0} style={{ maxHeight: "9rem", overflowY: "auto" }}>
               <ul role="list">
                 {historySummary.days.map((day) => (
