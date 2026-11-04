@@ -9,6 +9,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    pool: "threads",
     clearMocks: true,
     restoreMocks: true,
   },
