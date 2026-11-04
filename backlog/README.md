@@ -47,3 +47,15 @@ que modifica estos archivos y regenera issues.
 3. Decisiones arquitectónicas significativas se documentan en `docs/adr/`.
 4. Afirmaciones de salud requieren fuente aprobada en el registro de evidencia (EPIC-13) o deben
    rotularse «sin evidencia verificada».
+
+## Estado de cierre del MVP (2026-11-04)
+
+Las **40 historias de fase MVP están implementadas con evidencia** (pruebas en repo + notas por
+historia en los archivos de épica) o resueltas en su alcance local, con commits atómicos en
+`main` y validación continua (npm test, lint, build, eval:security).
+
+Las **16 historias V1 y 3 de V2 están GATED**: requieren backend, cuentas, sincronización o IA
+remota, y no pueden implementarse sin las aprobaciones explícitas de privacidad, seguridad,
+revisión científica, ética y análisis jurídico exigidas por el PRD §8 y la constitución
+(II Privacy by Design, X simplicidad), según ADR-0001 (local-first). Cada historia V1/V2 lleva
+nota con el gate citado en su archivo de épica.

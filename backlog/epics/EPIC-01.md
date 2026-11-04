@@ -126,6 +126,8 @@ Escenario: Token de otra sesión
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-105 — Cierre de sesión y caducidad segura
 
 **Historia:** Como persona usuaria, quiero cerrar sesión y que mi sesión caduque sola, para proteger mi información en dispositivos compartidos.
@@ -148,3 +150,5 @@ Escenario: Caducidad por inactividad
 **Evidencia requerida:** pruebas de revocación y caducidad; documentación de política de sesión.
 **DoR:** política de sesión definida en spec.
 **DoD:** pruebas verdes; política documentada.
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).

@@ -96,6 +96,8 @@ Escenario: Eventos permitidos
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1405 — Actualización continua del modelo de amenazas y escaneo de dependencias
 
 **Historia:** Como equipo, queremos que amenazas y dependencias se revisen continuamente, para que la seguridad no se deteriore.
@@ -122,6 +124,8 @@ referencia), con notificaciones suaves opt-in que nunca presionen.
 ---
 
 ### BLU-1501 — Auditoría y corrección de accesibilidad (WCAG 2.2 AA)
+
+> **Estado (2026-11-04):** Auditoría axe-core 4.14 sobre onboarding, dashboard, cuestionario y aviso previo: **0 violaciones serias/críticas** (color-contrast excluido por limitación de jsdom; smoke de controles etiquetados y jerarquía de títulos en src/app/a11y.test.tsx). Revisión con usuarios pendiente (EPIC-16).
 
 **Historia:** Como persona usuaria con discapacidad, quiero usar Blu con teclado y lector de pantalla, para no quedar fuera.
 **Prioridad:** P0 · **Tamaño:** L · **Fase:** MVP
@@ -168,6 +172,8 @@ Escenario: Notificación sin culpa
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1503 — Uso básico sin conexión (PWA mínima)
 
 **Historia:** Como persona usuaria con conexión intermitente, quiero registrar mis hábitos sin internet, para no perder continuidad.
@@ -194,6 +200,8 @@ incluidos los nulos.
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V2** — requiere backend y RAG/funciones avanzadas; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1601 — Protocolo del piloto de ocho semanas con revisión ética
 
 **Historia:** Como investigador, quiero un protocolo aprobado por comité de ética o determinación institucional, para reclutar y medir sin dañar.
@@ -212,6 +220,8 @@ Escenario: Protocolo completo
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1602 — Registro público y preespecificación estadística
 
 **Historia:** Como equipo, queremos registrar el estudio y preespecificar hipótesis y análisis, para que los resultados sean creíbles.
@@ -229,6 +239,8 @@ Escenario: Preespecificación
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1603 — Pipeline de análisis reproducible del piloto
 
 **Historia:** Como analista, quiero un pipeline auditable desde datos consentidos a resultados, para que los números del piloto sean reproducibles.
@@ -246,6 +258,8 @@ Escenario: Reproducibilidad
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1604 — Gobernanza de resultados: publicar también los nulos
 
 **Historia:** Como equipo, queremos publicar resultados favorables y desfavorables por igual, para no inducir sesgo de publicación.
@@ -260,3 +274,5 @@ Escenario: Resultado nulo publicado
 ```
 **Evidencia requerida:** política de publicación en repo; plantilla de informe.
 **DoD:** política adoptada por el equipo.
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).

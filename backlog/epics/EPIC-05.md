@@ -32,6 +32,8 @@ Escenario: Sin configuración
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1002 — Guardián de seguridad: deny-by-default ante clínica y promesas
 
 **Historia:** Como persona usuaria, quiero que Blu jamás me dé diagnósticos ni promesas de salud, para confiar en sus límites.
@@ -60,6 +62,8 @@ Escenario: Respuesta generada con promesa oculta
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1003 — Memoria conversacional consentida y minimizada
 
 **Historia:** Como persona usuaria, quiero decidir si Blu recuerda nuestra conversación y poder borrarla, para que mi intimidad dependa de mí.
@@ -86,6 +90,8 @@ Escenario: Borrar memoria
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V2** — requiere backend y RAG/funciones avanzadas; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1004 — Defensas contra prompt injection y evaluación continua
 
 **Historia:** Como equipo de producto, queremos que mensajes maliciosos no alteren el comportamiento del asistente, para proteger a las personas y al sistema.
@@ -120,6 +126,8 @@ toda personalización requiere acción de la persona y nada cambia en silencio.
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1101 — Motor de recomendación por reglas explícitas
 
 **Historia:** Como equipo de producto, queremos un motor de recomendación basado en reglas visibles, para explicar cada sugerencia sin modelos opacos.
@@ -229,6 +237,8 @@ siempre las métricas de uso del producto de cualquier afirmación de eficacia e
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1201 — Panel descriptivo de progreso
 
 **Historia:** Como persona usuaria, quiero ver mis registros de los últimos días en un resumen claro, para reflexionar sin juicio.
@@ -292,6 +302,8 @@ Escenario: Exportar solo consentido y agregado
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1204 — Separación explícita de métricas de uso vs. eficacia
 
 **Historia:** Como equipo, queremos que el panel interno distinga "uso del producto" de "resultados en salud", para no confundir engagement con eficacia.
@@ -339,6 +351,8 @@ Escenario: Ciclo de vida de una fuente
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1302 — Flujo de revisión humana con aprobación explícita
 
 **Historia:** Como equipo, queremos que toda evidencia pase por revisión humana antes de usarse, para evitar afirmaciones no verificadas.
@@ -362,6 +376,8 @@ Escenario: Evidencia retirada
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1303 — Recuperación semántica (RAG) solo sobre evidencia aprobada
 
 **Historia:** Como asistente, quiero recuperar solo contenido aprobado para fundamentar respuestas, para no inventar afirmaciones.
@@ -385,6 +401,8 @@ Escenario: Sin evidencia aplicable
 
 ---
 
+
+> **Estado (2026-11-04):** **GATED a V2** — requiere backend y RAG/funciones avanzadas; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1304 — Trazabilidad recomendación↔fuentes visible
 
 **Historia:** Como persona usuaria, quiero ver de dónde sale cada recomendación, para juzgarla informada.
@@ -400,3 +418,5 @@ Escenario: Ver fuentes de una recomendación
 **Evidencia requerida:** prueba de renderizado de trazabilidad; prueba con recomendación sin fuente (rotulo "sin evidencia verificada").
 **DoR:** plantilla de explicación aprobada.
 **DoD:** implementado con pruebas verdes.
+
+> **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
