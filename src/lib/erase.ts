@@ -1,5 +1,6 @@
 import { clearBluState } from "./storage";
 import { invalidateReviews } from "./review";
+import { invalidatePlans } from "./weekly-plan";
 import { invalidateGoals } from "./onboarding/goals-storage";
 
 /** Todas las claves que Blu puede escribir en el almacenamiento local. */
@@ -9,6 +10,7 @@ export const BLU_STORAGE_KEYS = [
   "blu.goals.v1",
   "blu.review.v1",
   "blu.onboarding.notice.v1",
+  "blu.plan.v1",
 ] as const;
 
 export interface EraseResult {
@@ -40,5 +42,6 @@ export function eraseAllLocalData(): EraseResult {
   }
   invalidateReviews();
   invalidateGoals();
+  invalidatePlans();
   return { ok: remaining.length === 0, remaining };
 }

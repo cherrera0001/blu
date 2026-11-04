@@ -394,6 +394,24 @@ describe("Blu user flows", () => {
     expect(saved.selectedHabitIds).toHaveLength(3);
   });
 
+  it("suggests a weekly plan, shows intentions and removes them", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.click(screen.getByRole("button", { name: /Sugerir mi semana/i }));
+    expect(screen.getByRole("heading", { name: /Intenciones sugeridas/i })).toBeTruthy();
+    const removeButtons = screen.getAllByRole("button", { name: /^Quitar / });
+    expect(removeButtons.length).toBeGreaterThan(0);
+    await user.click(removeButtons[0]);
+    expect(screen.getAllByRole("button", { name: /^Quitar / }).length).toBe(removeButtons.length - 1);
+    const saved = JSON.parse(window.localStorage.getItem("blu.plan.v1") ?? "null") as {
+      weekKey: string;
+      days: Array<{ intentions: unknown[] }>;
+    };
+    expect(saved.weekKey).toMatch(/^\d{4}-W\d{2}$/);
+    expect(saved.days).toHaveLength(7);
+  });
+
   it("shows a renewal banner for legacy consent without blocking use", async () => {
     window.localStorage.setItem(
       "blu.local.v1",

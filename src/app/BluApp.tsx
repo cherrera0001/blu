@@ -15,6 +15,15 @@ import {
 import { respondToMessage } from "@/lib/conversation";
 import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
 import { eraseAllLocalData } from "@/lib/erase";
+import {
+  DAY_NAMES,
+  buildDefaultPlan,
+  getPlanSnapshot,
+  getServerPlanSnapshot,
+  savePlan,
+  subscribePlans,
+  toggleIntention,
+} from "@/lib/weekly-plan";
 import { loadReviews } from "@/lib/review";
 import { loadOnboarding } from "@/lib/onboarding/storage";
 import {
@@ -62,6 +71,8 @@ export default function Home() {
   const [managingConsent, setManagingConsent] = useState(false);
   const reviewState = useSyncExternalStore(subscribeReviews, getReviewSnapshot, getServerReviewSnapshot);
   const goalDecisions = useSyncExternalStore(subscribeGoals, getGoalsSnapshot, getServerGoalsSnapshot);
+  const weeklyPlan = useSyncExternalStore(subscribePlans, getPlanSnapshot, getServerPlanSnapshot);
+  const [planNotice, setPlanNotice] = useState("");
   const reviews = reviewState.reviews;
   const [reviewDraft, setReviewDraft] = useState<{
     felt: Felt | null;
@@ -156,6 +167,34 @@ export default function Home() {
   const acceptedGoals = (goalDecisions?.accepted ?? []).filter((goal) =>
     HABITS.some((habit) => habit.id === goal.habitId),
   );
+
+  function generateWeekPlan() {
+    const now = new Date().toISOString();
+    const habitsForPlan = state.selectedHabitIds.map((id) => {
+      const habit = HABITS.find((item) => item.id === id);
+      return { habitId: id, action: habit ? currentAction(state, id) : id };
+    });
+    const plan = buildDefaultPlan(weekKey, habitsForPlan, now);
+    const saved = savePlan(plan);
+    setPlanNotice(saved.ok ? "Semana sugerida creada; puedes moverla como quieras." : (saved.error ?? "No se pudo guardar."));
+  }
+
+  function handleToggleIntention(dayIndex: number, habitId: HabitId) {
+    const habit = HABITS.find((item) => item.id === habitId);
+    if (!habit || !weeklyPlan) return;
+    const result = toggleIntention(
+      weeklyPlan,
+      dayIndex,
+      { habitId, action: currentAction(state, habitId) },
+      new Date().toISOString(),
+    );
+    if (result.error) {
+      setPlanNotice(result.error);
+      return;
+    }
+    const saved = savePlan(result.plan);
+    setPlanNotice(saved.ok ? "" : (saved.error ?? "No se pudo guardar."));
+  }
 
   function includeGoal(goal: AcceptedGoal) {
     const habitId = goal.habitId as HabitId;
@@ -563,6 +602,55 @@ export default function Home() {
               </div>
             </section>
           )}
+
+          <section className="review-card" aria-labelledby="week-plan-heading">
+            <div className="review-top">
+              <div>
+                <span className="eyebrow">TU SEMANA</span>
+                <h2 id="week-plan-heading">Intenciones sugeridas ({weekKey})</h2>
+              </div>
+            </div>
+            <p className="muted">
+              Sugerencias, no obligaciones: un día vacío no rompe nada. Máximo 3 por día.
+            </p>
+            {!weeklyPlan && state.selectedHabitIds.length > 0 && (
+              <button className="button button-light" onClick={generateWeekPlan} type="button">
+                Sugerir mi semana
+              </button>
+            )}
+            {weeklyPlan && (
+              <ul role="list">
+                {weeklyPlan.days.map((day) => (
+                  <li key={day.dayIndex} className="consent-row">
+                    <span className="category-label">{DAY_NAMES[day.dayIndex]}</span>
+                    {day.intentions.length === 0 ? (
+                      <span className="muted">Sin intenciones (está bien).</span>
+                    ) : (
+                      day.intentions.map((intention) => {
+                        const habit = HABITS.find((item) => item.id === intention.habitId);
+                        return (
+                          <button
+                            aria-label={`Quitar ${habit?.title ?? intention.habitId} del ${DAY_NAMES[day.dayIndex]}`}
+                            className="text-button"
+                            key={`${day.dayIndex}-${intention.habitId}`}
+                            onClick={() => handleToggleIntention(day.dayIndex, intention.habitId as HabitId)}
+                            type="button"
+                          >
+                            {habit?.title ?? intention.habitId} ✕
+                          </button>
+                        );
+                      })
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {planNotice && (
+              <p className="inline-notice" role="status">
+                {planNotice}
+              </p>
+            )}
+          </section>
 
           <section className="review-card" aria-labelledby="review-heading">
             <div className="review-top">

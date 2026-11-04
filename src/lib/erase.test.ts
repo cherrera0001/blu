@@ -20,6 +20,9 @@ function seedAllKeys() {
   window.localStorage.setItem("blu.onboarding.notice.v1", JSON.stringify({
     version: "1.0.0", acceptedAt: "2026-11-04T00:00:00.000Z",
   }));
+  window.localStorage.setItem("blu.plan.v1", JSON.stringify({
+    weekKey: "2026-W45", days: [], updatedAt: "",
+  }));
 }
 
 beforeEach(() => {
