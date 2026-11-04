@@ -399,6 +399,7 @@ describe("Blu user flows", () => {
     render(<BluApp />);
     await completeOnboarding(user);
     await user.click(screen.getByText("Otras versiones"));
+    expect(screen.getAllByText(/sin evidencia verificada/i).length).toBeGreaterThanOrEqual(2);
     await user.click(
       screen.getByRole("button", { name: /Pausa postura: Cambiar de postura ahora mismo/i }),
     );

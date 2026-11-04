@@ -17,6 +17,7 @@ import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export"
 import { eraseAllLocalData } from "@/lib/erase";
 import { summarizeDays } from "@/lib/history";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
+import { loadEducation } from "@/lib/habit-education";
 import {
   DAY_NAMES,
   buildDefaultPlan,
@@ -169,6 +170,7 @@ export default function Home() {
   const thisWeekReview = reviews?.find((review) => review.weekKey === weekKey) ?? null;
   const historySummary = summarizeDays(state, today, historyPeriod);
   const habitCatalog = useMemo(() => loadCatalog(), []);
+  const habitEducation = useMemo(() => loadEducation(), []);
 
   function applyMicrohabit(habitId: HabitId, item: CatalogItem) {
     const previous = currentAction(state, habitId);
@@ -594,6 +596,20 @@ export default function Home() {
                           ))}
                       </ul>
                       <p className="tiny-note">{habitCatalog.disclaimer}</p>
+                      <p className="tiny-note">¿Para qué puede servir?</p>
+                      <ul role="list">
+                        {habitEducation.principles
+                          .find((entry) => entry.principleId === habit.id)
+                          ?.notes.map((note) => (
+                            <li key={note.id}>
+                              <strong>{note.title}.</strong> {note.text}{" "}
+                              <em>
+                                Fuente: {note.sourceLabel} (
+                                {note.sourceStatus === "verificada" ? "verificada" : "sin evidencia verificada"})
+                              </em>
+                            </li>
+                          ))}
+                      </ul>
                     </details>
                   </div>
                   <button
