@@ -394,6 +394,22 @@ describe("Blu user flows", () => {
     expect(saved.selectedHabitIds).toHaveLength(3);
   });
 
+  it("catalog: shows alternatives and applies one as an adaptation", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.click(screen.getByText("Otras versiones"));
+    await user.click(
+      screen.getByRole("button", { name: /Pausa postura: Cambiar de postura ahora mismo/i }),
+    );
+    const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
+      adaptations: Array<{ habitId: string; to: string }>;
+    };
+    expect(saved.adaptations).toHaveLength(1);
+    expect(saved.adaptations[0].to).toBe("Cambiar de postura ahora mismo.");
+    expect(screen.getByText(/quedó como tu versión actual/i)).toBeTruthy();
+  });
+
   it("history panel: switch period to 30 days and shows usage-not-efficacy label", async () => {
     const user = userEvent.setup();
     render(<BluApp />);

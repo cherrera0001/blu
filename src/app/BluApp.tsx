@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, type FormEvent } from "react";
+import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,6 +16,7 @@ import { respondToMessage } from "@/lib/conversation";
 import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
 import { eraseAllLocalData } from "@/lib/erase";
 import { summarizeDays } from "@/lib/history";
+import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import {
   DAY_NAMES,
   buildDefaultPlan,
@@ -167,6 +168,23 @@ export default function Home() {
   const weekKey = getISOWeekKey(today);
   const thisWeekReview = reviews?.find((review) => review.weekKey === weekKey) ?? null;
   const historySummary = summarizeDays(state, today, historyPeriod);
+  const habitCatalog = useMemo(() => loadCatalog(), []);
+
+  function applyMicrohabit(habitId: HabitId, item: CatalogItem) {
+    const previous = currentAction(state, habitId);
+    if (previous === item.smallerAction) {
+      setNotice("Esa versión ya está activa para este hábito.");
+      return;
+    }
+    updateBluState((current) => ({
+      ...current,
+      adaptations: [
+        ...current.adaptations,
+        { habitId, from: previous, to: item.smallerAction, barrier: "other", at: new Date().toISOString() },
+      ],
+    }));
+    setNotice(`Listo: «${item.title}» quedó como tu versión actual.`);
+  }
   const acceptedGoals = (goalDecisions?.accepted ?? []).filter((goal) =>
     HABITS.some((habit) => habit.id === goal.habitId),
   );
@@ -557,6 +575,26 @@ export default function Home() {
                   <div className="daily-copy">
                     <span className="category-label">{habit.title}</span>
                     <p>{currentAction(state, habit.id)}</p>
+                    <details>
+                      <summary className="text-button">Otras versiones</summary>
+                      <ul role="list">
+                        {habitCatalog.principles
+                          .find((entry) => entry.principleId === habit.id)
+                          ?.items.filter((item) => item.smallerAction !== currentAction(state, habit.id))
+                          .map((item) => (
+                            <li key={item.id}>
+                              <button
+                                className="text-button"
+                                onClick={() => applyMicrohabit(habit.id, item)}
+                                type="button"
+                              >
+                                {item.title}: {item.smallerAction}
+                              </button>
+                            </li>
+                          ))}
+                      </ul>
+                      <p className="tiny-note">{habitCatalog.disclaimer}</p>
+                    </details>
                   </div>
                   <button
                     aria-label={`${done ? "Desmarcar" : "Marcar"} ${habit.title}`}
