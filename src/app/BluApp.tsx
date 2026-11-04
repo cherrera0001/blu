@@ -16,6 +16,15 @@ import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export"
 import { loadOnboarding } from "@/lib/onboarding/storage";
 import { loadGoalDecisions } from "@/lib/onboarding/goals-storage";
 import {
+  getISOWeekKey,
+  getReviewSnapshot,
+  getServerReviewSnapshot,
+  saveReview,
+  subscribeReviews,
+  type Felt,
+  type ReviewDecision,
+} from "@/lib/review";
+import {
   CONSENT_VERSION,
   acceptPurpose,
   hasPurpose,
@@ -43,6 +52,12 @@ export default function Home() {
     investigacion: false,
   });
   const [managingConsent, setManagingConsent] = useState(false);
+  const reviews = useSyncExternalStore(subscribeReviews, getReviewSnapshot, getServerReviewSnapshot);
+  const [reviewDraft, setReviewDraft] = useState<{
+    felt: Felt | null;
+    decision: ReviewDecision | null;
+  }>({ felt: null, decision: null });
+  const [reviewNotice, setReviewNotice] = useState("");
   const [editingSelection, setEditingSelection] = useState(false);
   const [draftSelectedHabitIds, setDraftSelectedHabitIds] = useState<HabitId[]>([]);
   const [chatInput, setChatInput] = useState("");
@@ -117,6 +132,36 @@ export default function Home() {
       ok
         ? "Exportaste tus datos. Revisa tu carpeta de descargas."
         : "No pude preparar la exportación en este navegador.",
+    );
+  }
+
+  const weekKey = getISOWeekKey(today);
+  const thisWeekReview = reviews?.find((review) => review.weekKey === weekKey) ?? null;
+
+  function submitReview(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const result = saveReview(
+      {
+        weekKey,
+        felt: reviewDraft.felt ?? undefined,
+        decision: reviewDraft.decision ?? undefined,
+      },
+      new Date().toISOString(),
+    );
+    setReviewNotice(
+      result.ok
+        ? "Revisión guardada. Gracias por mirar tu semana."
+        : (result.error ?? "No se pudo guardar tu revisión."),
+    );
+    if (result.ok) setReviewDraft({ felt: null, decision: null });
+  }
+
+  function skipReview() {
+    const result = saveReview({ weekKey }, new Date().toISOString());
+    setReviewNotice(
+      result.ok
+        ? "Quedó registrado que omitiste esta semana."
+        : (result.error ?? "No se pudo guardar tu revisión."),
     );
   }
 
@@ -516,6 +561,76 @@ export default function Home() {
             )}
           </section>
 
+          <section className="review-card" aria-labelledby="weekly-review-heading">
+            <div className="review-top">
+              <div>
+                <span className="eyebrow">MIRADA SEMANAL</span>
+                <h2 id="weekly-review-heading">Revisión de tu semana</h2>
+              </div>
+            </div>
+            <p className="muted">Últimos 7 días · es un registro personal, no una medida de salud.</p>
+            {weeklySummary.actionsCompleted === 0 && (
+              <p className="muted">
+                Aún no tienes registros esta semana: también es válido empezar pequeño hoy.
+              </p>
+            )}
+            {thisWeekReview && (
+              <p className="inline-notice" role="status">
+                Revisión de esta semana guardada ({thisWeekReview.updatedAt.slice(0, 10)}). Puedes
+                actualizarla cuando quieras.
+              </p>
+            )}
+            <form onSubmit={submitReview}>
+              <fieldset>
+                <legend>¿Cómo te sentiste con tus hábitos?</legend>
+                {FEEL_OPTIONS.map((option) => (
+                  <label key={option.value} className="consent-row">
+                    <input
+                      checked={reviewDraft.felt === option.value}
+                      name="review-felt"
+                      onChange={() => setReviewDraft((draft) => ({ ...draft, felt: option.value }))}
+                      type="radio"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </fieldset>
+              <fieldset>
+                <legend>¿Qué quieres hacer la próxima semana?</legend>
+                {DECISION_OPTIONS.map((option) => (
+                  <label key={option.value} className="consent-row">
+                    <input
+                      checked={reviewDraft.decision === option.value}
+                      name="review-decision"
+                      onChange={() =>
+                        setReviewDraft((draft) => ({ ...draft, decision: option.value }))
+                      }
+                      type="radio"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </fieldset>
+              <div className="adapt-row">
+                <button
+                  className="button button-light"
+                  disabled={reviewDraft.felt === null && reviewDraft.decision === null}
+                  type="submit"
+                >
+                  Guardar revisión
+                </button>
+                <button className="text-button" onClick={skipReview} type="button">
+                  Prefiero no responder
+                </button>
+              </div>
+            </form>
+            {reviewNotice && (
+              <p className="inline-notice" role="status">
+                {reviewNotice}
+              </p>
+            )}
+          </section>
+
           <p className="evidence-note">
             <span aria-hidden="true">ⓘ</span> Las ideas de este prototipo no son recomendaciones clínicas;
             su evidencia específica está pendiente de revisión.
@@ -610,4 +725,15 @@ const PURPOSES: Array<{ id: PurposeId; label: string }> = [
     label:
       "Acepto que datos agregados y anónimos se usen en investigación con revisión ética. (opcional)",
   },
+];
+
+const FEEL_OPTIONS: Array<{ value: Felt; label: string }> = [
+  { value: "better", label: "Me sentí bien" },
+  { value: "same", label: "Más o menos igual" },
+  { value: "harder", label: "Se me hizo difícil" },
+];
+
+const DECISION_OPTIONS: Array<{ value: ReviewDecision; label: string }> = [
+  { value: "keep", label: "Mantener como está" },
+  { value: "adjust", label: "Ajustar un hábito" },
 ];

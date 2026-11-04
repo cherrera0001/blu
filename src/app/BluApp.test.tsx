@@ -133,6 +133,42 @@ describe("Blu user flows", () => {
     clickSpy.mockRestore();
   });
 
+  it("saves a weekly review with closed-list answers and date", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.getByRole("heading", { name: /Revisión de tu semana/i })).toBeTruthy();
+    await user.click(screen.getByRole("radio", { name: /Se me hizo difícil/i }));
+    await user.click(screen.getByRole("radio", { name: /Ajustar un hábito/i }));
+    await user.click(screen.getByRole("button", { name: "Guardar revisión" }));
+    expect(screen.getByText(/Revisión guardada/i)).toBeTruthy();
+    const saved = JSON.parse(window.localStorage.getItem("blu.review.v1") ?? "null") as Array<{
+      weekKey: string;
+      felt: string;
+      decision: string;
+      updatedAt: string;
+    }>;
+    expect(saved).toHaveLength(1);
+    expect(saved[0].weekKey).toMatch(/^\d{4}-W\d{2}$/);
+    expect(saved[0].felt).toBe("harder");
+    expect(saved[0].decision).toBe("adjust");
+    expect(saved[0].updatedAt).toBeTruthy();
+  });
+
+  it("skip records an empty review without answers", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.click(screen.getByRole("button", { name: /Prefiero no responder/i }));
+    const saved = JSON.parse(window.localStorage.getItem("blu.review.v1") ?? "null") as Array<{
+      weekKey: string;
+      felt?: string;
+    }>;
+    expect(saved).toHaveLength(1);
+    expect(saved[0].felt).toBeUndefined();
+    expect(screen.getByText(/omitiste esta semana/i)).toBeTruthy();
+  });
+
   it("shows a renewal banner for legacy consent without blocking use", async () => {
     window.localStorage.setItem(
       "blu.local.v1",
