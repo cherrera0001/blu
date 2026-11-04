@@ -13,6 +13,14 @@ import {
   type Assessment,
 } from "@/lib/onboarding/engine";
 import { BAND_LABELS, scoreAssessment } from "@/lib/onboarding/scoring";
+import { suggestGoals, type Suggestion } from "@/lib/onboarding/suggestions";
+import {
+  acceptSuggestion,
+  emptyDecisions,
+  loadGoalDecisions,
+  rejectSuggestion,
+  type GoalDecisions,
+} from "@/lib/onboarding/goals-storage";
 import { clearOnboarding, loadOnboarding, saveOnboarding } from "@/lib/onboarding/storage";
 
 const EXPERIMENTAL_NOTICE =
@@ -80,10 +88,23 @@ function QuestionnaireSession() {
     return saved.assessment ?? createAssessment(bank);
   });
   const [index, setIndex] = useState(() => firstUnansweredIndex(bank, assessment));
+  const [decisions, setDecisions] = useState<GoalDecisions | null>(
+    () => loadGoalDecisions().decisions,
+  );
   const versionNotice = assessment.bankVersion !== bank.bankVersion;
 
   const effective = getEffectiveQuestions(bank, assessment);
   const complete = index >= effective.length;
+  // El perfil se calcula una sola vez por assessment completado: computedAt estable
+  // para las decisiones (evita regenerar timestamp en cada render).
+  const profile = useMemo(
+    () => (complete ? scoreAssessment(bank, assessment) : null),
+    [complete, bank, assessment],
+  );
+  const suggestions = useMemo(
+    () => (profile ? suggestGoals(bank, assessment, profile) : []),
+    [profile, bank, assessment],
+  );
   const current: Question | undefined = complete ? undefined : effective[index];
   const progressText = complete
     ? "Cuestionario completado"
@@ -107,8 +128,25 @@ function QuestionnaireSession() {
     setNotice("");
   }
 
-  if (complete) {
-    const profile = scoreAssessment(bank, assessment);
+  if (complete && profile) {
+    const activeDecisions =
+      decisions && decisions.profileComputedAt === profile.computedAt ? decisions : null;
+
+    const decideAccept = (suggestion: Suggestion) => {
+      const now = new Date().toISOString();
+      const next = acceptSuggestion(suggestion, profile.computedAt, now);
+      setDecisions(next);
+    };
+
+    const decideReject = (suggestionId: string) => {
+      const now = new Date().toISOString();
+      const base: GoalDecisions = activeDecisions ?? {
+        ...emptyDecisions(),
+        profileComputedAt: profile.computedAt,
+      };
+      setDecisions(rejectSuggestion(base, suggestionId, profile.computedAt, now));
+    };
+
     return (
       <main className="onboarding">
         <section className="onboarding-card" aria-labelledby="result-heading">
@@ -119,6 +157,11 @@ function QuestionnaireSession() {
             <p className="inline-notice" role="status">
               El cuestionario se actualizó desde que empezaste; este resultado usa la versión que
               respondiste ({profile.bankVersion}).
+            </p>
+          )}
+          {notice && (
+            <p className="inline-notice" role="status">
+              {notice}
             </p>
           )}
           <ul className="habit-grid" role="list">
@@ -135,6 +178,56 @@ function QuestionnaireSession() {
               </li>
             ))}
           </ul>
+
+          <section aria-labelledby="suggestions-heading">
+            <h2 id="suggestions-heading">Sugerencias para partir (hasta tres)</h2>
+            {suggestions.length === 0 ? (
+              <p className="muted">
+                Sin sugerencias por ahora. Puedes{" "}
+                <Link href="/">elegir tus hábitos manualmente</Link>: tú decides siempre.
+              </p>
+            ) : (
+              <ul className="habit-grid" role="list">
+                {suggestions.map((s) => {
+                  const accepted = activeDecisions?.accepted.some((g) => g.suggestionId === s.id);
+                  const rejected = activeDecisions?.rejected.includes(s.id);
+                  return (
+                    <li key={s.id} className="habit-option">
+                      <span className="category-label">{s.title}</span>
+                      <p>{s.explanation}</p>
+                      {accepted ? (
+                        <p className="inline-notice" role="status">
+                          Guardado en tus objetivos. Puedes ajustarlo en la pantalla de hábitos.
+                        </p>
+                      ) : rejected ? (
+                        <p className="inline-notice" role="status">Rechazada; no se guardó nada.</p>
+                      ) : (
+                        <div className="adapt-row">
+                          <button
+                            aria-label={`Aceptar ${s.title}`}
+                            className="button button-light"
+                            type="button"
+                            onClick={() => decideAccept(s)}
+                          >
+                            Aceptar
+                          </button>
+                          <button
+                            aria-label={`Rechazar ${s.title}`}
+                            className="text-button"
+                            type="button"
+                            onClick={() => decideReject(s.id)}
+                          >
+                            Rechazar
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+
           <p className="tiny-note">
             Puedes usar esto para elegir hábitos, o ignorarlo por completo: tú decides.
           </p>

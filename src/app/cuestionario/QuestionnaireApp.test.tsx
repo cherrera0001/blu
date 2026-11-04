@@ -32,7 +32,7 @@ describe("QuestionnaireApp", () => {
     const user = userEvent.setup();
     render(<QuestionnaireApp />);
     for (let i = 0; i < 40; i += 1) {
-      if (screen.queryByText(/Tu autodiagnóstico/i)) break;
+      if (screen.queryByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })) break;
       // omite la pregunta cuando es omisible (cubre el botón de omisión)
       const skip = screen.queryByRole("button", { name: /prefiero no responder/i });
       if (skip && i % 3 === 0) {
@@ -41,7 +41,7 @@ describe("QuestionnaireApp", () => {
         await answerCurrentQuestion(user);
       }
     }
-    expect(screen.getByText(/Tu autodiagnóstico/i)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })).toBeTruthy();
     expect(screen.getByText(/experimental/i)).toBeTruthy();
     expect(screen.getByText(/no es un diagnóstico/i)).toBeTruthy();
   }, 20000);
@@ -56,6 +56,30 @@ describe("QuestionnaireApp", () => {
     render(<QuestionnaireApp />);
     expect(screen.getByRole("status").textContent).toMatch(/Pregunta 3 de \d+/);
   });
+
+  it("sugiere hasta tres objetivos y guarda al aceptar", async () => {
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    for (let i = 0; i < 40; i += 1) {
+      if (screen.queryByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })) break;
+      const skip = screen.queryByRole("button", { name: /prefiero no responder/i });
+      if (skip && i % 4 === 0) {
+        await user.click(skip);
+      } else {
+        await answerCurrentQuestion(user);
+      }
+    }
+    expect(screen.getByRole("heading", { name: /Sugerencias para partir/i })).toBeTruthy();
+    const acceptButtons = await screen.findAllByRole("button", { name: /^Aceptar / });
+    await user.click(acceptButtons[0]);
+    const saved = JSON.parse(window.localStorage.getItem("blu.goals.v1") ?? "null") as {
+      accepted: Array<{ suggestionId: string; decidedAt: string }>;
+    };
+    expect(saved.accepted).toHaveLength(1);
+    expect(saved.accepted[0].suggestionId).toMatch(/^sug-/);
+    expect(saved.accepted[0].decidedAt).toBeTruthy();
+    expect(await screen.findByText(/Guardado en tus objetivos/i)).toBeTruthy();
+  }, 20000);
 
   it("permite omitir una pregunta omisible y avanza", async () => {
     const user = userEvent.setup();
