@@ -81,7 +81,7 @@ describe("Blu user flows", () => {
 
     await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "Estoy ocupada");
     await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
-    expect(screen.getByText(/No asumiré qué necesitas/)).toBeTruthy();
+    expect((await screen.findByText(/No asumiré qué necesitas/)).textContent).toBeTruthy();
     expect(window.localStorage.getItem("blu.local.v1")).not.toContain("Estoy ocupada");
 
     await user.click(screen.getByRole("button", { name: "Borrar mis datos" }));

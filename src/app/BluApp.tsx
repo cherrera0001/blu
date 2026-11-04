@@ -114,12 +114,13 @@ export default function Home() {
     setNotice("Se deshizo el último ajuste. Puedes elegir otro cuando quieras.");
   }
 
-  function sendMessage(event: FormEvent<HTMLFormElement>) {
+  async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const text = chatInput.trim();
     if (!text) return;
+    const reply = await respondToMessage(text);
     const userMessage: ChatMessage = { role: "you", text };
-    const bluMessage: ChatMessage = { role: "blu", text: respondToMessage(text) };
+    const bluMessage: ChatMessage = { role: "blu", text: reply };
     setChatMessages((messages) =>
       [...messages, userMessage, bluMessage].slice(-40),
     );
