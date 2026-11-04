@@ -357,6 +357,8 @@ Escenario: Ciclo de vida de una fuente
 > **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
 ### BLU-1302 — Flujo de revisión humana con aprobación explícita
 
+> **Estado (2026-11-04, ciclo V1-prep):** Diseño V1 completo en `specs/013-v1-evidence-review/ (rol revisor con separación de funciones, cascada de retiro, versionado sin edición in-place, 5 pruebas)`. Implementación GATED a PRD §8.
+
 **Historia:** Como equipo, queremos que toda evidencia pase por revisión humana antes de usarse, para evitar afirmaciones no verificadas.
 **Prioridad:** P0 · **Tamaño:** M · **Fase:** V1
 **Dependencias:** BLU-1301.

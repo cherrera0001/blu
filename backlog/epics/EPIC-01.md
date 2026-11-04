@@ -9,6 +9,8 @@ y el consentimiento diferenciado desde el MVP.
 
 ### BLU-101 — Registro mínimo sin datos innecesarios
 
+> **Estado (2026-11-04, ciclo V1-prep):** Diseño V1 completo en `specs/012-v1-accounts/ (magic link, anti-enumeración, importación del export local, borrado ARCO; email cifrado fuera de logs)`. Implementación GATED a PRD §8.
+
 > **Estado (2026-11-04):** Implementado el alcance local: apodo opcional (blu.profile.v1, máx. 24 caracteres, sin correo ni datos personales; src/lib/profile.ts + tests). El registro con correo verificado queda **gated a V1**: requiere backend y verificación (PRD §8, ADR-0001); ver nota en la historia.
 
 **Historia:** Como persona usuaria, quiero crear una cuenta solo con mi correo, para usar Blu sin entregar datos que no necesita.

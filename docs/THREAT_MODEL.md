@@ -34,3 +34,27 @@ Mitigaciones requeridas antes de habilitar IA: recuperación solo de evidencia a
 - No desplegar públicamente con almacenamiento local como si fuera seguro para salud.
 - Definir proceso de incidentes, contactos, backups/borrado y evaluación de impacto antes de nube.
 - Revisión legal independiente para privacidad, consumo, investigación y regulación sanitaria aplicable.
+
+## Anexo V1 — fronteras de confianza de la arquitectura con cuentas (diseño, gated)
+
+**Estado:** preparatorio (2026-11-04) · **Aplica a:** ADR-0002 · specs 009–013
+
+Nuevas fronteras: `navegador ⇄ API/edge ⇄ Postgres (RLS) ⇄ proveedor de identidad` y
+`cliente ⇄ pipeline de telemetría`. Las políticas RLS (specs/009) son la autorización
+**definitiva**; el cliente jamás decide acceso. Controles por amenaza STRIDE:
+
+| STRIDE | Control V1 (spec) |
+|---|---|
+| Suplantación | Magic link de un uso (012); política de sesión con rotación y revocación (010) |
+| Manipulación | RLS owner-only + borrado lógico con purga (009); versionado de evidencia (013) |
+| Repudio | Consentimientos y aprobaciones con actor, fecha y versión (009/013) |
+| Divulgación | Tokens en memoria (010); telemetría de lista blanca con filtrado en borde (011); email cifrado y fuera de logs (012) |
+| Denegación de servicio | Cuotas por usuario y rate limiting en edge (009, pregunta pendiente) |
+| Elevación de privilegios | `service_role` nunca en cliente; rol `reviewer` separado y asignado documentadamente (009/013) |
+
+Riesgos residuales aceptados provisionalmente: proveedor gestionado (Supabase u homólogo)
+como tercero de confianza (mitigación: EIPD + contrato, pregunta en cada spec); pentest ligero
+pre-lanzamiento obligatorio (checklist en specs/009, matriz de aislamiento en CI).
+
+Este anexo **no modifica el alcance del MVP** y no autoriza implementación: sigue vigente el
+gate de PRD §8.
