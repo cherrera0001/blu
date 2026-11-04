@@ -14,6 +14,7 @@ import {
 } from "@/lib/onboarding/engine";
 import { BAND_LABELS, scoreAssessment } from "@/lib/onboarding/scoring";
 import { suggestGoals, type Suggestion } from "@/lib/onboarding/suggestions";
+import { getBluSnapshot } from "@/lib/storage";
 import {
   acceptSuggestion,
   emptyDecisions,
@@ -116,10 +117,18 @@ function QuestionnaireSession() {
     () => (complete ? scoreAssessment(bank, assessment) : null),
     [complete, bank, assessment],
   );
-  const suggestions = useMemo(
-    () => (profile ? suggestGoals(bank, assessment, profile) : []),
-    [profile, bank, assessment],
-  );
+  const suggestions = useMemo(() => {
+    if (!profile) return [];
+    // R3: si el hábito ya está en su versión mínima en el plan, el motor lo declara.
+    const snapshot = getBluSnapshot();
+    const adaptedActions: Record<string, string> = {};
+    if (!snapshot.error) {
+      for (const adaptation of snapshot.state.adaptations) {
+        adaptedActions[adaptation.habitId] = adaptation.to;
+      }
+    }
+    return suggestGoals(bank, assessment, profile, 3, { adaptedActions });
+  }, [profile, bank, assessment]);
   const current: Question | undefined = complete ? undefined : effective[index];
   const progressText = complete
     ? "Cuestionario completado"
