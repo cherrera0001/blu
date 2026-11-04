@@ -29,5 +29,8 @@
   },
   "overrides": {
     "minimatch": "^11.0.4"
+  },
+  "engines": {
+    "node": ">=20.9"
   }
 }
