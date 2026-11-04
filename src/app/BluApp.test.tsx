@@ -420,6 +420,20 @@ describe("Blu user flows", () => {
     expect(saved.checkInsByDate[today]).toContain(habitId);
   });
 
+  it("optional nickname: minimal local profile, no email requested", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.queryByRole("textbox", { name: /correo/i })).toBeNull();
+    await user.type(screen.getByRole("textbox", { name: "Apodo (opcional)" }), "Cris");
+    await user.click(screen.getByRole("button", { name: "Guardar" }));
+    expect(screen.getByText(/Tu espacio quedó guardado/i)).toBeTruthy();
+    const saved = JSON.parse(window.localStorage.getItem("blu.profile.v1") ?? "null") as {
+      nickname: string;
+    };
+    expect(saved.nickname).toBe("Cris");
+  });
+
   it("catalog: shows alternatives and applies one as an adaptation", async () => {
     const user = userEvent.setup();
     render(<BluApp />);

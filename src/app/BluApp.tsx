@@ -19,6 +19,12 @@ import { summarizeDays } from "@/lib/history";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import {
+  getProfileSnapshot,
+  getServerProfileSnapshot,
+  saveNickname,
+  subscribeProfile,
+} from "@/lib/profile";
+import {
   DAY_NAMES,
   buildDefaultPlan,
   getPlanSnapshot,
@@ -74,6 +80,8 @@ export default function Home() {
   const [managingConsent, setManagingConsent] = useState(false);
   const reviewState = useSyncExternalStore(subscribeReviews, getReviewSnapshot, getServerReviewSnapshot);
   const goalDecisions = useSyncExternalStore(subscribeGoals, getGoalsSnapshot, getServerGoalsSnapshot);
+  const localProfile = useSyncExternalStore(subscribeProfile, getProfileSnapshot, getServerProfileSnapshot);
+  const [nicknameDraft, setNicknameDraft] = useState(localProfile?.nickname ?? "");
   const weeklyPlan = useSyncExternalStore(subscribePlans, getPlanSnapshot, getServerPlanSnapshot);
   const [planNotice, setPlanNotice] = useState("");
   const [historyPeriod, setHistoryPeriod] = useState<7 | 14 | 30>(7);
@@ -625,6 +633,37 @@ export default function Home() {
               );
             })}
           </div>
+
+          <section aria-labelledby="space-heading">
+            <h2 id="space-heading" className="tiny-note">
+              Tu espacio (opcional)
+            </h2>
+            <p className="tiny-note">
+              Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni
+              otros datos: la verificación de correo llegará solo cuando exista cuenta en una
+              futura versión.
+            </p>
+            <div className="adapt-row">
+              <label className="visually-hidden" htmlFor="nickname">Apodo (opcional)</label>
+              <input
+                id="nickname"
+                maxLength={24}
+                onChange={(event) => setNicknameDraft(event.target.value)}
+                placeholder="Apodo (opcional)"
+                value={nicknameDraft}
+              />
+              <button
+                className="button button-light"
+                onClick={() => {
+                  const result = saveNickname(nicknameDraft || null, new Date().toISOString());
+                  setNotice(result.ok ? "Tu espacio quedó guardado en este navegador." : (result.error ?? "No se pudo guardar."));
+                }}
+                type="button"
+              >
+                Guardar
+              </button>
+            </div>
+          </section>
 
           {acceptedGoals.length > 0 && (
             <section aria-labelledby="accepted-goals-heading">
