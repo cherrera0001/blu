@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore, type FormEvent } from "react";
+import Link from "next/link";
 import {
   HABITS,
   currentAction,
@@ -261,6 +262,10 @@ export default function Home() {
             )}
             {notice && <p className="inline-notice" role="status">{notice}</p>}
             <p className="tiny-note">No escribas información médica ni datos que te identifiquen.</p>
+            <p className="tiny-note">
+              ¿Prefieres partir con una autoevaluación?{" "}
+              <Link href="/cuestionario">Hacer el autodiagnóstico de hábitos (opcional, experimental)</Link>
+            </p>
           </div>
         </section>
         <footer className="page-footer">

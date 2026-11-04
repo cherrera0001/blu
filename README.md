@@ -36,5 +36,15 @@ npm run build
 - [Historias de usuario](docs/USER_STORIES.md)
 - [Plan de validación científica](docs/SCIENTIFIC_VALIDATION.md)
 - [Evidencia de validación](docs/VALIDATION.md)
+- [Autodiagnóstico de hábitos](docs/onboarding/QUESTIONNAIRE.md) — cuestionario experimental (no diagnóstico)
+- [Backlog y convenciones](backlog/README.md) · [Épicas](backlog/epics/)
+- [Constitución del proyecto](.specify/memory/constitution.md) · [Specs](specs/) · [ADR](docs/adr/)
+
+## Autodiagnóstico de hábitos
+
+Ruta `/cuestionario`: autoevaluación orientativa de los siete principios (35 preguntas
+versionadas), con guardado progresivo, omisión sin penalización, saltos adaptativos (`skipIf`)
+y un índice por principio **experimental y no diagnóstico**. Especificación y plan:
+`specs/001-onboarding-questionnaire/`.
 
 Antes de incorporar nube, cuentas, modelos externos, integraciones de salud o reclutamiento de participantes, se requieren decisiones explícitas de privacidad, seguridad, revisión científica, ética y regulación.
