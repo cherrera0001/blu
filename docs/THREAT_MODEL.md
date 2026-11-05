@@ -94,5 +94,8 @@ Riesgos residuales aceptados provisionalmente: proveedor gestionado (Supabase u 
 como tercero de confianza (mitigación: EIPD + contrato, pregunta en cada spec); pentest ligero
 pre-lanzamiento obligatorio (checklist en specs/009, matriz de aislamiento en CI).
 
-Este anexo **no modifica el alcance del MVP** y no autoriza implementación: sigue vigente el
-gate de PRD §8.
+Este anexo **no modifica el alcance del MVP**. Con la apertura formal del gate V1 (ADR-0006,
+2026-11-05) pasa a ser la superficie activa en desarrollo: la construcción del código está
+habilitada (activación por configuración, sin recursos creados desde el repo) y la activación en
+producción con datos reales queda condicionada a las firmas C1–C3/C5 de ADR-0006 (EIPD, contrato
+con proveedor, pentest ligero, ARCO probado).
