@@ -93,3 +93,11 @@ eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
   bandas por principio son el valor principal del resultado, BLU-205).
 - **Validación**: 225/225 (los tests existentes afirman contenido, no geometría), axe sin
   regresiones, lint 0.
+
+### Ciclo 4 — 2026-11-05 (sistema de diseño, 21st take e0b9da47)
+- **Medición**: gap de foco visible (rúbrica accesibilidad); tokens de radio/sombra dispersos.
+- **Adoptado del boceto 21st**: escala de radios (4/6/9/14), sombras suaves en capas
+  (--shadow-card), anillo de foco por sombra.
+- **Implementado**: `:focus-visible` global (outline + ring), estados :active/hover de botones,
+  tokens --radius-*, sombra unificada en tarjetas principales. Paleta teal existente respetada
+  (los --blu-* quedan solo como acento de gráficos).

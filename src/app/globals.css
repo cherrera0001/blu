@@ -59,8 +59,12 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .disclaimer { display: flex; gap: 13px; max-width: 400px; margin-top: 35px; padding: 16px 18px; border-left: 3px solid var(--coral); background: #fff9f3; color: #655649; font-size: 12px; line-height: 1.6; }
 .disclaimer span { color: #b16e4b; font-size: 16px; }
 .disclaimer p { margin: 0; }
-.onboarding-card, .chat-card, .review-card { border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: var(--shadow); }
-.onboarding-card { padding: 29px 30px 24px; }
+.onboarding-card, .chat-card, .review-card { border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: var(--shadow); 
+  box-shadow: var(--shadow-card);
+}
+.onboarding-card { padding: 29px 30px 24px; 
+  box-shadow: var(--shadow-card);
+}
 .onboarding-card fieldset { min-width: 0; margin: 18px 0; padding: 7px 14px 2px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
 .onboarding-card fieldset legend { padding: 0 6px; color: var(--ink-soft); font-size: 11px; font-weight: 600; }
 .onboarding-card .consent-row { min-height: 44px; align-items: center; margin: 5px 0; cursor: pointer; font-size: 12px; }
@@ -163,7 +167,9 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .section-heading { margin: 0 0 14px; }
 .section-heading h2, .review-top h2 { margin: 5px 0 0; font-size: 21px; }
 .daily-list { display: grid; gap: 10px; }
-.daily-card { min-height: 91px; display: flex; align-items: center; gap: 15px; padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--paper); transition: .2s ease; }
+.daily-card { min-height: 91px; display: flex; align-items: center; gap: 15px; padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--paper); transition: .2s ease; 
+  box-shadow: var(--shadow-card);
+}
 .daily-card.completed { border-color: #bed9ca; background: #f4faf4; }
 .daily-icon { width: 42px; height: 42px; display: grid; flex: 0 0 42px; place-items: center; border-radius: 12px; background: var(--mint); color: var(--teal); font-size: 20px; }
 .daily-copy { flex: 1; }
@@ -185,7 +191,9 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .adaptation-record { margin: 12px 0 0; color: var(--teal-dark); font-size: 11px; line-height: 1.6; }
 .evidence-note { display: flex; gap: 8px; margin: 14px 0; color: #7a8982; font-size: 10px; line-height: 1.5; }
 .evidence-note span { color: var(--teal); }
-.chat-card { padding: 20px; }
+.chat-card { padding: 20px; 
+  box-shadow: var(--shadow-card);
+}
 .chat-heading { display: flex; align-items: center; gap: 11px; }
 .blu-avatar { width: 38px; height: 38px; overflow: hidden; border-radius: 50% 50% 50% 12px; background: var(--teal); }
 .blu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -320,4 +328,33 @@ details[open].review-card summary::before {
 }
 .habit-grid.compact .habit-option {
   padding: 0.6rem;
+}
+
+/* Ciclo 4 UX — sistema de foco visible (WCAG 2.2 AA 2.4.7/2.4.11) y acabado de botones */
+:root {
+  --focus-ring: 0 0 0 3px rgba(22, 124, 116, 0.35);
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 2px rgba(43, 58, 52, 0.04), 0 4px 12px -4px rgba(43, 58, 52, 0.06);
+}
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.text-button {
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+}
+.text-button:hover {
+  text-decoration: underline;
+}
+.check-button:focus-visible,
+.habit-option:focus-visible {
+  outline-offset: 1px;
 }
