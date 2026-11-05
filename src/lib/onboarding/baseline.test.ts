@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { Profile } from "./scoring";
+import { loadBank } from "./bank-loader";
+import { createAssessment, answerQuestion } from "./engine";
+import { scoreAssessment, type Profile } from "./scoring";
 import { computeBaseline, BASELINE_MIN_PRINCIPLES } from "./baseline";
 
 function profileWithScores(scores: Array<number | null>): Profile {
@@ -10,6 +12,7 @@ function profileWithScores(scores: Array<number | null>): Profile {
     results: scores.map((score, i) => ({
       principleId: `p${i}`,
       answered: score === null ? 0 : 4,
+      totalScoreable: 4,
       skipped: score === null ? 4 : 0,
       score,
       band: score === null ? null : "developing",
@@ -61,5 +64,39 @@ describe("computeBaseline — línea base experimental (no clínica)", () => {
     expect(disclaimer).toMatch(/descriptiva y experimental/i);
     expect(disclaimer).toMatch(/no es un diagnóstico/i);
     expect(disclaimer).not.toMatch(/riesgo|tratamiento/i);
+  });
+});
+
+describe("computeBaseline — total de preguntas derivado del banco (regresión)", () => {
+  it("respondiendo todo el banco real: answeredQuestions ≤ totalQuestions y sin total hardcodeado", () => {
+    const bank = loadBank();
+    let assessment = createAssessment(bank, "2026-11-05T00:00:00.000Z");
+    for (const principle of bank.principles) {
+      for (const question of principle.questions) {
+        if (!question.countsTowardScore) continue;
+        try {
+          assessment = answerQuestion(
+            bank,
+            assessment,
+            question.id,
+            question.type === "likert5" ? 2 : 1,
+          );
+        } catch {
+          // pregunta omitible no respondible en este contexto: se ignora
+        }
+      }
+    }
+    const baseline = computeBaseline(scoreAssessment(bank, assessment));
+    expect(baseline.answeredQuestions).toBeLessThanOrEqual(baseline.totalQuestions);
+    expect(baseline.totalQuestions).toBe(29); // banco v1.0.0: 29 puntuables (rest tiene 5)
+    expect(baseline.answeredQuestions).toBe(29);
+  });
+
+  it("totalQuestions es la suma de totalScoreable reportado por scoring", () => {
+    const bank = loadBank();
+    const profile = scoreAssessment(bank, createAssessment(bank, "t"));
+    const baseline = computeBaseline(profile);
+    const sum = profile.results.reduce((n, r) => n + r.totalScoreable, 0);
+    expect(baseline.totalQuestions).toBe(sum);
   });
 });

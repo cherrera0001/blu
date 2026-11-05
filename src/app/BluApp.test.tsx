@@ -2,6 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import BluApp from "./BluApp";
+import Page from "./page";
 import { clearBluState } from "@/lib/storage";
 import { invalidateReviews } from "@/lib/review";
 import { invalidateGoals } from "@/lib/onboarding/goals-storage";
@@ -751,5 +752,163 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+});
+
+
+describe("presencia expresiva de Blu (UX-07) — estados ligados a eventos reales", () => {
+  it("responding mientras espera la respuesta, con equivalente textual; acknowledge al completar", async () => {
+    let resolveFetch: ((value: unknown) => void) | undefined;
+    const fetchMock = vi.fn().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "Hola Blu");
+      await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+
+      const thinking = await screen.findByText(/Blu está pensando/i);
+      expect(thinking.getAttribute("role")).toBe("status");
+      const chatAvatar = document.querySelector(".chat-card [data-testid='blu-presence']");
+      expect(chatAvatar?.getAttribute("data-blu-state")).toBe("responding");
+
+      resolveFetch?.({
+        ok: true,
+        json: async () => ({
+          text: "Respuesta controlada de Blu.",
+          meta: { providerId: "local-rules", safety: { guardianAction: "none", latencyMs: 2 } },
+        }),
+      });
+
+      expect(await screen.findByText("Respuesta controlada de Blu.")).toBeTruthy();
+      expect(screen.queryByText(/Blu está pensando/i)).toBeNull();
+      expect(
+        document.querySelector(".chat-card [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
+      ).toBe("acknowledge");
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("unavailable honesto cuando el BFF no responde (modo local)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("red")));
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "¿Estás ahí?");
+      await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+
+      expect(await screen.findByText(/Respondí en modo local/i)).toBeTruthy();
+      expect(
+        document.querySelector(".chat-card [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
+      ).toBe("unavailable");
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("microcopy honesto por código: ante 429 explica que hay que esperar (UX-06)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 429 }));
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "hola");
+      await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+
+      expect(await screen.findByText(/pidió esperar un momento/i)).toBeTruthy();
+      expect(screen.getByText(/demasiados intentos/i)).toBeTruthy();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("el hero pasa a acknowledge tras el primer check-in del día", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(
+      document.querySelector(".dashboard-hero [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
+    ).toBe("welcome");
+
+    const markButton = document.querySelector('input[aria-label^="Marcar"], button[aria-label^="Marcar"]');
+    expect(markButton).not.toBeNull();
+    await user.click(markButton as HTMLElement);
+
+    expect(
+      document.querySelector(".dashboard-hero [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
+    ).toBe("acknowledge");
+  });
+});
+
+
+describe("agrupación del dashboard en móvil (UX-05) — secciones secundarias colapsables", () => {
+  it("'Tu espacio' es un details cerrado por defecto (sin scroll extra)", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    const details = document.querySelector("details.space-details");
+    expect(details).not.toBeNull();
+    expect(details?.querySelector("summary")?.textContent).toMatch(/Tu espacio/i);
+    expect(details?.hasAttribute("open")).toBe(false);
+    // se abre con interacción real y el contenido queda accesible
+    await user.click(details!.querySelector("summary") as HTMLElement);
+    expect(details?.hasAttribute("open")).toBe(true);
+    expect(screen.getByPlaceholderText(/Apodo/i)).toBeTruthy();
+  });
+
+  it("la revisión semanal queda colapsada tras guardarla (formulario dentro de details)", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    const details = document.querySelector("details.review-details");
+    expect(details).not.toBeNull();
+    // sin revisión previa: abierta para invitar a responder
+    expect(details?.hasAttribute("open")).toBe(true);
+
+    await user.click(screen.getByRole("radio", { name: "Me sentí bien" }));
+    await user.click(screen.getByRole("radio", { name: "Mantener como está" }));
+    await user.click(screen.getByRole("button", { name: "Guardar revisión" }));
+
+    expect(await screen.findByText(/Revisión de esta semana guardada/i)).toBeTruthy();
+    const after = document.querySelector("details.review-details");
+    expect(after?.hasAttribute("open")).toBe(false);
+    // la invitación a actualizar sigue visible fuera del details
+    expect(screen.getByText(/Puedes actualizarla cuando quieras/i)).toBeTruthy();
+  });
+});
+
+describe("accesibilidad adicional (BLU-1501)", () => {
+  it("el primer enlace del documento es 'Saltar al contenido principal' (WCAG 2.4.1)", async () => {
+    const user = userEvent.setup();
+    render(<Page />);
+    await completeOnboarding(user);
+    const main = document.getElementById("contenido-principal");
+    expect(main?.tagName).toBe("MAIN");
+    const links = [...document.querySelectorAll("a")];
+    expect(links[0].textContent).toMatch(/Saltar al contenido principal/i);
+    expect(links[0].getAttribute("href")).toBe("#contenido-principal");
+  });
+});
+
+describe("presencia: disparador real del estado pause (UX-07)", () => {
+  it("elegir 'Pausa con Blu' en la navegación pone al guía en estado pause", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(
+      document.querySelector(".chat-card [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
+    ).toBe("welcome");
+    await user.click(screen.getByRole("link", { name: "Pausa con Blu" }));
+    expect(
+      document.querySelector(".chat-card [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
+    ).toBe("pause");
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,7 +12,17 @@ import {
   type Barrier,
   type HabitId,
 } from "@/lib/blu";
-import { respondToMessage } from "@/lib/conversation";
+import { respondToMessage, type FallbackReason } from "@/lib/conversation";
+import {
+  disableReminders,
+  enableReminders,
+  getReminderPermission,
+  loadReminderSettings,
+  maybeSendReminder,
+  subscribeReminders,
+  type ReminderPermission,
+} from "@/lib/reminders";
+import BluPresence, { type BluPresenceState } from "./BluPresence";
 import { buildExportBundle, downloadBundle, exportFileName } from "@/lib/export";
 import { eraseAllLocalData } from "@/lib/erase";
 import { summarizeDays } from "@/lib/history";
@@ -71,6 +81,28 @@ import {
 
 type ChatMessage = { role: "blu" | "you"; text: string };
 
+let reminderSnapshotCache: {
+  enabled: boolean;
+  permission: ReminderPermission;
+  version: number;
+} | null = null;
+
+/** Snapshot estable para useSyncExternalStore (mismo objeto mientras nada cambia). */
+function getReminderSnapshot(version: number) {
+  const enabled = loadReminderSettings().enabled;
+  const permission = getReminderPermission();
+  if (
+    reminderSnapshotCache &&
+    reminderSnapshotCache.version === version &&
+    reminderSnapshotCache.enabled === enabled &&
+    reminderSnapshotCache.permission === permission
+  ) {
+    return reminderSnapshotCache;
+  }
+  reminderSnapshotCache = { enabled, permission, version };
+  return reminderSnapshotCache;
+}
+
 export default function Home() {
   const snapshot = useSyncExternalStore(subscribeToBlu, getBluSnapshot, getServerBluSnapshot);
   const clockMinute = useSyncExternalStore(subscribeToClock, getClockSnapshot, getServerClockSnapshot);
@@ -85,7 +117,7 @@ export default function Home() {
   const goalDecisions = useSyncExternalStore(subscribeGoals, getGoalsSnapshot, getServerGoalsSnapshot);
   const localProfile = useSyncExternalStore(subscribeProfile, getProfileSnapshot, getServerProfileSnapshot);
   const [nicknameDraft, setNicknameDraft] = useState(localProfile?.nickname ?? "");
-  const [localModeNotice, setLocalModeNotice] = useState(false);
+  const [localModeReason, setLocalModeReason] = useState<FallbackReason | null>(null);
   const weeklyPlan = useSyncExternalStore(subscribePlans, getPlanSnapshot, getServerPlanSnapshot);
   const [planNotice, setPlanNotice] = useState("");
   const [historyPeriod, setHistoryPeriod] = useState<7 | 14 | 30>(7);
@@ -99,6 +131,15 @@ export default function Home() {
   const [draftSelectedHabitIds, setDraftSelectedHabitIds] = useState<HabitId[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [assistantRemote, setAssistantRemote] = useState(false);
+  const [chatPresence, setChatPresence] = useState<BluPresenceState>("welcome");
+  const [heroPresence, setHeroPresence] = useState<BluPresenceState>("welcome");
+  const [reminderVersion, setReminderVersion] = useState(0);
+  const [reminderNotice, setReminderNotice] = useState("");
+  const reminderState = useSyncExternalStore(
+    subscribeReminders,
+    () => getReminderSnapshot(reminderVersion),
+    () => ({ enabled: false, permission: "unsupported" as const, version: 0 }),
+  );
   const [voiceProfile, setVoiceProfile] = useState<VoiceProfile>("warm");
   const [azureVoiceEnabled, setAzureVoiceEnabled] = useState(false);
   const [azureVoiceLoading, setAzureVoiceLoading] = useState(false);
@@ -348,6 +389,39 @@ export default function Home() {
         checkInsByDate: { ...current.checkInsByDate, [todayKey]: updated },
       };
     });
+    if (!state.checkInsByDate[todayKey]?.includes(habitId)) {
+      setHeroPresence("acknowledge"); // primer gesto real: la persona marcó un paso (UX-07)
+    }
+  }
+
+  // Recordatorio amable local (BLU-1502): sin servidor ni cuenta; solo con Blu abierta.
+  useEffect(() => {
+    const check = () => {
+      maybeSendReminder({
+        todayHabitIds: state.selectedHabitIds,
+        doneHabitIds: state.checkInsByDate[todayKey] ?? [],
+      });
+    };
+    check();
+    const timer = setInterval(check, 60_000);
+    return () => clearInterval(timer);
+  }, [state.selectedHabitIds, state.checkInsByDate, todayKey]);
+
+  async function toggleReminders() {
+    setReminderNotice("");
+    if (reminderState.enabled) {
+      disableReminders();
+      setReminderVersion((v) => v + 1);
+      setReminderNotice("Recordatorio desactivado. Puedes activarlo cuando quieras.");
+      return;
+    }
+    const result = await enableReminders();
+    setReminderVersion((v) => v + 1);
+    setReminderNotice(
+      result.ok
+        ? "Recordatorio activado: máximo uno al día, solo si quedan pasos sin marcar."
+        : "Sin permiso del navegador, no activo nada. Puedes intentarlo de nuevo desde la configuración del sitio.",
+    );
   }
 
   function simplifyHabit() {
@@ -387,10 +461,12 @@ export default function Home() {
     event.preventDefault();
     const text = chatInput.trim();
     if (!text) return;
+    setChatPresence("responding");
     const result = await respondToMessage(text);
     setAssistantRemote(result.providerId === "remote");
+    setChatPresence(result.usedFallback ? "unavailable" : "acknowledge");
     if (result.usedFallback) {
-      setLocalModeNotice(true); // una vez por sesión: honestidad sobre el modo local
+      setLocalModeReason((current) => current ?? result.fallbackReason); // una vez por sesión (UX-06)
     }
     const userMessage: ChatMessage = { role: "you", text };
     const bluMessage: ChatMessage = { role: "blu", text: result.text };
@@ -421,6 +497,8 @@ export default function Home() {
           text: BLU_GREETING,
         },
       ]);
+      setChatPresence("welcome");
+      setHeroPresence("welcome");
       setNotice("Se borraron todos los datos de Blu en este navegador.");
     } else {
       setNotice(
@@ -431,7 +509,7 @@ export default function Home() {
 
   if (snapshot.error) {
     return (
-      <main className="error-screen">
+      <div className="error-screen">
         <section className="error-card" role="alert">
           <span className="eyebrow">Blu · almacenamiento local</span>
           <h1>No pude acceder a tus datos</h1>
@@ -441,13 +519,13 @@ export default function Home() {
             Borrar datos locales y reiniciar
           </button>
         </section>
-      </main>
+      </div>
     );
   }
 
   if (!state.consentAcceptedAt || state.selectedHabitIds.length === 0 || editingSelection || managingConsent) {
     return (
-      <main className="onboarding">
+      <div className="onboarding">
         <header className="topbar">
           <a className="brand" href="#" aria-label="Blu, inicio">
             <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
@@ -582,12 +660,12 @@ export default function Home() {
           <span>Inspirado en siete dimensiones de bienestar</span>
           <span>Sin cuenta · Sin conexión a IA · Datos en este navegador</span>
         </footer>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="dashboard">
+    <div className="dashboard">
       <header className="app-header">
         <div className="topbar">
           <a className="brand" href="#" aria-label="Blu, inicio">
@@ -602,7 +680,12 @@ export default function Home() {
           </div>
         </div>
         <nav className="dashboard-nav" aria-label="Secciones principales">
-          <a href="#chat-heading">Pausa con Blu</a>
+          <a
+            href="#chat-heading"
+            onClick={() => setChatPresence("pause")} /* pausa elegida explícitamente (UX-07) */
+          >
+            Pausa con Blu
+          </a>
           <a href="#habits-heading">Hoy</a>
           <a href="#week-plan">Tu semana</a>
           <a href="#review-heading">Progreso</a>
@@ -628,7 +711,7 @@ export default function Home() {
           </a>
         </div>
         <div className="hero-blu">
-          <Image alt="Blu, tu guía de bienestar" className="blu-presence lg" height={96} src="/blu-avatar.jpg" width={96} />
+          <BluPresence size="lg" state={heroPresence} />
           <p className="hero-blu-line">«Estoy aquí para lo que elijas hoy.»</p>
         </div>
         <div className="hero-progress">
@@ -655,6 +738,26 @@ export default function Home() {
             />
           </div>
           <p className="progress-message" aria-live="polite">{todayProgressMessage}</p>
+        </div>
+        <div className="reminder-box">
+          <button
+            className="text-button"
+            disabled={reminderState.permission === "unsupported"}
+            onClick={toggleReminders}
+            type="button"
+          >
+            {reminderState.enabled ? "Desactivar recordatorio" : "Activar recordatorio de la mañana"}
+          </button>
+          <p className="tiny-note">
+            {reminderState.permission === "unsupported"
+              ? "Tu navegador no permite recordatorios."
+              : reminderState.permission === "denied" && !reminderState.enabled
+                ? "Quedaron bloqueados en el navegador; puedes permitirlos en la configuración del sitio."
+                : "Máximo uno al día, solo si quedan pasos sin marcar. Funciona con Blu abierta; sin cuenta ni servidor."}
+          </p>
+          {reminderNotice && (
+            <p className="inline-notice" role="status">{reminderNotice}</p>
+          )}
         </div>
       </section>
 
@@ -749,9 +852,12 @@ export default function Home() {
           </div>
 
           <section aria-labelledby="space-heading">
-            <h2 id="space-heading" className="tiny-note">
-              Tu espacio (opcional)
-            </h2>
+            <details className="space-details">
+              <summary>
+                <h2 id="space-heading" className="tiny-note">
+                  Tu espacio (opcional)
+                </h2>
+              </summary>
             <p className="tiny-note">
               Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni
               otros datos: la verificación de correo llegará solo cuando exista cuenta en una
@@ -777,6 +883,7 @@ export default function Home() {
                 Guardar
               </button>
             </div>
+            </details>
           </section>
 
           {acceptedGoals.length > 0 && (
@@ -1011,6 +1118,14 @@ export default function Home() {
                 </Link>
               </p>
             )}
+            <details
+              className="review-details"
+              open={!thisWeekReview}
+              key={thisWeekReview ? "saved" : "fresh"}
+            >
+              <summary className="text-button review-summary">
+                {thisWeekReview ? "Actualizar mi respuesta" : "Responder cómo me sentí"}
+              </summary>
             <form onSubmit={submitReview}>
               <fieldset>
                 <legend>¿Cómo te sentiste con tus hábitos?</legend>
@@ -1055,6 +1170,7 @@ export default function Home() {
                 </button>
               </div>
             </form>
+            </details>
             {reviewNotice && (
               <p className="inline-notice" role="status">
                 {reviewNotice}
@@ -1071,9 +1187,7 @@ export default function Home() {
         <aside className="side-column">
           <section className="chat-card" aria-labelledby="chat-heading">
             <div className="chat-heading">
-              <div className="blu-avatar" aria-hidden="true">
-                <Image src="/blu-avatar.jpg" alt="" width={38} height={38} />
-              </div>
+              <BluPresence size="sm" state={chatPresence} />
               <div>
                 <span className="eyebrow">ACOMPAÑAMIENTO</span>
                 <h2 id="chat-heading">Una pausa con Blu</h2>
@@ -1084,11 +1198,15 @@ export default function Home() {
                 ? "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud."
                 : "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación."}
             </p>
-            {localModeNotice && (
+            {localModeReason && (
               <p className="tiny-note" role="status">
-                Respondí en modo local: no pude contactar al servidor. El texto sigue igual de
-                privado, en este navegador.
+                {localModeReason === "rate_limited"
+                  ? "Respondí en modo local: el servidor pidió esperar un momento (demasiados intentos). El texto sigue privado, en este navegador."
+                  : "Respondí en modo local: no pude contactar al servidor. El texto sigue igual de privado, en este navegador."}
               </p>
+            )}
+            {chatPresence === "responding" && (
+              <p className="chat-thinking" role="status">Blu está pensando…</p>
             )}
             <div className="chat-voice-settings">
               <label className="chat-voice-control" htmlFor="voice-style">
@@ -1188,7 +1306,7 @@ export default function Home() {
           </button>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }
 

@@ -23,7 +23,9 @@ async function askServer(message: string): Promise<AssistantApiReply> {
     signal: AbortSignal.timeout(10_000),
   });
   if (!response.ok) {
-    throw new Error(`assistant_api_${response.status}`);
+    const error = new Error(`assistant_api_${response.status}`) as Error & { status?: number };
+    error.status = response.status;
+    throw error;
   }
   return (await response.json()) as AssistantApiReply;
 }
@@ -33,20 +35,37 @@ async function askServer(message: string): Promise<AssistantApiReply> {
  * degrada al proveedor local en el navegador para que el texto siga funcionando.
  * El adaptador remoto del BFF sigue gated; hoy el BFF usa el mismo cerebro local.
  */
+export type FallbackReason = "network" | "rate_limited" | "http_error";
+
 export interface RespondResult {
   text: string;
   usedFallback: boolean;
   /** providerId de la respuesta efectiva ("remote" | "local-rules"); alimenta el disclosure honesto del modo. */
   providerId: string;
+  /** Motivo del fallback cuando usedFallback (issue UX-06: microcopy honesto por código de error). */
+  fallbackReason: FallbackReason | null;
 }
 
 export async function respondToMessage(message: string): Promise<RespondResult> {
   try {
     const reply = await askServer(message);
-    return { text: reply.text, usedFallback: false, providerId: reply.meta.providerId };
-  } catch {
+    return {
+      text: reply.text,
+      usedFallback: false,
+      providerId: reply.meta.providerId,
+      fallbackReason: null,
+    };
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+    const fallbackReason: FallbackReason =
+      status === 429 ? "rate_limited" : status !== undefined ? "http_error" : "network";
     const fallback = await local.ask([{ role: "user", text: message }]);
-    return { text: fallback.text, usedFallback: true, providerId: "local-rules" };
+    return {
+      text: fallback.text,
+      usedFallback: true,
+      providerId: "local-rules",
+      fallbackReason,
+    };
   }
 }
 

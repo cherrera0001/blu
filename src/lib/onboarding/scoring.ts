@@ -6,6 +6,8 @@ export type Band = "care" | "developing" | "strength";
 export interface PrincipleResult {
   principleId: string;
   answered: number;
+  /** Preguntas puntuables del principio según el banco (transparencia del cálculo). */
+  totalScoreable: number;
   skipped: number;
   score: number | null;
   band: Band | null;
@@ -28,6 +30,7 @@ function maxFor(questionType: string, optionsMax: number): number {
 export function scoreAssessment(bank: QuestionBank, assessment: Assessment): Profile {
   const results: PrincipleResult[] = bank.principles.map((principle) => {
     const puntuables = principle.questions.filter((q) => q.countsTowardScore);
+    const totalScoreable = puntuables.length;
     let sum = 0;
     let answered = 0;
     let skipped = 0;
@@ -52,6 +55,7 @@ export function scoreAssessment(bank: QuestionBank, assessment: Assessment): Pro
       return {
         principleId: principle.id,
         answered: 0,
+        totalScoreable,
         skipped,
         score: null,
         band: null,
@@ -66,6 +70,7 @@ export function scoreAssessment(bank: QuestionBank, assessment: Assessment): Pro
     return {
       principleId: principle.id,
       answered,
+      totalScoreable,
       skipped,
       score,
       band: score < 40 ? "care" : score < 70 ? "developing" : "strength",

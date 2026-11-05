@@ -13,6 +13,7 @@ export const BLU_STORAGE_KEYS = [
   "blu.onboarding.notice.v1",
   "blu.plan.v1",
   "blu.profile.v1",
+  "blu.reminders.v1",
 ] as const;
 
 export interface EraseResult {

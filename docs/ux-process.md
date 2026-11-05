@@ -131,3 +131,43 @@ eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
   generativa (todavía)».
 - **Validación**: 234/234, axe sin regresiones, lint 0, build OK, eval:security 3/3,
   smoke del BFF OK. Capturas before/after en /tmp/blu-shots.
+
+### Ciclo 7 — 2026-11-05 (hackathon: demo defendible + presencia UX-07)
+- **Evidencia real**: recorrido completo con navegador headless (13 capturas + log): el flujo
+  intención→acción→check-in→revisión→adaptación→privacidad→cuestionario funciona de punta a
+  punta; bug visual del nav móvil (ancla cortada) y bug de datos ("29 de 28 respuestas
+  puntuables") detectados en las capturas y corregidos.
+- **Implementado**:
+  - `BluPresence` (specs/017, issue #95): SVG propio con estados `idle/welcome/responding/
+    acknowledge/pause/unavailable` (nunca `listening`), gestos ≤800 ms sin bucles en reposo,
+    `prefers-reduced-motion` con pose estática equivalente; decorativo (aria-hidden) con
+    equivalente textual ("Blu está pensando…"). Integrado en cabecera del chat y hero
+    (acknowledge tras el primer check-in).
+  - Fix de datos: `totalScoreable` calculado del banco en scoring; la línea base ya no
+    hardcodea 28 (banco real: 29). Tests de regresión con el banco real.
+  - Nav móvil: wrap a dos líneas (decisión #91: visible sin gesto oculto).
+  - Contraste: `hero-blu-line` a tinta clara sobre el hero oscuro; `.tiny-note` ya quedó en
+    `--ink-soft` (~7:1) en el ciclo 6 ⇒ issue #90 resuelto.
+  - Microcopy de errores por código (issue #92): `fallbackReason` (network/rate_limited/
+    http_error) con aviso honesto distinto ante 429.
+- **Validación**: 304/304 tests (32 archivos), lint 0, build OK, eval:security 3/3, audit 0.
+  Capturas del recorrido en AppData\Local\Temp\blu-tour.
+- **Docs hackathon**: `docs/hackathon/demo-guide.md` (guion 4–5 min validado) y
+  `docs/hackathon/evaluation-matrix.md` (matriz PROVISIONAL: sin rúbrica oficial disponible;
+  no atribuida a Georgia Tech).
+
+### Ciclo 8 — 2026-11-05 (issues del tablero: #91, #92, #95-completo, #67, #68, CI #65/#44)
+- **#91 (UX-05)**: "Tu espacio" y la revisión semanal en `<details>` (revisión colapsada tras
+  guardar; form abierto solo si falta responder). Verificado con tests y recorrido headless.
+- **#92 (UX-06)**: `fallbackReason` (network/rate_limited/http_error) con microcopy honesto
+  distinto ante 429 (tests en conversation y UI).
+- **#95 (UX-07) completado**: estado `pause` con disparador real (elegir «Pausa con Blu» en la
+  navegación); resto de estados ya venía del ciclo 7.
+- **#67 (BLU-1501)**: skip link «Saltar al contenido principal» (WCAG 2.4.1) como primer enlace
+  del documento; `main` único movido a `page.tsx` (antes tres `main` anidados).
+- **#68 (BLU-1502)**: recordatorios locales opt-in — máximo uno al día, solo si quedan pasos sin
+  marcar, a partir de las 9:00, solo con Blu abierta; sin cuenta ni servidor; clave
+  `blu.reminders.v1` cubierta por el borrado total. Snapshot estable para useSyncExternalStore.
+- **CI (#65/#44)**: workflow con `npm run eval:security` (red team) y `npm audit --audit-level=high`.
+- **#63**: `.env.example` con todas las variables server-side documentadas.
+- **Validación**: 316/316 tests (33 archivos), lint 0, build OK, eval:security 3/3, audit 0.
