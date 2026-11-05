@@ -286,7 +286,7 @@ function QuestionnaireSession() {
               {notice}
             </p>
           )}
-          <ul className="habit-grid" role="list">
+          <ul className="habit-grid compact" role="list">
             {profile.results.map((r) => (
               <li key={r.principleId} className="habit-option">
                 <span className="category-label">{principleTitle(r.principleId)}</span>
@@ -309,7 +309,7 @@ function QuestionnaireSession() {
                 <Link href="/">elegir tus hábitos manualmente</Link>: tú decides siempre.
               </p>
             ) : (
-              <ul className="habit-grid" role="list">
+              <ul className="habit-grid compact" role="list">
                 {suggestions.map((s) => {
                   const accepted = activeDecisions?.accepted.some((g) => g.suggestionId === s.id);
                   const rejected = activeDecisions?.rejected.includes(s.id);
