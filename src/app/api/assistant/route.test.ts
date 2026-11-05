@@ -88,6 +88,23 @@ describe("POST /api/assistant — BFF local (specs/016, proveedor local)", () =>
     }
   });
 
+  it("contrato: la respuesta 200 expone EXACTAMENTE las claves públicas (sin fugas internas)", async () => {
+    const res = await POST(req({ messages: [{ role: "user", text: "hola" }] }));
+    const json = (await res.json()) as Record<string, unknown>;
+    expect(Object.keys(json).sort()).toEqual(["meta", "text"]);
+    const meta = json.meta as Record<string, unknown>;
+    expect(Object.keys(meta).sort()).toEqual(["providerId", "safety"]);
+    const safety = meta.safety as Record<string, unknown>;
+    expect(Object.keys(safety).sort()).toEqual(["guardianAction", "latencyMs"]);
+  });
+
+  it("contrato: ningún valor de la respuesta contiene claves, stack ni contenido interno", async () => {
+    const res = await POST(req({ messages: [{ role: "user", text: "dato sintético 123" }] }));
+    const raw = await res.text();
+    expect(raw).not.toMatch(/sk-|apikey|api_key|stack|Error:|at /i);
+    expect(raw).not.toContain("dato sintético 123"); // el proveedor local no repite el input
+  });
+
   it("429 al superar la tasa por IP", async () => {
     let last = 0;
     for (let i = 0; i < 25; i += 1) {
