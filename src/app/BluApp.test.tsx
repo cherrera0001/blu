@@ -129,6 +129,30 @@ describe("Blu user flows", () => {
     expect(await screen.findByRole("heading", { name: "Un cambio pequeño también cuenta." }))
       .toBeTruthy();
   });
+
+  it("offers read-aloud on assistant replies when a local Spanish voice is available", async () => {
+    vi.stubGlobal("speechSynthesis", {
+      speak: vi.fn(),
+      cancel: vi.fn(),
+      getVoices: () => [{ lang: "es-CL", name: "Voz local", localService: true }],
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    });
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+
+      await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "Estoy ocupada");
+      await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+
+      expect(await screen.findByText(/No asumiré qué necesitas/)).toBeTruthy();
+      expect(screen.getAllByRole("button", { name: "Escuchar respuesta en voz alta" }))
+        .toHaveLength(2);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it("persists separated purposes when accepting operativo and investigacion", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -415,7 +439,10 @@ describe("Blu user flows", () => {
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
       checkInsByDate: Record<string, string[]>;
     };
-    const today = new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+      now.getDate(),
+    ).padStart(2, "0")}`; // fecha LOCAL, como localDateKey de la app
     expect(Object.values(saved.checkInsByDate).flat()).toContain(habitId);
     expect(saved.checkInsByDate[today]).toContain(habitId);
   });
@@ -475,8 +502,9 @@ describe("Blu user flows", () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
+    await user.click(screen.getAllByText(/Intenciones sugeridas/i)[0]);
     await user.click(screen.getByRole("button", { name: /Sugerir mi semana/i }));
-    expect(screen.getByRole("heading", { name: /Intenciones sugeridas/i })).toBeTruthy();
+    expect(screen.getAllByRole("heading", { name: /Intenciones sugeridas/i }).length).toBeGreaterThan(0);
     const removeButtons = screen.getAllByRole("button", { name: /^Quitar / });
     expect(removeButtons.length).toBeGreaterThan(0);
     await user.click(removeButtons[0]);

@@ -424,3 +424,53 @@ Escenario: Ver fuentes de una recomendación
 **DoD:** implementado con pruebas verdes.
 
 > **Estado (2026-11-04):** **GATED a V1** — requiere backend/cuentas/sincronización; bloqueada por PRD §8 y constitución II/X hasta aprobaciones de privacidad, seguridad, revisión científica, ética y análisis jurídico (ADR-0001).
+
+
+---
+
+### BLU-1005 — Lectura en voz alta local (read-aloud)
+
+**Historia:** Como persona usuaria, quiero escuchar la respuesta del asistente con la voz de mi
+dispositivo, para acceder al contenido cuando no puedo leer, sin que Blu seleccione un
+sintetizador remoto.
+**Prioridad:** P1 · **Tamaño:** S · **Fase:** MVP
+**Contexto y valor:** accesibilidad y comodidad con voz marcada `localService=true` por el
+navegador (ADR-0003). Blu no inicia solicitudes ni guarda contenido; no promete inspección
+independiente del tráfico del navegador/SO. El texto sigue siendo la vía completa; sin voz
+local apta no hay botón.
+
+**Gherkin:**
+```gherkin
+Escenario: Escuchar y detener
+  Dado una respuesta validada por el guardián
+  Cuando pulso «Escuchar»
+  Entonces se reproduce con voz es-* marcada local y puedo detenerla
+```
+**Casos:** positivo — reproducción con voz local en español. Negativo — solo voz remota/no
+clasificada: sin botón. Límite — cancelar antes de cada reproducción y al desmontar; admitir
+inventario de voces cargado en forma asíncrona; una sola lectura activa entre burbujas.
+**Accesibilidad y seguridad:** texto completo siempre visible; la función no genera solicitudes
+de red ni persiste contenido. La marca local la informa el navegador.
+**Evidencia y pruebas:** specs/014 (9 pruebas del componente + 1 de integración; suite completa,
+lint, build y eval:security verificados en el ciclo 2026-11-05).
+**DoR/DoD:** spec 014 completa; batería verde en CI.
+
+---
+
+### BLU-1006 — Chat remoto con proveedor sustituible (gated)
+
+**Historia:** Como persona usuaria, quiero conversar con un asistente generativo cuando esté
+aprobado, con mis datos protegidos por contrato y sin sorpresas de costo.
+**Prioridad:** P0 · **Tamaño:** L · **Fase:** V1
+**Contexto y valor:** conversación real tras aprobaciones PRD §8; diseño completo en specs/015
+(ruta de servidor, guardianes, límites, presupuesto duro). **Estado: GATED** (ADR-0003). Contrato del BFF diseñado en `specs/016-bff-api-contract/` y arquitectura confirmada en **ADR-0004** (2026-11-04).
+
+---
+
+### BLU-1007 — Entrada por voz local comprobable (gated)
+
+**Historia:** Como persona usuaria, quiero dictar mensajes solo cuando el reconocimiento se
+procese localmente y esté verificado, con confirmación de la transcripción y vía de texto siempre.
+**Prioridad:** P2 · **Tamaño:** L · **Fase:** V2
+**Contexto y valor:** `SpeechRecognition.processLocally` + `available()`; consentimiento
+específico; nunca caer en reconocimiento cloud silencioso. **Estado: GATED** (specs/015).

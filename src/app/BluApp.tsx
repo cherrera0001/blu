@@ -19,6 +19,7 @@ import { summarizeDays } from "@/lib/history";
 import { WeekBars } from "./WeekBars";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
+import SpeakButton from "./SpeakButton";
 import {
   getProfileSnapshot,
   getServerProfileSnapshot,
@@ -700,7 +701,13 @@ export default function Home() {
             </section>
           )}
 
-          <section className="review-card" aria-labelledby="week-plan-heading">
+          <details className="review-card">
+            <summary aria-labelledby="week-plan-heading" className="review-top">
+              <div>
+                <span className="eyebrow">TU SEMANA</span>
+                <h2 id="week-plan-heading">Intenciones sugeridas ({weekKey})</h2>
+              </div>
+            </summary>
             <div className="review-top">
               <div>
                 <span className="eyebrow">TU SEMANA</span>
@@ -747,7 +754,7 @@ export default function Home() {
                 {planNotice}
               </p>
             )}
-          </section>
+          </details>
 
           <section className="review-card" aria-labelledby="review-heading">
             <div className="review-top">
@@ -965,9 +972,10 @@ export default function Home() {
             </p>
             <div aria-live="polite" className="chat-messages" role="log">
               {chatMessages.map((message, index) => (
-                <p className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
-                  {message.text}
-                </p>
+                <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
+                  <p>{message.text}</p>
+                  {message.role === "blu" && <SpeakButton text={message.text} />}
+                </div>
               ))}
             </div>
             <form className="chat-form" onSubmit={sendMessage}>
