@@ -38,6 +38,7 @@ npm run build
 - [Evidencia de validación](docs/VALIDATION.md)
 - [Autodiagnóstico de hábitos](docs/onboarding/QUESTIONNAIRE.md) — cuestionario experimental (no diagnóstico)
 - [Backlog y convenciones](backlog/README.md) · [Épicas](backlog/epics/)
+- [Proceso de evaluación y ciclos UI/UX](docs/ux-process.md)
 - [Constitución del proyecto](.specify/memory/constitution.md) · [Specs](specs/) · [ADR](docs/adr/)
 
 ## Autodiagnóstico de hábitos

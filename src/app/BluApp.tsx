@@ -536,7 +536,7 @@ export default function Home() {
           <a href="#habits-heading">Hoy</a>
           <a href="#week-plan">Tu semana</a>
           <a href="#review-heading">Progreso</a>
-          <a href="#chat-heading">Conversación</a>
+          <a href="#chat-heading">Pausa</a>
           <a href="#privacy-controls">Privacidad</a>
         </nav>
       </header>

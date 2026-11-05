@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
 const URL = "http://localhost/api/assistant";
@@ -71,6 +71,21 @@ describe("POST /api/assistant — BFF local (specs/016, proveedor local)", () =>
     });
     const res = await POST(bad);
     expect([400, 500]).toContain(res.status);
+  });
+
+  it("429 al superar el cap diario (200) aunque la ventana por minuto se renueve", async () => {
+    vi.useFakeTimers();
+    try {
+      let last = 0;
+      for (let i = 0; i < 205; i += 1) {
+        const r = await POST(req({ messages: [{ role: "user", text: `d${i}` }] }, "10.8.8.8"));
+        last = r.status;
+        vi.advanceTimersByTime(61_000); // salta la ventana por minuto
+      }
+      expect(last).toBe(429);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("429 al superar la tasa por IP", async () => {
