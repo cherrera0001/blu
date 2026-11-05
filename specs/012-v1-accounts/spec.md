@@ -1,9 +1,11 @@
-# Spec de diseño V1: Cuentas con correo verificado (BLU-101-V1) — gated
+# Spec de diseño V1: Cuentas con correo verificado (BLU-101-V1) — gate abierto por fases
 
-**Estado:** diseño preparatorio · **Fase:** V1 · **Relaciona:** BLU-104/105 · ADR-0002
+**Estado:** diseño aprobado para construcción (ADR-0006, gate V1 2026-11-05); activación en
+producción condicionada a firmas C1–C3/C5 · **Fase:** V1 · **Relaciona:** BLU-104/105 · ADR-0002/0006
 
-> Diseño, no implementación. El correo es el único dato de identidad obligatorio; todo lo demás
-> sigue siendo opt-in (constitución II: minimización).
+> Construcción habilitada sin crear recursos cloud; activación solo por `SUPABASE_*` configuradas
+> por el dueño del producto. El correo es el único dato de identidad obligatorio; todo lo demás
+> sigue siendo opt-in (constitución II: minimización). Ver EIPD-V1 (borrador) antes de producción.
 
 ## Flujo
 
