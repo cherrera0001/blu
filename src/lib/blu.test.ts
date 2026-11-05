@@ -102,13 +102,13 @@ describe("adaptations and bounded inputs", () => {
 
 describe("bounded conversation", () => {
   it("redirects health questions instead of offering clinical advice", async () => {
-    expect(await respondToMessage("¿Qué dosis debería tomar?")).toContain(
+    expect((await respondToMessage("¿Qué dosis debería tomar?")).text).toContain(
       "No puedo evaluar síntomas ni orientar tratamientos",
     );
   });
 
   it("responds to time barriers without blame", async () => {
-    const reply = await respondToMessage("Estoy ocupada y no tengo tiempo");
+    const reply = (await respondToMessage("Estoy ocupada y no tengo tiempo")).text;
     expect(reply).toContain("No asumiré qué necesitas");
     expect(reply).not.toContain("fallo");
   });
