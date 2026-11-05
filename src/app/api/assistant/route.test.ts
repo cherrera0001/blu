@@ -76,6 +76,9 @@ describe("POST /api/assistant — BFF local (specs/016, proveedor local)", () =>
   it("429 al superar el cap diario (200) aunque la ventana por minuto se renueve", async () => {
     vi.useFakeTimers();
     try {
+      // Ancla horaria: el bucle avanza ~3,4 h; si parte cerca de medianoche UTC,
+      // dayKey cambia a mitad y el contador diario se reinicia (falso 200).
+      vi.setSystemTime(new Date("2026-06-15T12:00:00Z"));
       let last = 0;
       for (let i = 0; i < 205; i += 1) {
         const r = await POST(req({ messages: [{ role: "user", text: `d${i}` }] }, "10.8.8.8"));
