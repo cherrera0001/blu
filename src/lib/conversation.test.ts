@@ -18,6 +18,7 @@ describe("respondToMessage vía BFF con fallback local", () => {
     const result = await respondToMessage("hola");
     expect(result.text).toBe("Respuesta del BFF");
     expect(result.usedFallback).toBe(false);
+    expect(result.providerId).toBe("local-rules");
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/assistant",
       expect.objectContaining({ method: "POST" }),
@@ -30,6 +31,7 @@ describe("respondToMessage vía BFF con fallback local", () => {
     const result = await respondToMessage("Estoy ocupada");
     expect(result.text).toMatch(/El tiempo aprieta|dos minutos/i);
     expect(result.usedFallback).toBe(true);
+    expect(result.providerId).toBe("local-rules");
   });
 
   it("degrada ante respuesta no-OK (p. ej., 429)", async () => {
@@ -38,5 +40,20 @@ describe("respondToMessage vía BFF con fallback local", () => {
     const result = await respondToMessage("dolor de pecho");
     expect(result.text).toMatch(/profesional|emergencia/i); // guardián local intacto
     expect(result.usedFallback).toBe(true);
+    expect(result.providerId).toBe("local-rules");
+  });
+
+  it("expone providerId remote cuando el BFF responde con el proveedor remoto", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        text: "Prueba con un paso pequeño hoy.",
+        meta: { providerId: "remote", safety: { guardianAction: "none", latencyMs: 3 } },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await respondToMessage("¿por dónde parto?");
+    expect(result.usedFallback).toBe(false);
+    expect(result.providerId).toBe("remote");
   });
 });

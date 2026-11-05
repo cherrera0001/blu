@@ -5,6 +5,12 @@
 
 > Documento de diseño listo para ejecutar tras aprobaciones. **Ningún código de esta spec
 > debe implementarse antes del visto bueno documentado** (ADR-0003, constitución II/X).
+>
+> Nota de alcance (2026-11-05): la opción estrecha de Azure TTS de respuestas existentes se
+> implementa en specs/014 como excepción opt-in y desactivada por defecto. El **chat remoto de
+> texto** se desbloqueó e implementó por separado (ADR-0005, enmienda PRD §8) con proveedor
+> intercambiable vía BFF; esta spec conserva su valor para las piezas que siguen gated:
+> reconocimiento de voz (STT) en la nube, voz-a-voz continuo y el pipeline de audio completo.
 
 ## Requisitos separados (no inferir consentimiento)
 

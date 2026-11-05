@@ -36,15 +36,17 @@ async function askServer(message: string): Promise<AssistantApiReply> {
 export interface RespondResult {
   text: string;
   usedFallback: boolean;
+  /** providerId de la respuesta efectiva ("remote" | "local-rules"); alimenta el disclosure honesto del modo. */
+  providerId: string;
 }
 
 export async function respondToMessage(message: string): Promise<RespondResult> {
   try {
     const reply = await askServer(message);
-    return { text: reply.text, usedFallback: false };
+    return { text: reply.text, usedFallback: false, providerId: reply.meta.providerId };
   } catch {
     const fallback = await local.ask([{ role: "user", text: message }]);
-    return { text: fallback.text, usedFallback: true };
+    return { text: fallback.text, usedFallback: true, providerId: "local-rules" };
   }
 }
 

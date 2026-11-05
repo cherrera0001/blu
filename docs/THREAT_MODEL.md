@@ -7,6 +7,7 @@
 - Preferencias y check-ins de bienestar (datos personales potencialmente sensibles).
 - Consentimiento, catálogo de hábitos, historial de adaptaciones y referencias científicas.
 - Frontera navegador ↔ almacenamiento local; futura frontera cliente ↔ API ↔ base de datos ↔ proveedor LLM.
+- Texto elegido para síntesis de voz Azure y audio temporal generado.
 
 ## Amenazas
 
@@ -34,6 +35,43 @@ Mitigaciones requeridas antes de habilitar IA: recuperación solo de evidencia a
 - No desplegar públicamente con almacenamiento local como si fuera seguro para salud.
 - Definir proceso de incidentes, contactos, backups/borrado y evaluación de impacto antes de nube.
 - Revisión legal independiente para privacidad, consumo, investigación y regulación sanitaria aplicable.
+
+## Riesgos específicos del chat remoto (2026-11-05, ADR-0005)
+
+- **Divulgación a proveedor LLM:** los mensajes del turno salen del servidor de Blu hacia el
+  proveedor configurado (Groq/OpenAI/Azure). Mitigaciones implementadas: guardián de entrada
+  (crisis/clínica/inyección no invocan al proveedor), system prompt que prohíbe pedir datos
+  personales, texto máx. 2000 caracteres, máx. 10 mensajes por request, **sin persistencia ni
+  logs de contenido**, disclosure dinámico que pide no compartir datos personales o de salud.
+  Condición para piloto real: verificar términos vigentes del proveedor (entrenamiento,
+  retención, revisión humana) antes de configurar las variables.
+- **Clave de API y abuso de cuota:** `BLU_LLM_API_KEY` solo en servidor (jamás `NEXT_PUBLIC_*`);
+  errores mapeados sin detalles internos ni nombre del modelo (test de contrato); rate limit
+  20/min + 200/día por IP; `BLU_API_TOKEN` opcional para piloto cerrado; timeout 10 s sin
+  reintentos; degradación a reglas locales ante fallo.
+- **Salida insegura del modelo:** `validateOutput` reemplaza afirmaciones prohibidas antes de
+  responder (test con proveedor fake); límites no clínicos y de crisis heredados de specs/002.
+- **Dependencia de un tercero (cuota/cambios de condiciones):** el proveedor es sustituible por
+  configuración sin cambio de código; ninguna cuota gratuita se promete como producción.
+
+## Riesgos específicos de Azure TTS opcional
+
+- **Divulgación:** una respuesta elegida se envía a Microsoft después de activar la voz y pulsar
+  «Escuchar». Mitigar con aviso previo, activación por sesión, no persistencia/logs de Blu,
+  texto máximo de 500 caracteres y voz local disponible. El aviso no sustituye la revisión de
+  privacidad/proveedor de PRD §8.
+- **Uso/costo no autorizado:** un endpoint público puede recibir abuso o agotar la cuota. La
+  ruta requiere banderas server-side, clave privada, recurso Azure verificado manualmente como
+  F0, límite de longitud, rate limit y timeout. La bandera `AZURE_SPEECH_F0_CONFIRMED` es una
+  confirmación operativa, no una verificación técnica del nivel de facturación; revisar cuota
+  y consumo en Azure. El rate limit en memoria es una defensa adicional y best-effort (puede
+  reiniciarse entre instancias); no sustituye la cuota F0 del proveedor.
+- **Falsificación/interferencia:** el usuario controla el texto recibido; escapar XML antes de
+  construir SSML, aceptar solo JSON de tamaño limitado y no permitir que el cliente elija URL,
+  región, locale, voz ni cabeceras del proveedor. Región, locale y voz se leen de configuración
+  server-side con validación de formato y compatibilidad locale/voz.
+- **Disponibilidad:** cuotas, red o voz pueden fallar. No degradar en silencio; mantener texto
+  completo, mostrar error y permitir volver explícitamente a voz local.
 
 ## Anexo V1 — fronteras de confianza de la arquitectura con cuentas (diseño, gated)
 

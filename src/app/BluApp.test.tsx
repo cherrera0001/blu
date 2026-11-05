@@ -5,6 +5,7 @@ import BluApp from "./BluApp";
 import { clearBluState } from "@/lib/storage";
 import { invalidateReviews } from "@/lib/review";
 import { invalidateGoals } from "@/lib/onboarding/goals-storage";
+import { BLU_GREETING } from "@/lib/conversation";
 
 // El optimizer de next/image no corre en jsdom: se renderiza un <img> plano.
 vi.mock("next/image", () => ({
@@ -207,6 +208,84 @@ describe("Blu user flows", () => {
       vi.unstubAllGlobals();
     }
   });
+
+  it("uses Azure voice only after explicit activation and a separate listen click", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(Response.json({ azureAvailable: true }))
+      .mockResolvedValueOnce({
+        ok: true,
+        blob: async () => new Blob(["synthetic audio"]),
+      });
+    const audio = {
+      play: vi.fn().mockResolvedValue(undefined),
+      pause: vi.fn(),
+      removeAttribute: vi.fn(),
+      load: vi.fn(),
+      onended: null as (() => void) | null,
+      onerror: null as (() => void) | null,
+    };
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("Audio", class {
+      play = audio.play;
+      pause = audio.pause;
+      removeAttribute = audio.removeAttribute;
+      load = audio.load;
+      onended = audio.onended;
+      onerror = audio.onerror;
+      constructor(readonly src: string) {}
+    });
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn(() => "blob:azure-audio"),
+      revokeObjectURL: vi.fn(),
+    });
+
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(screen.getByText(/se enviará a Microsoft solo el texto de Blu/)).toBeTruthy();
+
+      await user.click(screen.getByRole("button", { name: "Activar voz natural" }));
+      expect(await screen.findByText("Voz natural activada para esta sesión.")).toBeTruthy();
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/voice",
+        expect.objectContaining({ cache: "no-store" }),
+      );
+
+      await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+      expect(await screen.findByRole("button", { name: "Detener lectura" })).toBeTruthy();
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenNthCalledWith(
+        2,
+        "/api/voice",
+        expect.objectContaining({ body: JSON.stringify({ text: BLU_GREETING }) }),
+      );
+      expect(audio.play).toHaveBeenCalledOnce();
+      await user.click(screen.getByRole("button", { name: "Usar solo voz local" }));
+      expect(audio.pause).toHaveBeenCalledOnce();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("keeps local voice mode when Azure is not configured", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ azureAvailable: false }));
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      await user.click(screen.getByRole("button", { name: "Activar voz natural" }));
+      expect(await screen.findByText(/aún no está configurada/)).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Activar voz natural" })).toBeTruthy();
+      expect(fetchMock).toHaveBeenCalledOnce();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("persists separated purposes when accepting operativo and investigacion", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -611,3 +690,66 @@ async function completeOnboarding(user: ReturnType<typeof userEvent.setup>): Pro
   await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
   await screen.findByRole("region", { name: "Hábitos que elegiste" });
 }
+
+
+describe("chat: disclosure honesto del modo de respuesta", () => {
+  it("muestra el disclosure remoto cuando el BFF responde con IA (providerId remote)", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        text: "Prueba con un paso de dos minutos.",
+        meta: { providerId: "remote", safety: { guardianAction: "none", latencyMs: 5 } },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      expect(screen.getByText(/reglas sencillas, no con IA generativa/i)).toBeTruthy();
+
+      await user.type(
+        screen.getByRole("textbox", { name: "Escribe una reflexión" }),
+        "Me cuesta moverme",
+      );
+      await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+
+      expect(await screen.findByText(/respondo con IA/i)).toBeTruthy();
+      expect(screen.getByText(/evita compartir datos personales o de salud/i)).toBeTruthy();
+      expect(screen.queryByText(/reglas sencillas, no con IA generativa/i)).toBeNull();
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/assistant",
+        expect.objectContaining({ method: "POST" }),
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("mantiene el disclosure local cuando el BFF responde en modo reglas", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        text: "El tiempo aprieta, lo entiendo.",
+        meta: { providerId: "local-rules", safety: { guardianAction: "none", latencyMs: 2 } },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const user = userEvent.setup();
+      render(<BluApp />);
+      await completeOnboarding(user);
+      await user.type(
+        screen.getByRole("textbox", { name: "Escribe una reflexión" }),
+        "Estoy ocupada",
+      );
+      await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+
+      expect(await screen.findByText(/El tiempo aprieta/)).toBeTruthy();
+      expect(screen.getByText(/reglas sencillas, no con IA generativa/i)).toBeTruthy();
+      expect(screen.queryByText(/respondo con IA \(modo remoto\)/i)).toBeNull();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});
