@@ -115,3 +115,10 @@ un LLM real en V1 (la suite validará también al proveedor remoto detrás del m
 - El proveedor actual es local y determinista; el contrato queda listo para BLU-1001 (remoto) sin cambios de UI.
 - No hay memoria persistente: la sesión vive en la página (igual que el MVP).
 - Los textos seguros se mantienen en español de Chile, tono cálido y breve.
+
+## Persona y presencia (actualización 2026-11-04)
+
+Blu se presenta en primera persona, con avatar único y voz breve y cálida (ver ciclo 5 en
+`docs/ux-process.md`). El modo real se comunica sin ambigüedad: reglas locales en el
+navegador, sin IA generativa, sin persistencia de conversación. Toda afirmación de capacidad
+que no exista debe mantenerse como límite explícito (constitución I/VII).

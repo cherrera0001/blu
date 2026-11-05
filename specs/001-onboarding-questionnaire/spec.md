@@ -117,3 +117,10 @@ con >30% de omisiones en un principio, marca confianza reducida; con 100% omitid
 - El banco es contenido estático versionado en el repo (sin backend de contenido).
 - La UI del cuestionario es una página nueva `/cuestionario` accesible desde el onboarding; no reemplaza el flujo manual existente.
 - La ramificación implementada es la de `skipIf` por respuesta (BLU-203 en su alcance mínimo); ramificaciones más ricas se especificarán aparte si el piloto lo requiere.
+
+## Línea base del autodiagnóstico (actualización 2026-11-04)
+
+La US3 del resultado incluye una línea base global: promedio entero de los índices por
+dimensión con respuestas; omisiones sin penalización; mínimo 3 dimensiones; fórmula y límites
+visibles; revisión con recálculo. Ver `docs/onboarding/QUESTIONNAIRE.md` §Línea base y
+`src/lib/onboarding/baseline.ts`.

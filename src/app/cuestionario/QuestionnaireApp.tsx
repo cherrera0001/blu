@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { loadBank } from "@/lib/onboarding/bank-loader";
 import type { Question } from "@/lib/onboarding/bank";
@@ -14,6 +15,7 @@ import {
 } from "@/lib/onboarding/engine";
 import { BAND_LABELS, scoreAssessment } from "@/lib/onboarding/scoring";
 import { suggestGoals, type Suggestion } from "@/lib/onboarding/suggestions";
+import { computeBaseline, BASELINE_MIN_PRINCIPLES } from "@/lib/onboarding/baseline";
 import { getBluSnapshot } from "@/lib/storage";
 import {
   acceptSuggestion,
@@ -97,6 +99,7 @@ function QuestionnaireSession() {
     return saved.assessment ?? createAssessment(bank);
   });
   const [index, setIndex] = useState(() => firstUnansweredIndex(bank, assessment));
+  const [reviewing, setReviewing] = useState(false);
   const [noticeSnapshot] = useState(() => loadNotice());
   const [noticeAcceptance, setNoticeAcceptance] = useState<NoticeAcceptance | null>(
     noticeSnapshot.accepted,
@@ -117,6 +120,7 @@ function QuestionnaireSession() {
     () => (complete ? scoreAssessment(bank, assessment) : null),
     [complete, bank, assessment],
   );
+  const baseline = useMemo(() => (profile ? computeBaseline(profile) : null), [profile]);
   const suggestions = useMemo(() => {
     if (!profile) return [];
     // R3: si el hábito ya está en su versión mínima en el plan, el motor lo declara.
@@ -190,19 +194,17 @@ function QuestionnaireSession() {
       <main className="onboarding">
         <section className="onboarding-card" aria-labelledby="notice-heading">
           <span className="step-label">ANTES DE EMPEZAR</span>
-          <h1 id="notice-heading">Antes del autodiagnóstico</h1>
+          <h1 id="notice-heading">Antes de empezar, un aviso</h1>
+          <div className="blu-intro">
+            <Image alt="" className="blu-presence sm" height={28} src="/blu-avatar.jpg" width={28} />
+            <p className="blu-intro-line">
+              «Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»
+            </p>
+          </div>
           <p>
-            Las respuestas del cuestionario se guardan solo en el almacenamiento local de este
-            navegador.
-          </p>
-          <p>
-            Ese almacenamiento <strong>no está cifrado</strong>: cualquier persona con acceso a
-            este perfil del navegador podría leerlas. No escribas información médica ni datos que
-            te identifiquen.
-          </p>
-          <p>
-            Puedes borrarlas en cualquier momento con «Borrar datos del cuestionario» en esta
-            pantalla o con «Borrar mis datos» en la aplicación.
+            Este almacenamiento <strong>no está cifrado</strong>: evita datos médicos o que te
+            identifiquen. Puedes borrar todo con «Borrar datos del cuestionario» o «Borrar mis
+            datos».
           </p>
           {noticeOutdated && (
             <p className="inline-notice" role="status">
@@ -286,6 +288,50 @@ function QuestionnaireSession() {
               {notice}
             </p>
           )}
+          {baseline && (
+            <section className="review-card" aria-labelledby="baseline-heading">
+              <span className="eyebrow">TU LÍNEA BASE</span>
+              <h2 id="baseline-heading">Punto de partida</h2>
+              {baseline.value === null ? (
+                <p className="muted" role="status">
+                  Aún no hay base suficiente: respondiste {baseline.coverage} de{" "}
+                  {baseline.totalPrinciples} dimensiones y se necesitan al menos{" "}
+                  {BASELINE_MIN_PRINCIPLES}. Revisa tus respuestas y vuelve: se recalcula al
+                  instante.
+                </p>
+              ) : (
+                <p className="baseline-value" role="status">
+                  <strong>{baseline.value}</strong> de 100 · basado en {baseline.coverage} de{" "}
+                  {baseline.totalPrinciples} dimensiones ({baseline.answeredQuestions} de {baseline.totalQuestions} respuestas puntuables)
+                </p>
+              )}
+              <p className="muted">{baseline.disclaimer}</p>
+              <details>
+                <summary className="text-button">¿Cómo se calcula?</summary>
+                <p className="tiny-note">{baseline.formula}</p>
+              </details>
+              <div className="adapt-row">
+                <button
+                  className="text-button"
+                  onClick={() => {
+                    setReviewing(true);
+                    setIndex(0);
+                  }}
+                  type="button"
+                >
+                  Revisar mis respuestas
+                </button>
+                <span className="tiny-note">
+                  Corregir recalcula tu línea base al momento.
+                </span>
+              </div>
+              <p className="tiny-note">
+                Cuando repitas la autoevaluación, la nueva línea base reemplaza a esta: por ahora
+                no guardamos historial.
+              </p>
+            </section>
+          )}
+
           <ul className="habit-grid compact" role="list">
             {profile.results.map((r) => (
               <li key={r.principleId} className="habit-option">
@@ -381,6 +427,18 @@ function QuestionnaireSession() {
           <p className="inline-notice" role="status">
             {notice}
           </p>
+        )}
+        {reviewing && (
+          <button
+            className="text-button"
+            onClick={() => {
+              setReviewing(false);
+              setIndex(effective.length);
+            }}
+            type="button"
+          >
+            Volver a mi resultado
+          </button>
         )}
         {current && (
           <QuestionStep

@@ -28,7 +28,7 @@ describe("respondToMessage vía BFF con fallback local", () => {
     const fetchMock = vi.fn().mockRejectedValue(new Error("network"));
     vi.stubGlobal("fetch", fetchMock);
     const result = await respondToMessage("Estoy ocupada");
-    expect(result.text).toMatch(/No asumiré qué necesitas|tiempo influya/i);
+    expect(result.text).toMatch(/El tiempo aprieta|dos minutos/i);
     expect(result.usedFallback).toBe(true);
   });
 

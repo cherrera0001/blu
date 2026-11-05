@@ -22,7 +22,7 @@ export class LocalRuleProvider implements AssistantProvider {
 
     let reply: string;
     if (text.length === 0) {
-      reply = "Cuéntame en una frase cómo va tu día; podemos partir por algo pequeño.";
+      reply = "Cuéntame en una frase cómo va tu día y partimos por algo pequeño.";
     } else if (CRISIS_RE.test(text)) {
       guardianLog.logEvent("crisis", "safe_response");
       reply = SAFE_CRISIS_RESPONSE;
@@ -30,13 +30,13 @@ export class LocalRuleProvider implements AssistantProvider {
       reply = SAFE_CLINICAL_RESPONSE;
     } else if (/\b(ocupad\w*|trabaj\w*|tiempo|agenda|apuro)/i.test(text)) {
       reply =
-        "Tiene sentido que el tiempo influya. No asumiré qué necesitas: ¿te serviría elegir una versión de dos minutos, cambiar el momento o dejarlo para otro día?";
+        "El tiempo aprieta, lo entiendo. Sin asumir nada: ¿una versión de dos minutos, otro momento del día, o lo dejamos para mañana sin culpa?";
     } else if (/\b(cansad\w*|agotad\w*|energia|dificil|no pude|falle\w*)/i.test(text)) {
       reply =
-        "Gracias por contármelo. No es un fallo. ¿Qué pesó más esta vez: el tiempo, la energía, acordarte u otra cosa? Puedes cambiar el plan o no cambiarlo.";
+        "Gracias por contarme. No es un fallo: es información. ¿Qué pesó más esta vez: tiempo, energía o acordarte? Puedes ajustar el plan o dejarlo igual.";
     } else {
       reply =
-        "Gracias por compartirlo. ¿Qué versión pequeña y realista te gustaría probar, si es que quieres probar alguna?";
+        "Gracias por compartirlo. Si quieres, elegimos juntos una versión pequeña y realista. Y si no, también está bien.";
     }
 
     return { text: reply, meta: { providerId: this.id, model: "rules-1.0" } };

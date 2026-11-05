@@ -9,6 +9,10 @@ export interface AssistantApiReply {
   };
 }
 
+export const BLU_GREETING =
+  "Hola, soy Blu. Te acompaño en pasos pequeños: nada de promesas grandes. " +
+  "¿Qué te está costando más hoy: el tiempo, la energía o acordarte?";
+
 const local = new BluAssistant(new LocalRuleProvider());
 
 async function askServer(message: string): Promise<AssistantApiReply> {

@@ -72,3 +72,19 @@ elegir manualmente. El control es siempre de la persona.
 
 Repetible cuando la persona lo decida; cada ejecución es un `Assessment` nuevo con
 `bankVersion`, fecha y respuestas. El historial conserva versiones para no reescribir el pasado.
+
+## Línea base (implementada 2026-11-04)
+
+Al completar la autoevaluación, la pantalla de resultado muestra una **línea base**: promedio
+entero (0–100) de los índices de las dimensiones **con respuestas**. Reglas públicas:
+
+- Las preguntas omitidas no penalizan: solo reducen la cobertura declarada ("basado en X de 7
+  dimensiones, N de 28 respuestas puntuables").
+- Con menos de 3 dimensiones respondidas **no se fabrica un total** (mensaje honesto).
+- Se expone la fórmula en pantalla y el rotulo obligatorio: medida descriptiva y experimental,
+  no diagnóstica, sin comparación poblacional.
+- La persona puede **revisar y corregir** respuestas; la línea base se recalcula al instante.
+- No se persiste el score por separado ni historial: se calcula sobre las respuestas ya
+  guardadas (misma regla de almacenamiento aprobada); repetir la evaluación reemplaza la base.
+- Implementación: `src/lib/onboarding/baseline.ts` (puro, determinista) + tarjeta en el
+  resultado del cuestionario; pruebas en `baseline.test.ts` y `QuestionnaireApp.test.tsx`.

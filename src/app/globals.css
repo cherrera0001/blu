@@ -199,6 +199,9 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .blu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .chat-heading h2 { margin: 4px 0 0; font-size: 16px; letter-spacing: -.3px; }
 .chat-disclosure { margin: 15px 0 12px; padding: 10px; border-radius: 8px; background: #f1f7f1; color: #5d7169; font-size: 10px; line-height: 1.5; }
+.chat-voice-control { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+.chat-voice-control select { min-height: 40px; min-width: 132px; padding: 0 30px 0 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--ink); font-size: 11px; }
+.chat-voice-hint { margin: 0 0 10px; color: var(--muted); font-size: 10px; line-height: 1.5; }
 .chat-messages { display: flex; flex-direction: column; gap: 9px; min-height: 150px; max-height: 270px; overflow-y: auto; padding: 3px 1px 10px; }
 .chat-bubble { max-width: 91%; margin: 0; padding: 10px 12px; border-radius: 12px; background: #edf5ef; color: var(--ink-soft); font-size: 11px; line-height: 1.55; overflow-wrap: anywhere; }
 .chat-bubble.you { align-self: flex-end; border-bottom-right-radius: 3px; background: #e4f0eb; color: var(--ink); }
@@ -358,3 +361,83 @@ details[open].review-card summary::before {
 .habit-option:focus-visible {
   outline-offset: 1px;
 }
+
+/* ===== Presencia de Blu (rediseño): avatar + tokens semánticos ===== */
+:root {
+  --blu-blue: #4f7dd1;
+  --blu-avatar-start: #6ea8ff;
+  --blu-avatar-end: #167c74;
+  --surface: #ffffff;
+  --surface-warm: var(--paper);
+  --text-soft: var(--ink-soft);
+}
+.blu-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 46% 54% 52% 48% / 48% 46% 54% 52%; /* forma orgánica */
+  background: linear-gradient(140deg, var(--blu-avatar-start), var(--blu-avatar-end));
+  box-shadow: 0 4px 14px -6px rgba(22, 124, 116, 0.5);
+}
+.blu-avatar-sm { width: 28px; height: 28px; }
+.blu-avatar-md { width: 56px; height: 56px; }
+.blu-avatar-lg { width: 96px; height: 96px; }
+.blu-avatar-sm { font-size: 4px; }
+.blu-avatar-md { font-size: 7px; }
+.blu-avatar-lg { font-size: 12px; }
+.blu-avatar-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4em;
+  height: 100%;
+}
+.blu-avatar-eyes { display: flex; gap: 2em; }
+.blu-avatar-eye {
+  width: 1.3em;
+  height: 1.3em;
+  background: #fff;
+  border-radius: 50%;
+}
+.blu-avatar-smile {
+  width: 3.2em;
+  height: 1.6em;
+  border: 0.4em solid #fff;
+  border-top: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-radius: 0 0 999px 999px;
+}
+/* Presencia junto a burbujas del asistente */
+.chat-bubble.blu { display: flex; align-items: flex-start; gap: 0.5rem; }
+.chat-bubble.blu > p { margin-top: 0; }
+/* Jerarquía: notas legibles (contraste AA, UX-04) */
+.tiny-note { color: var(--text-soft); font-size: 11px; }
+/* Fix overflow móvil: ninguna tarjeta supera el viewport */
+.onboarding-card, .error-card, .review-card, .chat-card {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
+/* Presencia de Blu: avatar único (public/blu-avatar.jpg) con forma orgánica */
+.blu-presence { border-radius: 46% 54% 52% 48% / 48% 46% 54% 52%; object-fit: cover; flex: none; }
+.blu-presence.sm { width: 28px; height: 28px; }
+.blu-presence.lg { width: 96px; height: 96px; box-shadow: 0 6px 18px -8px rgba(22, 124, 116, 0.55); }
+.blu-intro { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+.blu-intro-line { font-size: 15px; color: var(--ink-soft); max-width: 16rem; margin: 0; }
+.hero-blu { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.hero-blu-line { font-size: 13px; color: var(--ink-soft); text-align: center; max-width: 10rem; margin: 0; }
+.chat-bubble.blu { display: flex; align-items: flex-start; gap: 0.5rem; }
+.chat-bubble-body p { margin: 0 0 0.25rem; }
+
+/* Fix overflow móvil (evidencia captura 390px): la página nunca supera el viewport */
+html, body { overflow-x: clip; }
+.onboarding-card, .error-card { width: 100%; }
+.blu-intro p, .consent-row span, .chat-bubble-body { min-width: 0; }
+
+/* Línea base: número sobrio, sin decimales ni juicio */
+.baseline-value { font-size: 15px; margin: 0.35rem 0; }
+.baseline-value strong { font-size: 34px; letter-spacing: -1px; color: var(--ink); }
