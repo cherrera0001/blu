@@ -1,15 +1,42 @@
 import { BluAssistant } from "./assistant/assistant";
 import { LocalRuleProvider } from "./assistant/providers/local";
 
-/**
- * Compatibilidad con el código existente (BluApp y pruebas previas).
- * La nueva integración debe preferir BluAssistant directamente.
- */
-const shared = new BluAssistant(new LocalRuleProvider());
+export interface AssistantApiReply {
+  text: string;
+  meta: {
+    providerId: string;
+    safety: { guardianAction: string; latencyMs: number };
+  };
+}
 
+const local = new BluAssistant(new LocalRuleProvider());
+
+async function askServer(message: string): Promise<AssistantApiReply> {
+  const response = await fetch("/api/assistant", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: [{ role: "user", text: message }] }),
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (!response.ok) {
+    throw new Error(`assistant_api_${response.status}`);
+  }
+  return (await response.json()) as AssistantApiReply;
+}
+
+/**
+ * Responde vía BFF /api/assistant (specs/016). Si la ruta falla (red, 429, 5xx),
+ * degrada al proveedor local en el navegador para que el texto siga funcionando.
+ * El adaptador remoto del BFF sigue gated; hoy el BFF usa el mismo cerebro local.
+ */
 export async function respondToMessage(message: string): Promise<string> {
-  const reply = await shared.ask([{ role: "user", text: message }]);
-  return reply.text;
+  try {
+    const reply = await askServer(message);
+    return reply.text;
+  } catch {
+    const fallback = await local.ask([{ role: "user", text: message }]);
+    return fallback.text;
+  }
 }
 
 export { BluAssistant, LocalRuleProvider };
