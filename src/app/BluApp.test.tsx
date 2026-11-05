@@ -141,6 +141,17 @@ describe("Blu user flows", () => {
     ).toHaveLength(0);
   });
 
+  it("shows a one-time local-mode notice when the BFF is unreachable (UX-03)", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("red")));
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "hola");
+    await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
+    expect(await screen.findByText(/Respondí en modo local/i)).toBeTruthy();
+    vi.unstubAllGlobals();
+  });
+
   it("keeps conversation in memory and verifies data deletion", async () => {    const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);

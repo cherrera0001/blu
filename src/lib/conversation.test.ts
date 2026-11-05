@@ -15,8 +15,9 @@ describe("respondToMessage vía BFF con fallback local", () => {
       }),
     });
     vi.stubGlobal("fetch", fetchMock);
-    const text = await respondToMessage("hola");
-    expect(text).toBe("Respuesta del BFF");
+    const result = await respondToMessage("hola");
+    expect(result.text).toBe("Respuesta del BFF");
+    expect(result.usedFallback).toBe(false);
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/assistant",
       expect.objectContaining({ method: "POST" }),
@@ -26,14 +27,16 @@ describe("respondToMessage vía BFF con fallback local", () => {
   it("degrada al proveedor local si el BFF falla (red o error)", async () => {
     const fetchMock = vi.fn().mockRejectedValue(new Error("network"));
     vi.stubGlobal("fetch", fetchMock);
-    const text = await respondToMessage("Estoy ocupada");
-    expect(text).toMatch(/No asumiré qué necesitas|tiempo influya/i);
+    const result = await respondToMessage("Estoy ocupada");
+    expect(result.text).toMatch(/No asumiré qué necesitas|tiempo influya/i);
+    expect(result.usedFallback).toBe(true);
   });
 
   it("degrada ante respuesta no-OK (p. ej., 429)", async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 429 });
     vi.stubGlobal("fetch", fetchMock);
-    const text = await respondToMessage("dolor de pecho");
-    expect(text).toMatch(/profesional|emergencia/i); // guardián local intacto
+    const result = await respondToMessage("dolor de pecho");
+    expect(result.text).toMatch(/profesional|emergencia/i); // guardián local intacto
+    expect(result.usedFallback).toBe(true);
   });
 });

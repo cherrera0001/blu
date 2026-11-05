@@ -29,13 +29,18 @@ async function askServer(message: string): Promise<AssistantApiReply> {
  * degrada al proveedor local en el navegador para que el texto siga funcionando.
  * El adaptador remoto del BFF sigue gated; hoy el BFF usa el mismo cerebro local.
  */
-export async function respondToMessage(message: string): Promise<string> {
+export interface RespondResult {
+  text: string;
+  usedFallback: boolean;
+}
+
+export async function respondToMessage(message: string): Promise<RespondResult> {
   try {
     const reply = await askServer(message);
-    return reply.text;
+    return { text: reply.text, usedFallback: false };
   } catch {
     const fallback = await local.ask([{ role: "user", text: message }]);
-    return fallback.text;
+    return { text: fallback.text, usedFallback: true };
   }
 }
 

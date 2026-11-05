@@ -84,6 +84,7 @@ export default function Home() {
   const goalDecisions = useSyncExternalStore(subscribeGoals, getGoalsSnapshot, getServerGoalsSnapshot);
   const localProfile = useSyncExternalStore(subscribeProfile, getProfileSnapshot, getServerProfileSnapshot);
   const [nicknameDraft, setNicknameDraft] = useState(localProfile?.nickname ?? "");
+  const [localModeNotice, setLocalModeNotice] = useState(false);
   const weeklyPlan = useSyncExternalStore(subscribePlans, getPlanSnapshot, getServerPlanSnapshot);
   const [planNotice, setPlanNotice] = useState("");
   const [historyPeriod, setHistoryPeriod] = useState<7 | 14 | 30>(7);
@@ -344,9 +345,12 @@ export default function Home() {
     event.preventDefault();
     const text = chatInput.trim();
     if (!text) return;
-    const reply = await respondToMessage(text);
+    const result = await respondToMessage(text);
+    if (result.usedFallback) {
+      setLocalModeNotice(true); // una vez por sesión: honestidad sobre el modo local
+    }
     const userMessage: ChatMessage = { role: "you", text };
-    const bluMessage: ChatMessage = { role: "blu", text: reply };
+    const bluMessage: ChatMessage = { role: "blu", text: result.text };
     setChatMessages((messages) =>
       [...messages, userMessage, bluMessage].slice(-40),
     );
@@ -1025,6 +1029,12 @@ export default function Home() {
             <p className="chat-disclosure">
               Modo demostración: respuestas predefinidas, no IA generativa. Tus mensajes no se guardan.
             </p>
+            {localModeNotice && (
+              <p className="tiny-note" role="status">
+                Respondí en modo local: no pude contactar al servidor. El texto sigue igual de
+                privado, en este navegador.
+              </p>
+            )}
             <div aria-live="polite" className="chat-messages" role="log">
               {chatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
