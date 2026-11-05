@@ -43,13 +43,20 @@ describe("Blu user flows", () => {
     await completeOnboarding(user);
 
     expect(screen.getByRole("navigation", { name: "Secciones principales" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Hoy" }).getAttribute("href")).toBe("#habits-heading");
-    expect(screen.getByRole("link", { name: "Tu semana" }).getAttribute("href")).toBe("#week-plan");
-    expect(screen.getByRole("link", { name: "Progreso" }).getAttribute("href")).toBe("#review-heading");
-    expect(screen.getByRole("link", { name: "Conversación" }).getAttribute("href")).toBe("#chat-heading");
-    expect(screen.getByRole("link", { name: "Privacidad" }).getAttribute("href")).toBe("#privacy-controls");
+    const destinations = [
+      ["Hoy", "#habits-heading"],
+      ["Tu semana", "#week-plan"],
+      ["Progreso", "#review-heading"],
+      ["Pausa", "#chat-heading"],
+      ["Privacidad", "#privacy-controls"],
+    ];
+    for (const [label, href] of destinations) {
+      expect(screen.getByRole("link", { name: label }).getAttribute("href")).toBe(href);
+      expect(document.querySelector(href)).not.toBeNull();
+    }
 
-    await user.click(screen.getByRole("link", { name: "Progreso" }));
+    screen.getByRole("link", { name: "Progreso" }).focus();
+    await user.keyboard("{Enter}");
     expect(window.location.hash).toBe("#review-heading");
   });
 

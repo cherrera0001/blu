@@ -41,7 +41,7 @@
 
 ## Log de ciclos
 
-### Ciclo 1 — 2026-11-04 (en curso)
+### Ciclo 1 — 2026-11-04 (validado)
 - Medición inicial: axe 0 violaciones serias (4 pantallas); smoke verde.
 - Contrastación: inspiración 21st (shadcn genérico ~60% match → referencia limitada);
   boceto generado para crítica visual (no integración).
@@ -56,3 +56,15 @@
 
 **Validación del ciclo 1**: 202/202 pruebas (incluye axe y smoke), lint 0, build OK,
 eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
+
+### Ciclo 2 — 2026-11-04 (en curso)
+- Medición: recorrido visual en móvil (390 × 844) encontró un dashboard largo sin navegación
+  entre sus áreas; el consentimiento inicial se veía distinto al resto de las tarjetas.
+- Trazabilidad: la mejora aborda parte de BLU-1501 (issue #67). No se cierra esa historia:
+  queda pendiente completar la auditoría manual de teclado, contraste y objetivos táctiles.
+- Decisión: agregar navegación persistente por anclas (Hoy, Semana, Progreso, Pausa y
+  Privacidad), scroll horizontal contenido en móvil y desplazamiento de destino visible bajo
+  la barra; unificar la presentación del bloque de consentimiento y su enlace secundario.
+- 21st.dev: el fragmento compartido traía la API key redactada. No se configuró ni guardó
+  ninguna clave; se mantiene la decisión de usar referencias visuales sin dependencias externas.
+- Implementación y validación: pendientes de completar en este ciclo.

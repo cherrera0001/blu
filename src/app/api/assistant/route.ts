@@ -14,17 +14,46 @@ interface ChatMessage {
   text: string;
 }
 
-const buckets = new Map<string, { count: number; resetAt: number }>();
+const DAY_MS = 86_400_000;
+const DAILY_MAX = 200;
+const MAX_TRACKED_IPS = 1000;
+
+interface Bucket {
+  count: number;
+  resetAt: number;
+  day: string;
+  dayCount: number;
+}
+
+const buckets = new Map<string, Bucket>();
+
+function dayKey(now: number): string {
+  return new Date(now).toISOString().slice(0, 10);
+}
+
+function sweepIfNeeded(now: number): void {
+  if (buckets.size < MAX_TRACKED_IPS) return;
+  for (const [ip, bucket] of buckets) {
+    if (now > bucket.resetAt + DAY_MS) buckets.delete(ip);
+  }
+}
 
 function rateLimit(ip: string): boolean {
   const now = Date.now();
-  const bucket = buckets.get(ip);
-  if (!bucket || now > bucket.resetAt) {
-    buckets.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return true;
+  sweepIfNeeded(now);
+  const today = dayKey(now);
+  let bucket = buckets.get(ip);
+  if (!bucket || bucket.day !== today) {
+    bucket = { count: 0, resetAt: now + RATE_WINDOW_MS, day: today, dayCount: 0 };
+    buckets.set(ip, bucket);
+  }
+  if (now > bucket.resetAt) {
+    bucket.count = 0;
+    bucket.resetAt = now + RATE_WINDOW_MS;
   }
   bucket.count += 1;
-  return bucket.count <= RATE_MAX;
+  bucket.dayCount += 1;
+  return bucket.count <= RATE_MAX && bucket.dayCount <= DAILY_MAX;
 }
 
 function clientIp(request: Request): string {
