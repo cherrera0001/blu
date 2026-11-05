@@ -35,16 +35,17 @@ Los siete principios Living Blue Zone son un marco inspirador, no una escala cl�
 - Resumen descriptivo de los últimos siete días, sin calificación ni lenguaje de fracaso.
 - Adaptación explícita de un hábito a una versión más pequeña, con motivo elegido y evento registrado localmente.
 - Conversación de demostración con respuestas deterministas y límites visibles; no es un modelo generativo.
+- Lectura en voz alta local y una integración opcional de voz neuronal Azure TTS, desactivada hasta configurar y aprobar su habilitación.
 - Eliminación de todos los datos locales desde la interfaz.
 
-El prototipo utiliza `localStorage`: no requiere identidad, no envía datos a Blu ni a un proveedor de IA, y no cifra el almacenamiento del navegador. No guardar información médica, nombres, teléfonos ni texto identificatorio. El dispositivo o perfil del navegador puede ser compartido; esto debe quedar claro antes de usarlo.
+El prototipo utiliza `localStorage` para preferencias y registros; no requiere identidad ni usa un proveedor de IA generativa. Los mensajes de conversación se envían al BFF de Blu, que aplica reglas deterministas y no los persiste por la aplicación. La voz Azure, si se configura y se activa expresamente, envía a Microsoft únicamente la respuesta elegida para síntesis. Blu no cifra el almacenamiento del navegador. No ingresar información médica, nombres, teléfonos ni texto identificatorio; el dispositivo o perfil del navegador puede ser compartido.
 
 ## 5. Fuera de alcance
 
 - Diagnóstico, tratamiento, triaje clínico o emergencias.
 - Recomendación nutricional individualizada, dieta, peso/calorías, fármacos o suplementos.
 - Promesas de longevidad, predicciones clínicas o puntuación de riesgo.
-- LLM, voz, memoria conversacional persistente, analítica de terceros o entrenamiento con conversaciones.
+- LLM, reconocimiento de voz, memoria conversacional persistente, analítica de terceros o entrenamiento con conversaciones.
 - Cuentas, nube, sincronización entre dispositivos, wearable APIs o comunidad.
 - Afirmar que Blu mejora adherencia o salud antes de probarlo.
 
@@ -57,7 +58,7 @@ El prototipo utiliza `localStorage`: no requiere identidad, no envía datos a Bl
 | P-03 | Check-in | Marcar/desmarcar una acción actualiza el día local; al recargar, el estado se conserva en el mismo navegador. |
 | P-04 | Revisión | El resumen cuenta las acciones registradas en los últimos 7 días y declara el período; no presenta resultados como diagnóstico ni como eficacia. |
 | P-05 | Adaptación | Solo ocurre tras una acción explícita; registra hábito, acción anterior/nueva, motivo predefinido y fecha. |
-| P-06 | Conversación | No realiza llamadas de red; advierte no incluir datos identificatorios y deriva preguntas clínicas a un profesional. |
+| P-06 | Conversación | Usa respuestas deterministas del BFF, no un LLM; no persiste el historial y advierte no incluir datos identificatorios. La síntesis externa requiere activación separada. |
 | P-07 | Borrado | La acción de borrar elimina la clave de Blu y vuelve al onboarding; si falla, muestra un error. |
 | P-08 | Errores de almacenamiento | Datos corruptos o almacenamiento inaccesible producen un mensaje visible y una opción explícita de reinicio; nunca se silencian. |
 | P-09 | Accesibilidad | Navegación con teclado, etiquetas accesibles, foco visible, contraste legible y diseño adaptable a móvil. |
@@ -83,3 +84,7 @@ Un piloto de ocho semanas puede evaluar factibilidad, aceptabilidad, retención 
 ## 8. Condiciones antes de ampliar el producto
 
 No habilitar LLM remoto, perfiles de salud, cuentas, analítica, wearables, comunidad o reclutamiento hasta que se aprueben: arquitectura de privacidad, evaluación de impacto, contratos de tratamiento, retención y borrado, controles de acceso, protocolo de incidentes, seguridad de proveedor, revisión clínica/científica y análisis jurídico aplicable en Chile.
+
+La síntesis neuronal de voz es una excepción acotada solicitada para el MVP: solo transforma en audio una respuesta de Blu elegida expresamente por la persona; no habilita chat generativo ni entrada por micrófono. El texto se envía a Microsoft únicamente después de activar esta opción y pulsar «Escuchar». La integración permanece desactivada por defecto. Antes de habilitarla en un despliegue, confirmar la revisión de privacidad y del proveedor, usar un recurso Speech con nivel **F0 (Free)** y configurar las variables de servidor documentadas en el README. La bandera F0 es una confirmación operativa; no sustituye la verificación del nivel real en Azure. Si el recurso o las variables no están disponibles, Blu conserva el modo local.
+
+**Enmienda 2026-11-05 (aprobación explícita del dueño del producto):** el chat remoto de texto queda habilitado como construcción real, con alcance acotado y registrado en ADR-0005: proveedor intercambiable (API OpenAI-compatible) detrás del BFF; guardianes de entrada/salida invariantes; sin persistencia conversacional; límites de tasa, longitud y tiempo; clave solo en el servidor; degradación a modo local ante fallos; disclosure honesto del modo en la interfaz; `BLU_API_TOKEN` opcional para piloto cerrado. La activación es exclusivamente por configuración del servidor: sin `BLU_LLM_*` configuradas, el comportamiento es el local determinista. Esta enmienda **no** habilita cuentas/sincronización (specs 009–013), reconocimiento de voz en la nube, memoria persistente, analítica ni producción comercial: para escalar a esas capacidades sigue requerido el listado completo de aprobaciones de este §8 (EIPD, contratos, pentest, revisión jurídica y clínica).

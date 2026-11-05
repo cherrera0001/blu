@@ -1,5 +1,7 @@
 import { BluAssistant } from "@/lib/assistant/assistant";
 import { LocalRuleProvider } from "@/lib/assistant/providers/local";
+import { getRemoteLlmConfig, RemoteLlmProvider } from "@/lib/assistant/providers/remote";
+import type { AssistantProvider } from "@/lib/assistant/types";
 
 // Next 16 (Cache Components): los Route Handlers corren a request time por defecto;
 // no se usa `export const dynamic` (incompatible con cacheComponents, docs instaladas).
@@ -82,11 +84,37 @@ const PROVIDER_ERROR_TEXT =
   "Tuve un problema para responder, pero sigo aquí. ¿Quieres intentarlo de nuevo?";
 
 /**
- * BFF /api/assistant (specs/016): validación → rate limit → guardián → proveedor → guardián
- * de salida. Versión actual con proveedor LOCAL (LocalRuleProvider): sin claves, sin red
- * externa, sin persistencia. El adaptador remoto queda gated (ADR-0003/0004, specs/015).
+ * Resuelve el proveedor por request: remoto cuando BLU_LLM_BASE_URL/API_KEY/MODEL
+ * están configuradas (ADR-0005); si no, el proveedor local determinista actual.
+ * El orquestador degrada automáticamente al local si el remoto falla.
+ */
+function resolveProvider(): AssistantProvider {
+  const config = getRemoteLlmConfig();
+  return config ? new RemoteLlmProvider(config) : new LocalRuleProvider();
+}
+
+/**
+ * Capacidades públicas del BFF (sin secretos): permite a la UI reflejar el modo
+ * de respuesta antes de la primera interacción. No-store por ser request time.
+ */
+export async function GET(): Promise<Response> {
+  return Response.json(
+    { remoteConfigured: getRemoteLlmConfig() !== null },
+    { headers: { "Cache-Control": "no-store" } },
+  );
+}
+
+/**
+ * BFF /api/assistant (specs/016): auth opcional → validación → rate limit →
+ * guardián → proveedor → guardián de salida. Proveedor remoto intercambiable
+ * detrás del mismo contrato; sin persistencia de conversaciones.
  */
 export async function POST(request: Request): Promise<Response> {
+  const apiToken = process.env.BLU_API_TOKEN?.trim();
+  if (apiToken && request.headers.get("authorization") !== `Bearer ${apiToken}`) {
+    return Response.json({ error: "unauthorized" }, { status: 401 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -100,7 +128,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "rate_limited" }, { status: 429 });
   }
 
-  const assistant = new BluAssistant(new LocalRuleProvider());
+  const assistant = new BluAssistant(resolveProvider());
   try {
     const reply = await assistant.ask(body.messages);
     return Response.json({

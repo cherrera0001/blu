@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import SpeakButton from "./SpeakButton";
@@ -114,6 +114,192 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     expect(synth.cancel).toHaveBeenCalledTimes(2);
 
     vi.unstubAllGlobals();
+  });
+
+  it("uses a slower, warmer profile by default", async () => {
+    const synth = fakeSynth();
+    vi.stubGlobal("speechSynthesis", synth);
+    vi.stubGlobal("SpeechSynthesisUtterance", class {
+      lang = "";
+      pitch = 1;
+      rate = 1;
+      voice: unknown;
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(readonly text: string) {}
+    });
+    const user = userEvent.setup();
+    render(<SpeakButton text="Hola" />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+
+    const utterance = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
+    expect(utterance.rate).toBe(0.94);
+    expect(utterance.pitch).toBe(1.05);
+    vi.unstubAllGlobals();
+  });
+
+  it("supports a balanced voice profile when the listener prefers it", async () => {
+    const synth = fakeSynth();
+    vi.stubGlobal("speechSynthesis", synth);
+    vi.stubGlobal("SpeechSynthesisUtterance", class {
+      lang = "";
+      pitch = 1;
+      rate = 1;
+      voice: unknown;
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(readonly text: string) {}
+    });
+    const user = userEvent.setup();
+    render(<SpeakButton text="Hola" profile="balanced" />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+
+    const utterance = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
+    expect(utterance.rate).toBe(0.98);
+    expect(utterance.pitch).toBe(1);
+    vi.unstubAllGlobals();
+  });
+
+  it("prefers the browser language when an exact local voice is available", async () => {
+    const synth = fakeSynth();
+    const voices = [
+      { lang: "es-ES", name: "Spanish voice", localService: true },
+      { lang: "es-CL", name: "Chilean voice", localService: true },
+    ];
+    synth.getVoices = () => voices;
+    vi.stubGlobal("speechSynthesis", synth);
+    vi.stubGlobal("SpeechSynthesisUtterance", class {
+      lang = "";
+      pitch = 1;
+      rate = 1;
+      voice: unknown;
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(readonly text: string) {}
+    });
+    const language = vi.spyOn(navigator, "language", "get").mockReturnValue("es-ES");
+    const user = userEvent.setup();
+    render(<SpeakButton text="Hola" />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+
+    const utterance = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
+    expect(utterance.voice).toEqual(voices[0]);
+    language.mockRestore();
+    vi.unstubAllGlobals();
+  });
+
+  it("prefers a Latin American Spanish voice over a Spain voice when locale does not match", async () => {
+    const synth = fakeSynth();
+    const voices = [
+      { lang: "es-ES", name: "Spanish voice", localService: true },
+      { lang: "es-CL", name: "Chilean voice", localService: true },
+    ];
+    synth.getVoices = () => voices;
+    vi.stubGlobal("speechSynthesis", synth);
+    vi.stubGlobal("SpeechSynthesisUtterance", class {
+      lang = "";
+      pitch = 1;
+      rate = 1;
+      voice: unknown;
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(readonly text: string) {}
+    });
+    const language = vi.spyOn(navigator, "language", "get").mockReturnValue("en-US");
+    const user = userEvent.setup();
+    render(<SpeakButton text="Hola" />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+
+    const utterance = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
+    expect(utterance.voice).toEqual(voices[1]);
+    language.mockRestore();
+    vi.unstubAllGlobals();
+  });
+
+  it("sends only the chosen reply to the Azure endpoint after an explicit listen action", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: async () => new Blob(["audio"]),
+    });
+    const audio = {
+      pause: vi.fn(),
+      removeAttribute: vi.fn(),
+      load: vi.fn(),
+      play: vi.fn().mockResolvedValue(undefined),
+      onended: null as (() => void) | null,
+      onerror: null as (() => void) | null,
+    };
+    const AudioStub = vi.fn(class {
+      pause = audio.pause;
+      removeAttribute = audio.removeAttribute;
+      load = audio.load;
+      play = audio.play;
+      onended = audio.onended;
+      onerror = audio.onerror;
+      constructor(readonly src: string) {}
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("Audio", AudioStub);
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn(() => "blob:azure-audio"),
+      revokeObjectURL: vi.fn(),
+    });
+    const user = userEvent.setup();
+    render(<SpeakButton text="Una pausa breve puede bastar." mode="azure" azureAvailable />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    expect(fetchMock).toHaveBeenCalledWith("/api/voice", expect.objectContaining({
+      method: "POST",
+      body: JSON.stringify({ text: "Una pausa breve puede bastar." }),
+    }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Detener lectura" })).toBeTruthy());
+    expect(audio.play).toHaveBeenCalledOnce();
+    vi.unstubAllGlobals();
+  });
+
+  it("surfaces Azure synthesis failures without silently using the local voice", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn(),
+      revokeObjectURL: vi.fn(),
+    });
+    const user = userEvent.setup();
+    render(<SpeakButton text="Hola" mode="azure" azureAvailable />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+
+    expect((await screen.findByRole("status")).textContent).toMatch(/No pude generar la voz natural/);
+    vi.unstubAllGlobals();
+  });
+
+  it("aborts an in-progress Azure request when the listener stops it", async () => {
+    let receivedSignal: AbortSignal | undefined;
+    const fetchMock = vi.fn((_url: string, options: RequestInit) => {
+      receivedSignal = options.signal as AbortSignal;
+      return new Promise(() => {});
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+    render(<SpeakButton text="Hola" mode="azure" azureAvailable />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    await user.click(screen.getByRole("button", { name: "Detener lectura" }));
+
+    expect(receivedSignal?.aborted).toBe(true);
+    vi.unstubAllGlobals();
+  });
+
+  it("does not render a cloud voice button unless the server confirms availability", () => {
+    render(<SpeakButton text="Hola" mode="azure" />);
+
+    expect(screen.queryByRole("button")).toBeNull();
   });
 
   it("mantiene una sola lectura activa entre varias respuestas", async () => {

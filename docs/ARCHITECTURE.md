@@ -1,6 +1,6 @@
 # Blu — Arquitectura C4
 
-**Versión:** 0.1 · **Estado:** objetivo propuesto; el prototipo implementa solo el contenedor web local.
+**Versión:** 0.1 · **Estado:** prototipo con BFF de reglas locales y TTS Azure opcional, desactivado por defecto.
 
 ## Nivel 1 — Contexto
 
@@ -13,7 +13,7 @@ flowchart LR
   evidence --> |"contenido aprobado y versionado"| blu
 ```
 
-En el prototipo no existe servicio de evidencia en línea: el catálogo de hábitos es contenido estático sin afirmación de eficacia aprobada. No hay proveedores externos ni transmisión de datos.
+En el prototipo no existe servicio de evidencia en línea: el catálogo de hábitos es contenido estático sin afirmación de eficacia aprobada. No se usa un proveedor generativo. Azure Speech solo se usa si la persona activa la opción y solicita leer una respuesta; su disponibilidad requiere configuración de servidor y aprobación.
 
 ## Nivel 2 — Contenedores
 
@@ -21,18 +21,24 @@ En el prototipo no existe servicio de evidencia en línea: el catálogo de hábi
 flowchart TB
   user["Persona"]
   subgraph browser["Dispositivo / navegador"]
-    web["Aplicación web Next.js<br/>UI + reglas de demostración"]
+    web["Aplicación Next.js<br/>UI + reglas de demostración"]
     local["Almacenamiento local del navegador<br/>preferencias y check-ins mínimos"]
     web <--> local
   end
+  subgraph server["Servidor de Blu"]
+    bff["BFF Next.js<br/>reglas deterministas + ruta TTS"]
+  end
+  azure["Azure Speech TTS F0<br/>solo voz opt-in"]
   editor["Revisión humana editorial<br/>fuera del runtime"]
   user <--> web
+  web -->|"mensaje del chat"| bff
+  bff -->|"solo texto de respuesta<br/>tras activar y pulsar Escuchar"| azure
   editor -. "publica referencias verificadas<br/>en una fase futura" .-> web
 ```
 
-**Implementado:** aplicación Next.js con estado local; el chat es determinista y no persiste el texto de la conversación. La información del navegador no está cifrada por Blu.
+**Implementado:** aplicación Next.js con estado local y BFF de reglas deterministas; el chat no usa LLM ni persiste historial. La ruta Azure TTS requiere activación expresa, no registra texto/audio y permanece deshabilitada por defecto. La información del navegador no está cifrada por Blu.
 
-**Futuro sujeto a aprobación:** cliente web → API autenticada → servicio de aplicación → base de datos cifrada; servicio de evidencia con catálogo editorial aprobado; proveedor de modelo opcional detrás de una puerta de privacidad y seguridad. No implementar esa topología por defecto ni enviar conversaciones a un LLM.
+**Futuro sujeto a aprobación:** cliente web → API autenticada → servicio de aplicación → base de datos cifrada; servicio de evidencia con catálogo editorial aprobado; proveedor de modelo opcional detrás de una puerta de privacidad y seguridad. No enviar conversaciones a un LLM sin aprobar ese alcance.
 
 ## Nivel 3 — Componentes lógicos
 
@@ -44,8 +50,8 @@ flowchart TB
 
 ## Decisiones arquitectónicas
 
-1. Prototipo local-first para evitar transmisión de datos personales en esta etapa.
-2. No añadir backend ni dependencia de IA hasta precisar necesidad, amenazas, consentimiento y retención.
+1. Preferencias y check-ins son local-first; el chat se procesa en el BFF propio con reglas deterministas.
+2. No añadir proveedor generativo; TTS Azure solo tras habilitación explícita y aviso previo.
 3. Mantener el chat de demostración separado de cualquier afirmación de IA personalizada.
 4. Toda adaptación requiere una acción del usuario; no aprender ni reentrenar automáticamente.
 5. Evaluar Next.js/FastAPI/PostgreSQL solo cuando un requisito real necesite cuentas o sincronización; el texto inicial los propone, pero no los valida como decisión final.
@@ -56,11 +62,14 @@ flowchart TB
 2. Persona marca una acción → estado asociado a fecha local → resumen descriptivo.
 3. Persona solicita simplificar → elige hábito y barrera de una lista → se registra cambio y queda visible.
 4. Persona borra datos → eliminar estado local y volver al onboarding.
+5. Persona activa Azure TTS → aviso de envío a Microsoft → elige una respuesta y pulsa «Escuchar» → BFF devuelve audio temporal sin caché; el texto no se persiste.
 
 ## Requisitos transversales
 
 - Fallar visiblemente ante corrupción o bloqueo del almacenamiento.
-- No registrar texto del chat ni identificadores.
+- No registrar ni persistir texto o audio del chat/TTS.
+- Azure TTS: clave exclusivamente server-side; texto hasta 500 caracteres; timeout y rate limit;
+  activar solo tras revisar privacidad/proveedor y confirmar recurso F0.
 - No cargar fuentes remotas, píxeles de analítica ni SDKs de terceros.
 - Mantener contenido estático claramente rotulado como no validado hasta revisión científica.
 - Antes de nube: aislamiento por usuario, autorización en servidor, cifrado, rotación de claves, límites de retención, exportación/borrado y evaluación de proveedores.

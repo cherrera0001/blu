@@ -19,7 +19,7 @@ import { summarizeDays } from "@/lib/history";
 import { WeekBars } from "./WeekBars";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
-import SpeakButton from "./SpeakButton";
+import SpeakButton, { stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
 import { BLU_GREETING } from "@/lib/conversation";
 import {
   getProfileSnapshot,
@@ -98,6 +98,11 @@ export default function Home() {
   const [editingSelection, setEditingSelection] = useState(false);
   const [draftSelectedHabitIds, setDraftSelectedHabitIds] = useState<HabitId[]>([]);
   const [chatInput, setChatInput] = useState("");
+  const [assistantRemote, setAssistantRemote] = useState(false);
+  const [voiceProfile, setVoiceProfile] = useState<VoiceProfile>("warm");
+  const [azureVoiceEnabled, setAzureVoiceEnabled] = useState(false);
+  const [azureVoiceLoading, setAzureVoiceLoading] = useState(false);
+  const [azureVoiceNotice, setAzureVoiceNotice] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "blu",
@@ -156,6 +161,42 @@ export default function Home() {
     });
     setDraftSelectedHabitIds(state.selectedHabitIds);
     setManagingConsent(true);
+  }
+
+  async function toggleAzureVoice() {
+    if (azureVoiceEnabled) {
+      stopActiveSpeech();
+      setAzureVoiceEnabled(false);
+      setAzureVoiceNotice("Voz local activada. La lectura no envía texto a Microsoft.");
+      return;
+    }
+
+    setAzureVoiceLoading(true);
+    setAzureVoiceNotice("");
+    try {
+      const response = await fetch("/api/voice", { cache: "no-store" });
+      const result: unknown = await response.json();
+      if (
+        !response.ok ||
+        typeof result !== "object" ||
+        result === null ||
+        !("azureAvailable" in result) ||
+        result.azureAvailable !== true
+      ) {
+        setAzureVoiceNotice(
+          "La voz natural aún no está configurada. Puedes seguir usando la voz de tu dispositivo.",
+        );
+        return;
+      }
+      setAzureVoiceEnabled(true);
+      setAzureVoiceNotice("Voz natural activada para esta sesión.");
+    } catch {
+      setAzureVoiceNotice(
+        "No pude comprobar la voz natural. Puedes seguir usando la voz de tu dispositivo.",
+      );
+    } finally {
+      setAzureVoiceLoading(false);
+    }
   }
 
   function exportData() {
@@ -347,6 +388,7 @@ export default function Home() {
     const text = chatInput.trim();
     if (!text) return;
     const result = await respondToMessage(text);
+    setAssistantRemote(result.providerId === "remote");
     if (result.usedFallback) {
       setLocalModeNotice(true); // una vez por sesión: honestidad sobre el modo local
     }
@@ -1037,8 +1079,10 @@ export default function Home() {
                 <h2 id="chat-heading">Una pausa con Blu</h2>
               </div>
             </div>
-            <p className="chat-disclosure">
-              Respondo con reglas locales en tu navegador: no soy IA generativa (todavía). Nada de lo que escribes sale de tu equipo ni se guarda.
+            <p aria-live="polite" className="chat-disclosure">
+              {assistantRemote
+                ? "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud."
+                : "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación."}
             </p>
             {localModeNotice && (
               <p className="tiny-note" role="status">
@@ -1046,6 +1090,43 @@ export default function Home() {
                 privado, en este navegador.
               </p>
             )}
+            <div className="chat-voice-settings">
+              <label className="chat-voice-control" htmlFor="voice-style">
+                <span>Estilo de voz local</span>
+                <select
+                  id="voice-style"
+                  onChange={(event) => {
+                    if (event.target.value === "warm" || event.target.value === "balanced") {
+                      setVoiceProfile(event.target.value);
+                    }
+                  }}
+                  value={voiceProfile}
+                >
+                  <option value="warm">Cálida</option>
+                  <option value="balanced">Equilibrada</option>
+                </select>
+              </label>
+              <p className="chat-voice-hint">
+                La voz local depende de las opciones de tu dispositivo.
+              </p>
+              <p className="chat-voice-cloud-note">
+                Si activas Azure, se enviará a Microsoft solo el texto de Blu que elijas escuchar
+                para crear el audio. No compartas información personal o de salud.
+              </p>
+              <button
+                className="text-button chat-voice-toggle"
+                disabled={azureVoiceLoading}
+                onClick={toggleAzureVoice}
+                type="button"
+              >
+                {azureVoiceLoading
+                  ? "Comprobando…"
+                  : azureVoiceEnabled
+                    ? "Usar solo voz local"
+                    : "Activar voz natural"}
+              </button>
+              {azureVoiceNotice && <p className="chat-voice-status" role="status">{azureVoiceNotice}</p>}
+            </div>
             <div aria-live="polite" className="chat-messages" role="log">
               {chatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
@@ -1054,7 +1135,14 @@ export default function Home() {
                   )}
                   <div className="chat-bubble-body">
                     <p>{message.text}</p>
-                    {message.role === "blu" && <SpeakButton text={message.text} />}
+                    {message.role === "blu" && (
+                      <SpeakButton
+                        azureAvailable={azureVoiceEnabled}
+                        mode={azureVoiceEnabled ? "azure" : "local"}
+                        profile={voiceProfile}
+                        text={message.text}
+                      />
+                    )}
                   </div>
                 </div>
               ))}

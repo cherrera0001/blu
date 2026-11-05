@@ -44,13 +44,21 @@ Como persona usuaria, quiero hacer más pequeño un hábito cuando no encaja en 
 
 ### US-06 — Conversar con límites claros
 
-Como persona usuaria, quiero recibir una respuesta breve sin que se expongan mis mensajes.
+Como persona usuaria, quiero recibir una respuesta breve sin que mi conversación se persista.
 
-- El chat de demostración no realiza solicitudes de red ni persiste los mensajes.
+- El chat usa reglas deterministas del BFF de Blu, no un modelo generativo, y la aplicación no persiste el historial.
 - La interfaz pide no compartir identificadores ni información médica.
 - Solicitudes clínicas reciben una respuesta de límite y derivación a profesional.
 
-### US-07 — Borrar mis datos
+### US-07 — Elegir cómo escuchar a Blu
+
+Como persona usuaria, quiero mantener la voz local o activar una voz neuronal más natural con información clara.
+
+- La voz local es el modo predeterminado; Azure solo se activa después de ver el aviso y confirmar que está disponible.
+- Cada respuesta de Blu requiere un clic explícito para enviarla a Azure TTS; no se envían mensajes de usuario ni se guarda el audio por Blu.
+- Si Azure no está configurado o falla, se conserva el texto y se informa; puedo volver a la voz local.
+
+### US-08 — Borrar mis datos
 
 Como persona usuaria, quiero eliminar mi estado local.
 

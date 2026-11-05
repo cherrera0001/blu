@@ -1,17 +1,27 @@
-# Spec de diseño: Contrato del BFF `/api/assistant` (BLU-1006) — DRAFT, gated
+# Spec de diseño: Contrato del BFF `/api/assistant` (BLU-1006) — IMPLEMENTADO
 
-**Estado:** **Draft — NO implementar** · **Gate:** PRD §8 + presupuesto aprobado (ADR-0003/0004)
-**Stack confirmado:** Route Handler de Next.js (POST, no cacheado — verificado en docs instaladas)
+**Estado:** **Implementado (2026-11-05)** · **Aprobación:** ADR-0005 + enmienda PRD §8 (2026-11-05)
+**Stack confirmado:** Route Handler de Next.js (POST/GET, no cacheado — verificado en docs instaladas)
 
-> Contrato listo para implementar con TDD tras aprobaciones. **Cero código ahora.** Toda prueba
-> usa mocks y datos sintéticos; nunca datos reales ni proveedores reales en CI.
+> Implementado con TDD (`src/app/api/assistant/route.ts` + `route.test.ts`). El plan de pruebas
+> de esta spec se ejecutó con mocks y datos sintéticos (proveedor remoto fake); nunca datos
+> reales ni proveedores reales en CI. Ajuste respecto del diseño original: la autenticación
+> Bearer por sesión (specs/010) queda para la fase de cuentas; el piloto usa `BLU_API_TOKEN`
+> opcional (ver «Autenticación» abajo).
 
 ## Endpoint
 
 ```
 POST /api/assistant
-Autenticación: Bearer session (specs/010) — 401 sin sesión válida
+Autenticación: opcional — Bearer BLU_API_TOKEN solo si la variable está configurada (piloto cerrado);
+sin la variable, la ruta mantiene su comportamiento abierto con rate limit por IP.
+              (fase cuentas: Bearer session, specs/010)
 Content-Type: application/json
+```
+
+```
+GET /api/assistant
+→ 200 { "remoteConfigured": boolean }   (capacidades, sin secretos; Cache-Control: no-store)
 ```
 
 ### Request
@@ -40,10 +50,14 @@ interface AssistantResponse {
 | Código | Cuándo | Mensaje al cliente |
 |---|---|---|
 | 400 | esquema inválido / longitud excedida | «Revisa el mensaje e inténtalo de nuevo» |
-| 401 | sesión inválida/expirada | «Inicia sesión nuevamente» |
+| 401 | token Bearer ausente/inválido (solo si `BLU_API_TOKEN` está configurado) | «Inicia sesión nuevamente» |
 | 429 | cuota de sesión o tasa superada | «Demasiados intentos; espera un momento» |
-| 504 | timeout del proveedor (10 s) | «No pude responder a tiempo; ¿lo intentamos de nuevo?» |
 | 500 | fallo interno | «Tuve un problema; sigo aquí en modo local» (fallback) |
+
+Nota sobre timeout (ajuste 2026-11-05): el timeout del proveedor (10 s) no produce 504; el
+orquestador degrada a reglas locales y responde 200 con `guardianAction: "provider_error"` y
+`providerId: "local-rules"` (mismo contrato de degradación aprobado en specs/002). El 504 se
+reserva para cuando exista manejo de sesiones y se decida no degradar.
 
 ## Límites (obligatorios en el BFF)
 
