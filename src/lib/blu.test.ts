@@ -109,7 +109,7 @@ describe("bounded conversation", () => {
 
   it("responds to time barriers without blame", async () => {
     const reply = (await respondToMessage("Estoy ocupada y no tengo tiempo")).text;
-    expect(reply).toContain("No asumiré qué necesitas");
+    expect(reply).toContain("El tiempo aprieta, lo entiendo");
     expect(reply).not.toContain("fallo");
   });
 });

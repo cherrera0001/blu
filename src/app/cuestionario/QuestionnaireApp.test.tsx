@@ -32,7 +32,7 @@ describe("aviso previo del cuestionario (consentimiento)", () => {
     window.localStorage.clear();
     const user = userEvent.setup();
     render(<QuestionnaireApp />);
-    expect(screen.getByRole("heading", { name: /Antes del autodiagnóstico/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /Antes de empezar, un aviso/i })).toBeTruthy();
     expect(screen.getByText(/no está cifrado/i)).toBeTruthy();
     expect(screen.getByText(/Borrar datos del cuestionario|Borrar mis datos/i)).toBeTruthy();
     const comenzar = screen.getByRole("button", { name: "Comenzar" });
@@ -58,7 +58,7 @@ describe("aviso previo del cuestionario (consentimiento)", () => {
 
   it("con aceptación vigente de la versión actual omite el aviso y va directo al cuestionario", () => {
     render(<QuestionnaireApp />);
-    expect(screen.queryByRole("heading", { name: /Antes del autodiagnóstico/i })).toBeNull();
+    expect(screen.queryByRole("heading", { name: /Antes de empezar, un aviso/i })).toBeNull();
     expect(screen.getByText(/¿Cuántos días a la semana caminas/i)).toBeTruthy();
   });
 
@@ -69,7 +69,7 @@ describe("aviso previo del cuestionario (consentimiento)", () => {
     );
     const user = userEvent.setup();
     render(<QuestionnaireApp />);
-    expect(screen.getByRole("heading", { name: /Antes del autodiagnóstico/i })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /Antes de empezar, un aviso/i })).toBeTruthy();
     expect(screen.getByText(/Actualizamos el aviso del cuestionario/i)).toBeTruthy();
     const comenzar = screen.getByRole("button", { name: "Comenzar" });
     expect(comenzar.hasAttribute("disabled")).toBe(true);
@@ -108,8 +108,8 @@ describe("QuestionnaireApp", () => {
       }
     }
     expect(screen.getByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })).toBeTruthy();
-    expect(screen.getByText(/experimental/i)).toBeTruthy();
-    expect(screen.getByText(/no es un diagnóstico/i)).toBeTruthy();
+    expect(screen.getAllByText(/experimental/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/no es un diagnóstico/i).length).toBeGreaterThanOrEqual(1);
   }, 20000);
 
   it("reanuda donde quedó tras recargar (guardado progresivo)", async () => {
@@ -122,6 +122,59 @@ describe("QuestionnaireApp", () => {
     render(<QuestionnaireApp />);
     expect(screen.getByRole("status").textContent).toMatch(/Pregunta 3 de \d+/);
   });
+
+  it("muestra la línea base explicada (valor, cobertura, fórmula, límites) al completar", async () => {
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    for (let i = 0; i < 40; i += 1) {
+      if (screen.queryByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })) break;
+      const skip = screen.queryByRole("button", { name: /prefiero no responder/i });
+      if (skip && i % 4 === 0) await user.click(skip);
+      else await answerCurrentQuestion(user);
+    }
+    expect(screen.getByRole("heading", { name: /Punto de partida/i })).toBeTruthy();
+    expect(screen.getByText(/de 100 · basado en/i)).toBeTruthy();
+    expect(screen.getAllByText(/no es un diagnóstico/i).length).toBeGreaterThanOrEqual(1);
+    await user.click(screen.getByText(/¿Cómo se calcula\?/i));
+    expect(screen.getByText(/Promedio de las dimensiones respondidas/i)).toBeTruthy();
+    // privacidad: sin claves nuevas ni red
+    const keys = Object.keys(window.localStorage);
+    for (const k of keys) {
+      expect(k.startsWith("blu.") || k.startsWith("blu.onboarding")).toBe(true);
+    }
+  }, 20000);
+
+  it("revisar permite corregir una respuesta y recalcula la línea base", async () => {
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    for (let i = 0; i < 40; i += 1) {
+      if (screen.queryByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })) break;
+      await answerCurrentQuestion(user); // siempre primera opción (valor 0)
+    }
+    const before = screen.getByText(/de 100 · basado en/i).textContent;
+    await user.click(screen.getByRole("button", { name: /Revisar mis respuestas/i }));
+    // cambiar la primera pregunta a la última opción (mayor valor)
+    const radios = screen.getAllByRole("radio");
+    await user.click(radios[radios.length - 1]);
+    await user.click(screen.getByRole("button", { name: /Siguiente|Ver mi resultado/i }));
+    await user.click(screen.getByRole("button", { name: /Volver a mi resultado/i }));
+    const after = screen.getByText(/de 100 · basado en/i).textContent;
+    expect(after).not.toBe(before);
+  }, 20000);
+
+  it("el flujo normal siempre cubre las 7 dimensiones (cada una tiene pregunta requerida)", async () => {
+    // la guarda de base insuficiente queda cubierta a nivel unidad en baseline.test.ts;
+    // aquí verificamos que completar el cuestionario produce cobertura total.
+    const user = userEvent.setup();
+    render(<QuestionnaireApp />);
+    for (let i = 0; i < 40; i += 1) {
+      if (screen.queryByRole("heading", { name: /Tu autodiagnóstico de hábitos/i })) break;
+      const skip = screen.queryByRole("button", { name: /prefiero no responder/i });
+      if (skip && i % 4 === 0) await user.click(skip);
+      else await answerCurrentQuestion(user);
+    }
+    expect(screen.getByText(/basado en 7 de 7 dimensiones/i)).toBeTruthy();
+  }, 20000);
 
   it("sugiere hasta tres objetivos y guarda al aceptar", async () => {
     const user = userEvent.setup();

@@ -20,6 +20,7 @@ import { WeekBars } from "./WeekBars";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import SpeakButton from "./SpeakButton";
+import { BLU_GREETING } from "@/lib/conversation";
 import {
   getProfileSnapshot,
   getServerProfileSnapshot,
@@ -100,7 +101,7 @@ export default function Home() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "blu",
-      text: "Hola, soy Blu en modo demostración. ¿Qué haría que un hábito se sintiera más posible hoy?",
+      text: BLU_GREETING,
     },
   ]);
   const [adaptHabitId, setAdaptHabitId] = useState<HabitId | "">("");
@@ -375,7 +376,7 @@ export default function Home() {
       setChatMessages([
         {
           role: "blu",
-          text: "Hola, soy Blu en modo demostración. ¿Qué haría que un hábito se sintiera más posible hoy?",
+          text: BLU_GREETING,
         },
       ]);
       setNotice("Se borraron todos los datos de Blu en este navegador.");
@@ -414,6 +415,12 @@ export default function Home() {
         </header>
         <section className="welcome-panel">
           <div className="welcome-copy">
+            <div className="blu-intro">
+              <Image alt="Blu, tu guía de bienestar" className="blu-presence lg" height={96} src="/blu-avatar.jpg" width={96} />
+              <p className="blu-intro-line">
+                «Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.»
+              </p>
+            </div>
             <span className="eyebrow">TU BIENESTAR, UN DÍA A LA VEZ</span>
             <h1>Un cambio pequeño también cuenta.</h1>
             <p>
@@ -553,10 +560,10 @@ export default function Home() {
           </div>
         </div>
         <nav className="dashboard-nav" aria-label="Secciones principales">
+          <a href="#chat-heading">Pausa con Blu</a>
           <a href="#habits-heading">Hoy</a>
           <a href="#week-plan">Tu semana</a>
           <a href="#review-heading">Progreso</a>
-          <a href="#chat-heading">Pausa</a>
           <a href="#privacy-controls">Privacidad</a>
         </nav>
       </header>
@@ -577,6 +584,10 @@ export default function Home() {
           <a className="hero-link" href="#habits-heading">
             Ver mis hábitos <span aria-hidden="true">↓</span>
           </a>
+        </div>
+        <div className="hero-blu">
+          <Image alt="Blu, tu guía de bienestar" className="blu-presence lg" height={96} src="/blu-avatar.jpg" width={96} />
+          <p className="hero-blu-line">«Estoy aquí para lo que elijas hoy.»</p>
         </div>
         <div className="hero-progress">
           <span className="progress-caption">TUS PASOS DE HOY</span>
@@ -1027,7 +1038,7 @@ export default function Home() {
               </div>
             </div>
             <p className="chat-disclosure">
-              Modo demostración: respuestas predefinidas, no IA generativa. Tus mensajes no se guardan.
+              Respondo con reglas locales en tu navegador: no soy IA generativa (todavía). Nada de lo que escribes sale de tu equipo ni se guarda.
             </p>
             {localModeNotice && (
               <p className="tiny-note" role="status">
@@ -1038,8 +1049,13 @@ export default function Home() {
             <div aria-live="polite" className="chat-messages" role="log">
               {chatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
-                  <p>{message.text}</p>
-                  {message.role === "blu" && <SpeakButton text={message.text} />}
+                  {message.role === "blu" && (
+                    <Image alt="" className="blu-presence sm" height={28} src="/blu-avatar.jpg" width={28} />
+                  )}
+                  <div className="chat-bubble-body">
+                    <p>{message.text}</p>
+                    {message.role === "blu" && <SpeakButton text={message.text} />}
+                  </div>
                 </div>
               ))}
             </div>

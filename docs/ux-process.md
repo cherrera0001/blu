@@ -101,3 +101,33 @@ eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
 - **Implementado**: `:focus-visible` global (outline + ring), estados :active/hover de botones,
   tokens --radius-*, sombra unificada en tarjetas principales. Paleta teal existente respetada
   (los --blu-* quedan solo como acento de gráficos).
+
+### Ciclo 5 — 2026-11-05 (voz local de Blu)
+- **Medición**: la lectura usaba la primera voz española local disponible y la prosodia
+  predeterminada del dispositivo; no había elección de estilo.
+- **Decisión**: ofrecer los perfiles Cálida y Equilibrada y priorizar el idioma configurado,
+  manteniendo solo voces españolas declaradas locales. El timbre sigue dependiendo del
+  dispositivo; no se promete voz femenina ni calidad uniforme.
+- **Implementación y privacidad**: se mantienen `speechSynthesis` y los datos en el navegador;
+  no se añaden llamadas de red, voces remotas ni persistencia del perfil.
+- **TDD**: pruebas de ambos perfiles y de la prioridad regional; la primera ejecución falló
+  antes de implementar los parámetros de prosodia y pasó tras el cambio.
+- **Validación**: `npm test` (234 pruebas), `npm run lint`, `npm run build` y
+  `npm run eval:security` (3/3) pasan.
+
+### Ciclo 6 — 2026-11-04 (replanteo: Blu como protagonista)
+- **Evidencia real** (capturas headless 390×844 de producción y de la rama): la marca era un
+  favicon de 35 px; onboarding = plantilla genérica sin presencia de la guía; la conversación
+  era un panel lateral; no había voz propia.
+- **Diagnóstico con instrumento**: probe `innerWidth` en la página reveló que el "overflow"
+  aparente era artefacto del viewport mínimo de Chrome headless (500 px de layout vs 390 de
+  imagen) — **no hay overflow real** (scrollWidth == innerWidth). Aun así se aplicaron fixes
+  defensivos (overflow-x: clip, width:100%, min-width:0 en hijos flex).
+- **Decisiones**: avatar único (`public/blu-avatar.jpg`, cara de Blu que creó el equipo) con
+  forma orgánica CSS, presencia en onboarding (intro en primera persona), hero del dashboard,
+  burbujas del asistente y aviso del cuestionario; navegación con «Pausa con Blu» primero;
+  voz de Blu reescrita en primera persona (saludo propio, respuestas más breves y humanas);
+  disclosure honesto del modo: «Respondo con reglas locales en tu navegador: no soy IA
+  generativa (todavía)».
+- **Validación**: 234/234, axe sin regresiones, lint 0, build OK, eval:security 3/3,
+  smoke del BFF OK. Capturas before/after en /tmp/blu-shots.

@@ -54,7 +54,7 @@ describe("auditoría WCAG con axe-core (BLU-1501)", () => {
   it("aviso previo del cuestionario sin violaciones serias", async () => {
     window.localStorage.clear();
     const { container } = render(<QuestionnaireApp />);
-    await screen.findByRole("heading", { name: /Antes del autodiagnóstico/i });
+    await screen.findByRole("heading", { name: /Antes de empezar, un aviso/i });
     await expectNoA11yViolations(container, "aviso previo");
   });
 });

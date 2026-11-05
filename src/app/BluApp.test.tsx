@@ -44,10 +44,10 @@ describe("Blu user flows", () => {
 
     expect(screen.getByRole("navigation", { name: "Secciones principales" })).toBeTruthy();
     const destinations = [
+      ["Pausa con Blu", "#chat-heading"],
       ["Hoy", "#habits-heading"],
       ["Tu semana", "#week-plan"],
       ["Progreso", "#review-heading"],
-      ["Pausa", "#chat-heading"],
       ["Privacidad", "#privacy-controls"],
     ];
     for (const [label, href] of destinations) {
@@ -158,7 +158,7 @@ describe("Blu user flows", () => {
 
     await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "Estoy ocupada");
     await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
-    expect((await screen.findByText(/No asumiré qué necesitas/)).textContent).toBeTruthy();
+    expect((await screen.findByText(/El tiempo aprieta/)).textContent).toBeTruthy();
     expect(window.localStorage.getItem("blu.local.v1")).not.toContain("Estoy ocupada");
 
     for (const key of [
@@ -200,7 +200,7 @@ describe("Blu user flows", () => {
       await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "Estoy ocupada");
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
-      expect(await screen.findByText(/No asumiré qué necesitas/)).toBeTruthy();
+      expect(await screen.findByText(/El tiempo aprieta/)).toBeTruthy();
       expect(screen.getAllByRole("button", { name: "Escuchar respuesta en voz alta" }))
         .toHaveLength(2);
     } finally {

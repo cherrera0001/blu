@@ -39,3 +39,13 @@
 ```bash
 npm ci && npm test && npm run lint && npm run build
 ```
+
+## Adenda — Línea base (2026-11-04)
+
+- `baseline.ts`: promedio entero de índices con respuestas; cobertura declarada; sin total
+  bajo 3 dimensiones; determinista; disclaimer no clínico.
+- UI del resultado: tarjeta "Punto de partida" con valor, cobertura, fórmula en `<details>`,
+  límites, revisión con recálculo y nota de no-historial.
+- Pruebas: 7 unitarias (cálculo, umbral, omisiones, determinismo, fórmula, disclaimer) + 3 de
+  componente (línea base explicada, corrección que recalcula, cobertura total del flujo).
+- Validación: 244/244, lint 0, build OK, eval:security 3/3, audit 0.
