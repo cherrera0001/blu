@@ -32,5 +32,11 @@ jobs:
       - name: Pruebas (vitest)
         run: npm test
 
+      - name: Evaluación de seguridad del asistente (red team)
+        run: npm run eval:security
+
+      - name: Auditoría de dependencias
+        run: npm audit --audit-level=high
+
       - name: Build de producción
         run: npm run build

@@ -246,7 +246,7 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
   .onboarding, .dashboard { padding: 0 17px; }
   .topbar { height: 69px; }
   .dashboard > .app-header .topbar { height: 60px; }
-  .dashboard-nav { margin: 0 -4px; padding-bottom: 7px; }
+  .dashboard-nav { margin: 0 -4px; padding-bottom: 7px; flex-wrap: wrap; row-gap: 2px; overflow-x: visible; }
   .dashboard-nav a { padding: 0 12px; font-size: 11px; }
   #habits-heading, #week-plan, #review-heading, #chat-heading, #privacy-controls { scroll-margin-top: 116px; }
   .topbar-right { gap: 11px; }
@@ -435,7 +435,7 @@ details[open].review-card summary::before {
 .blu-intro { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
 .blu-intro-line { font-size: 15px; color: var(--ink-soft); max-width: 16rem; margin: 0; }
 .hero-blu { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.hero-blu-line { font-size: 13px; color: var(--ink-soft); text-align: center; max-width: 10rem; margin: 0; }
+.hero-blu-line { font-size: 13px; color: #dcebe2; text-align: center; max-width: 10rem; margin: 0; }
 .chat-bubble.blu { display: flex; align-items: flex-start; gap: 0.5rem; }
 .chat-bubble-body p { margin: 0 0 0.25rem; }
 
@@ -447,3 +447,53 @@ html, body { overflow-x: clip; }
 /* Línea base: número sobrio, sin decimales ni juicio */
 .baseline-value { font-size: 15px; margin: 0.35rem 0; }
 .baseline-value strong { font-size: 34px; letter-spacing: -1px; color: var(--ink); }
+
+/* ===== Presencia expresiva de Blu (specs/017, issue UX-07) =====
+   Gestos ≤800 ms, sin bucles en reposo; decorativo (aria-hidden en el marcador).
+   Con prefers-reduced-motion: pose estática equivalente, sin animaciones. */
+.blu-presence { display: inline-flex; flex: none; }
+.blu-presence--sm { width: 38px; height: 38px; }
+.blu-presence--md { width: 56px; height: 56px; }
+.blu-presence--lg { width: 96px; height: 96px; }
+.blu-face-svg { display: block; }
+.blu-body { transform-origin: 50% 92%; transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.blu-eye { fill: #fff; transform-box: fill-box; transform-origin: center; transition: transform 400ms ease; }
+.blu-mouth { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; transform-box: fill-box; transform-origin: center; transition: transform 400ms ease; }
+.blu-brows path { fill: none; stroke: #23406e; stroke-width: 2.6; stroke-linecap: round; opacity: 0; transition: opacity 300ms ease; }
+.blu-dots circle { fill: #fff; opacity: 0; }
+
+.blu-state--welcome .blu-body { animation: blu-wave 600ms ease; }
+@keyframes blu-wave {
+  0% { transform: rotate(0); }
+  35% { transform: rotate(-7deg) translateY(-1.5%); }
+  100% { transform: rotate(0); }
+}
+
+/* responding: indicador de actividad real en curso (ciclo cesa al cambiar de estado) */
+.blu-state--responding .blu-dots circle { animation: blu-dot 1.1s ease-in-out infinite; }
+.blu-state--responding .blu-dots circle:nth-child(2) { animation-delay: 180ms; }
+.blu-state--responding .blu-dots circle:nth-child(3) { animation-delay: 360ms; }
+@keyframes blu-dot {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+.blu-state--responding .blu-mouth { opacity: 0; transition: opacity 150ms ease; }
+
+.blu-state--acknowledge .blu-eye { transform: scaleY(0.15); }
+.blu-state--acknowledge .blu-mouth { transform: scaleX(1.18) translateY(1px); }
+
+.blu-state--pause .blu-eye { transform: scaleY(0.55); }
+.blu-state--pause .blu-body { transform: scale(0.97); }
+
+.blu-state--unavailable .blu-brows path { opacity: 1; }
+.blu-state--unavailable .blu-body { transform: rotate(3deg); }
+.blu-state--unavailable .blu-mouth { transform: scaleX(0.8); }
+
+@media (prefers-reduced-motion: reduce) {
+  .blu-presence, .blu-presence * { animation: none !important; transition: none !important; }
+  .blu-state--responding .blu-dots circle { opacity: 0.85; }
+  .blu-state--responding .blu-mouth { opacity: 0; }
+}
+.blu-presence.blu-reduced, .blu-presence.blu-reduced * { animation: none !important; transition: none !important; }
+.blu-presence.blu-reduced.blu-state--responding .blu-dots circle { opacity: 0.85; }
+.chat-thinking { min-height: 1.2em; margin: 4px 0 8px; color: var(--ink-soft); }

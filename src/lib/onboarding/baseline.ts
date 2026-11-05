@@ -36,7 +36,9 @@ export function computeBaseline(profile: Profile): Baseline {
     coverage === 0 ? null : Math.round(withScore.reduce((n, r) => n + r.score!, 0) / coverage);
 
   const answeredQuestions = profile.results.reduce((n, r) => n + r.answered, 0);
-  const totalQuestions = 28; // preguntas puntuables del banco v1.0.0 (7 dimensiones x 4)
+  // Total derivado del banco vía scoring (regresión 2026-11-05: el valor hardcodeado 28
+  // contradecía el banco real, que tiene 29 preguntas puntuables: rest tiene 5).
+  const totalQuestions = profile.results.reduce((n, r) => n + r.totalScoreable, 0);
 
   return {
     value: sufficient ? value : null,
