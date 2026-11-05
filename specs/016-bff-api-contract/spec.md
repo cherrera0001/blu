@@ -89,3 +89,13 @@ validate(schema) → rateLimit → guardianDeEntrada
 
 Aprobaciones PRD §8 → selección de proveedor por retención verificada → implementar con la
 suite de arriba → piloto cerrado con límites activos.
+
+## Estado de implementación (2026-11-05)
+
+Implementada la **versión local del BFF** (`src/app/api/assistant/route.ts`): validación de
+esquema, rate limit por IP (20/min, ventana fija), guardián de entrada/salida vía
+`BluAssistant` + `LocalRuleProvider`, mapeo de errores del contrato y ausencia total de
+persistencia. **8 pruebas** con datos sintéticos (specs arriba), 220/220 en CI, build, lint y
+eval:security verdes. El **adaptador remoto sigue GATED** (ADR-0003/0004, specs/015): sin clave
+de servidor no existe camino de llamada externa, y no se añaden claves ficticias ni flags que
+lo evadan.

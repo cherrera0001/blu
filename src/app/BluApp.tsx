@@ -519,17 +519,26 @@ export default function Home() {
 
   return (
     <main className="dashboard">
-      <header className="topbar">
-        <a className="brand" href="#" aria-label="Blu, inicio">
-          <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
-          <span>blu</span>
-        </a>
-        <div className="topbar-right">
-          <span className="prototype-tag">PROTOTIPO LOCAL</span>
-          <button className="text-button" onClick={clearData} type="button">
-            Borrar mis datos
-          </button>
+      <header className="app-header">
+        <div className="topbar">
+          <a className="brand" href="#" aria-label="Blu, inicio">
+            <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
+            <span>blu</span>
+          </a>
+          <div className="topbar-right">
+            <span className="prototype-tag">PROTOTIPO LOCAL</span>
+            <button className="text-button" onClick={clearData} type="button">
+              Borrar mis datos
+            </button>
+          </div>
         </div>
+        <nav className="dashboard-nav" aria-label="Secciones principales">
+          <a href="#habits-heading">Hoy</a>
+          <a href="#week-plan">Tu semana</a>
+          <a href="#review-heading">Progreso</a>
+          <a href="#chat-heading">Conversación</a>
+          <a href="#privacy-controls">Privacidad</a>
+        </nav>
       </header>
 
       <section className="dashboard-intro">
@@ -701,7 +710,7 @@ export default function Home() {
             </section>
           )}
 
-          <details className="review-card">
+          <details className="review-card" id="week-plan">
             <summary aria-labelledby="week-plan-heading" className="review-top">
               <div>
                 <span className="eyebrow">TU SEMANA</span>
@@ -1000,7 +1009,7 @@ export default function Home() {
         </aside>
       </div>
 
-      <footer className="dashboard-footer">
+      <footer className="dashboard-footer" id="privacy-controls">
         <span>Blu es un prototipo local de bienestar; no diagnostica ni trata.</span>
         <p className="tiny-note">
           «Exportar mis datos» descarga un JSON con todo lo que Blu guarda en este navegador
