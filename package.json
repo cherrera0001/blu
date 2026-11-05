@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "eval:security": "vitest run src/lib/assistant/redteam.test.ts"
+    "eval:security": "vitest run src/lib/assistant/redteam.test.ts",
+    "smoke:api": "node scripts/smoke-api.mjs"
   },
   "dependencies": {
     "next": "16.4.5",
