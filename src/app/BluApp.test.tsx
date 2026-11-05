@@ -60,6 +60,24 @@ describe("Blu user flows", () => {
     expect(window.location.hash).toBe("#review-heading");
   });
 
+  it("shows daily progress and updates it after a check-in", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+
+    expect(screen.getByRole("heading", { name: "Hoy, elige un paso a tu ritmo." })).toBeTruthy();
+    const progress = screen.getByRole("progressbar", { name: "Acciones de hoy" });
+    expect(progress.getAttribute("aria-valuenow")).toBe("0");
+    expect(progress.getAttribute("aria-valuemax")).toBe("1");
+    expect(screen.getByRole("link", { name: /Ver mis hábitos/ }).getAttribute("href"))
+      .toBe("#habits-heading");
+
+    await user.click(screen.getByRole("button", { name: "Marcar Movimiento natural" }));
+
+    expect(progress.getAttribute("aria-valuenow")).toBe("1");
+    expect(screen.getByText("Hoy hiciste espacio para ti.")).toBeTruthy();
+  });
+
   it("keeps selections in memory until consent and caps onboarding at three habits", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -69,7 +87,9 @@ describe("Blu user flows", () => {
     await user.click(screen.getByRole("button", { name: "Propósito" }));
     await user.click(screen.getByRole("button", { name: "Alimentación consciente" }));
 
-    expect(screen.getByRole("status").textContent).toContain("hasta tres hábitos");
+    expect(
+      screen.getAllByRole("status").some((el) => (el.textContent ?? "").includes("hasta tres hábitos")),
+    ).toBe(true);
     expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
     expect(screen.getByRole("button", { name: "Empezar con lo que elegí" }).hasAttribute("disabled"))
       .toBe(true);
@@ -195,6 +215,18 @@ describe("Blu user flows", () => {
     expect(saved.consent.purposes.operativo.acceptedAt).toBeTruthy();
     expect(saved.consent.purposes.investigacion.acceptedAt).toBeTruthy();
     expect(saved.consent.purposes.mejora).toBeUndefined();
+  });
+
+  it("explains why continue is disabled (habits and/or consent missing)", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    expect(screen.getByText(/Elige al menos un hábito/i)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
+    expect(screen.getByText(/aceptar el aviso/i)).toBeTruthy();
+    await user.click(
+      screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
+    );
+    expect(screen.queryByText(/Elige al menos un hábito|acepta el aviso/i)).toBeNull();
   });
 
   it("blocks saving until the required operativo purpose is accepted", async () => {

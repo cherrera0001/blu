@@ -108,6 +108,15 @@ export default function Home() {
   const today = new Date(clockMinute * 60_000);
   const todayKey = localDateKey(today);
   const weeklySummary = getWeeklySummary(state, today);
+  const todayHabitsCompleted = state.selectedHabitIds.filter((habitId) =>
+    state.checkInsByDate[todayKey]?.includes(habitId),
+  ).length;
+  const todayProgressMessage =
+    todayHabitsCompleted === 0
+      ? "Un paso pequeño también cuenta."
+      : todayHabitsCompleted === state.selectedHabitIds.length
+        ? "Hoy hiciste espacio para ti."
+        : "Ya registraste un paso. Sigue a tu ritmo.";
   const consentReady = hasPurpose(state.consent, "operativo") && !needsReconsent(state.consent);
   const showConsentEditor = !consentReady || managingConsent;
 
@@ -477,6 +486,13 @@ export default function Home() {
                 )}
               </fieldset>
             )}
+            {(draftSelectedHabitIds.length === 0 || (!consentReady && !purposeDraft.operativo)) && (
+              <p className="tiny-note" role="status" aria-live="polite">
+                {draftSelectedHabitIds.length === 0
+                  ? "Elige al menos un hábito para continuar."
+                  : "Falta aceptar el aviso (propósito operativo) para continuar."}
+              </p>
+            )}
             <button
               className="button button-dark full-width"
               disabled={
@@ -541,17 +557,47 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="dashboard-intro">
-        <div>
-          <span className="eyebrow">
-            HOY · {today.toLocaleDateString("es-CL", { dateStyle: "long" })}
+      <section className="dashboard-hero" aria-labelledby="today-heading">
+        <div className="hero-copy">
+          <span className="hero-kicker">
+            <span className="hero-kicker-dot" aria-hidden="true" />
+            Un día a la vez
           </span>
-          <h1>¿Qué pequeño paso te hace bien?</h1>
-          <p>No hay rachas que perder. Registra lo que sí ocurrió, a tu manera.</p>
+          <p className="hero-date">
+            {today.toLocaleDateString("es-CL", { dateStyle: "long" })}
+          </p>
+          <h1 id="today-heading">Hoy, elige un paso <span>a tu ritmo.</span></h1>
+          <p className="hero-description">
+            No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias.
+          </p>
+          <a className="hero-link" href="#habits-heading">
+            Ver mis hábitos <span aria-hidden="true">↓</span>
+          </a>
         </div>
-        <div className="day-orb" aria-hidden="true">
-          <span>◌</span>
-          <small>un día<br />a la vez</small>
+        <div className="hero-progress">
+          <span className="progress-caption">TUS PASOS DE HOY</span>
+          <div className="progress-count">
+            <strong>{todayHabitsCompleted}</strong>
+            <span>
+              / {state.selectedHabitIds.length}{" "}
+              {state.selectedHabitIds.length === 1 ? "hábito" : "hábitos"}
+            </span>
+          </div>
+          <div
+            aria-label="Acciones de hoy"
+            aria-valuemax={state.selectedHabitIds.length}
+            aria-valuemin={0}
+            aria-valuenow={todayHabitsCompleted}
+            className="progress-track"
+            role="progressbar"
+          >
+            <span
+              style={{
+                width: `${(todayHabitsCompleted / state.selectedHabitIds.length) * 100}%`,
+              }}
+            />
+          </div>
+          <p className="progress-message" aria-live="polite">{todayProgressMessage}</p>
         </div>
       </section>
 
