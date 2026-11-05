@@ -1,0 +1,12 @@
+# Configuración de gitleaks para Blu.
+#
+# Las claves de localStorage de Blu ("blu.<modulo>.v<N>") son identificadores
+# públicos por diseño (visibles en el código y en el navegador), no secretos.
+# Se permiten explícitamente para evitar falsos positivos de la regla
+# generic-api-key en constantes del tipo *_STORAGE_KEY. Cualquier otra regla
+# por defecto de gitleaks sigue activa.
+[extend]
+useDefault = true
+
+[allowlist]
+regexes = ['''blu\.[a-z0-9.-]+\.v\d''']
