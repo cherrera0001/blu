@@ -57,7 +57,7 @@
 **Validación del ciclo 1**: 202/202 pruebas (incluye axe y smoke), lint 0, build OK,
 eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
 
-### Ciclo 2 — 2026-11-04 (en curso)
+### Ciclo 2 — 2026-11-04 (implementado; BLU-1501 sigue abierto)
 - Medición: recorrido visual en móvil (390 × 844) encontró un dashboard largo sin navegación
   entre sus áreas; el consentimiento inicial se veía distinto al resto de las tarjetas.
 - Trazabilidad: la mejora aborda parte de BLU-1501 (issue #67). No se cierra esa historia:
@@ -67,4 +67,29 @@ eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
   la barra; unificar la presentación del bloque de consentimiento y su enlace secundario.
 - 21st.dev: el fragmento compartido traía la API key redactada. No se configuró ni guardó
   ninguna clave; se mantiene la decisión de usar referencias visuales sin dependencias externas.
-- Implementación y validación: pendientes de completar en este ciclo.
+- Implementación: navegación por anclas accesible y ajuste de consentimiento incorporados.
+  La auditoría manual completa de BLU-1501 sigue pendiente.
+
+### Ciclo 3 — 2026-11-04 (validado)
+- Hallazgo: pese a la navegación nueva, el inicio todavía se percibía como una grilla genérica
+  de tarjetas; faltaba una acción principal clara y feedback inmediato del día.
+- Decisión: reemplazar el encabezado plano por un hero verde bosque con fecha, mensaje breve,
+  acceso directo a los hábitos y un resumen visual del progreso diario. El progreso solo refleja
+  check-ins locales de los hábitos elegidos; no es una puntuación de salud ni una racha.
+- Accesibilidad y móvil: el resumen usa `progressbar` con nombre y valores anunciables; se
+  ampliaron los controles principales a 44 px y se verificó el layout a 390 × 844 sin overflow.
+- Privacidad: sin dependencias, fuentes externas, nuevos datos ni llamadas de red.
+- TDD: la prueba nueva falla antes del cambio y pasa después; confirma contenido, enlace, rango
+  accesible y actualización al registrar un hábito.
+- Validación: `npm test` (228/228), `npm run lint`, `npm run build` y
+  `npm run eval:security` (3/3) pasan.
+
+### Ciclo 3 — 2026-11-05
+- **Medición**: resultado del cuestionario = mayor densidad vertical del MVP en móvil
+  (7 tarjetas de principios + hasta 3 sugerencias + acciones).
+- **Contraste**: mantener el patrón de tarjetas del boceto 21st (take 1) pero en 2 columnas.
+- **Decisión**: grid compacto (`habit-grid.compact`) — misma información 100 % visible,
+  padding reducido y columnas automáticas; sin contenido oculto (nada de details aquí: las
+  bandas por principio son el valor principal del resultado, BLU-205).
+- **Validación**: 225/225 (los tests existentes afirman contenido, no geometría), axe sin
+  regresiones, lint 0.

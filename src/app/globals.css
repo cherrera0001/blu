@@ -41,12 +41,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .onboarding, .dashboard { max-width: 1180px; margin: 0 auto; padding: 0 44px; }
 .topbar { height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
-.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font: 800 24px/1 "Segoe UI", sans-serif; letter-spacing: -1.5px; text-decoration: none; }
+.brand { min-height: 44px; display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font: 800 24px/1 "Segoe UI", sans-serif; letter-spacing: -1.5px; text-decoration: none; }
 .brand-mark { width: 35px; height: 35px; object-fit: cover; border-radius: 50% 50% 50% 12px; background: var(--teal); }
 .prototype-tag { padding: 7px 10px; border: 1px solid #c8ddd3; border-radius: 99px; background: #edf7f0; color: #426d60; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
 .topbar-right { display: flex; align-items: center; gap: 22px; }
 .text-button { padding: 8px 0; border: 0; background: transparent; color: var(--teal-dark); cursor: pointer; font-size: 13px; font-weight: 700; }
 .text-button:hover { text-decoration: underline; }
+.topbar-right .text-button, .section-heading > .text-button { min-height: 44px; }
 
 .welcome-panel { min-height: 660px; display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 70px; padding: 48px 0 64px; }
 .welcome-copy { max-width: 440px; }
@@ -80,7 +81,7 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .selection-count { margin: 0 0 18px; color: var(--muted); font-size: 11px; }
 .consent-row { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0; color: var(--ink-soft); font-size: 11px; line-height: 1.55; }
 .consent-row input { margin-top: 2px; accent-color: var(--teal); }
-.button { min-height: 43px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0 17px; border: 0; border-radius: 9px; cursor: pointer; font-size: 12px; font-weight: 700; transition: .15s ease; }
+.button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0 17px; border: 0; border-radius: 9px; cursor: pointer; font-size: 12px; font-weight: 700; transition: .15s ease; }
 .button:disabled { cursor: not-allowed; opacity: .46; }
 .button-dark { background: var(--ink); color: white; }
 .button-dark:hover:not(:disabled) { background: var(--teal-dark); }
@@ -92,7 +93,6 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .cancel-edit { display: block; margin: 8px auto 0; }
 .page-footer, .dashboard-footer { display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); color: #82928b; font-size: 11px; }
 
-.dashboard-intro { display: flex; align-items: center; justify-content: space-between; padding: 44px 0 35px; }
 .app-header { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--pale) 94%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .dashboard > .app-header .topbar { height: 66px; border-bottom: 0; }
 .dashboard-nav { display: flex; align-items: center; gap: 6px; overflow-x: auto; overscroll-behavior-inline: contain; padding: 0 0 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
@@ -100,11 +100,64 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .dashboard-nav a { min-height: 44px; display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid transparent; border-radius: 999px; color: var(--ink-soft); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
 .dashboard-nav a:hover { border-color: var(--line); background: var(--paper); color: var(--teal-dark); }
 #habits-heading, #week-plan, #review-heading, #chat-heading, #privacy-controls { scroll-margin-top: 132px; }
-.dashboard-intro h1 { margin: 10px 0 8px; font-size: clamp(34px, 4vw, 47px); }
-.dashboard-intro p { margin: 0; color: var(--ink-soft); font-size: 14px; }
-.day-orb { width: 90px; height: 90px; display: grid; align-content: center; justify-items: center; border: 1px solid #cce2d5; border-radius: 50%; background: #edf7ef; color: var(--teal); }
-.day-orb span { font-size: 27px; line-height: 1; }
-.day-orb small { margin-top: 4px; color: var(--ink-soft); text-align: center; font-size: 8px; line-height: 1.2; }
+.dashboard-hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(250px, .7fr);
+  align-items: center;
+  gap: 42px;
+  overflow: hidden;
+  margin: 28px 0 30px;
+  padding: 38px 42px;
+  border: 1px solid #244c43;
+  border-radius: 26px;
+  background:
+    radial-gradient(ellipse at 82% 8%, rgb(111 151 107 / 30%), transparent 31%),
+    linear-gradient(118deg, #173f39 0%, #20534a 66%, #2e6253 100%);
+  box-shadow: 0 22px 54px rgb(22 57 49 / 16%);
+  color: #fffdf6;
+}
+.dashboard-hero::before {
+  position: absolute;
+  z-index: -1;
+  top: -155px;
+  right: 21%;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgb(245 231 175 / 14%);
+  border-radius: 50%;
+  content: "";
+}
+.dashboard-hero::after {
+  position: absolute;
+  z-index: -1;
+  top: -95px;
+  right: 25%;
+  width: 240px;
+  height: 240px;
+  border: 1px solid rgb(245 231 175 / 12%);
+  border-radius: 50%;
+  content: "";
+}
+.hero-copy { position: relative; z-index: 1; max-width: 610px; }
+.hero-kicker { display: inline-flex; align-items: center; gap: 9px; color: #e7e8ba; font-size: 10px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; }
+.hero-kicker-dot { width: 7px; height: 7px; border-radius: 50%; background: #d7ce88; box-shadow: 0 0 0 4px rgb(215 206 136 / 15%); }
+.hero-date { margin: 17px 0 7px; color: #bbd0c0; font-size: 11px; font-weight: 600; letter-spacing: .3px; text-transform: capitalize; }
+.hero-copy h1 { max-width: 540px; margin: 0; color: #fffdf6; font-size: clamp(37px, 4.2vw, 54px); line-height: 1.04; letter-spacing: -2px; }
+.hero-copy h1 span { color: #e2d99c; }
+.hero-description { max-width: 430px; margin: 14px 0 20px; color: #d0e0d5; font-size: 14px; line-height: 1.65; }
+.hero-link { min-height: 44px; display: inline-flex; align-items: center; gap: 12px; padding: 0 15px; border: 1px solid rgb(255 255 255 / 28%); border-radius: 999px; color: #fffdf6; font-size: 12px; font-weight: 700; text-decoration: none; transition: background .18s ease, border-color .18s ease; }
+.hero-link:hover { border-color: #e2d99c; background: rgb(255 255 255 / 9%); }
+.hero-link span { color: #e2d99c; font-size: 16px; }
+.hero-progress { position: relative; z-index: 1; padding: 23px 24px 20px; border: 1px solid rgb(255 255 255 / 64%); border-radius: 20px; background: #fffdf6; box-shadow: 0 14px 34px rgb(9 37 31 / 18%); color: var(--ink); }
+.progress-caption { color: #72817a; font-size: 9px; font-weight: 800; letter-spacing: 1.25px; }
+.progress-count { display: flex; align-items: baseline; gap: 5px; margin: 12px 0 13px; }
+.progress-count strong { color: #20534a; font-size: 47px; font-weight: 700; line-height: 1; letter-spacing: -2.5px; }
+.progress-count span { color: #71817b; font-size: 12px; }
+.progress-track { height: 8px; overflow: hidden; border-radius: 99px; background: #e7eee6; }
+.progress-track span { height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg, #9fb985, #c2b76f); transition: width .3s ease; }
+.progress-message { min-height: 32px; margin: 11px 0 0; color: #52665d; font-size: 11px; line-height: 1.5; }
 .content-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(290px, .75fr); align-items: start; gap: 25px; padding-bottom: 35px; }
 .main-column, .side-column { min-width: 0; }
 .section-heading { margin: 0 0 14px; }
@@ -116,7 +169,7 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .daily-copy { flex: 1; }
 .category-label { color: var(--teal); font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
 .daily-copy p { margin: 5px 0 0; color: var(--ink); font-size: 13px; line-height: 1.45; }
-.check-button { min-width: 73px; min-height: 34px; padding: 0 11px; border: 1px solid #cbded2; border-radius: 8px; background: white; color: var(--teal-dark); cursor: pointer; font-size: 11px; font-weight: 700; }
+.check-button { min-width: 88px; min-height: 44px; padding: 0 11px; border: 1px solid #cbded2; border-radius: 10px; background: white; color: var(--teal-dark); cursor: pointer; font-size: 11px; font-weight: 700; }
 .completed .check-button { border-color: var(--teal); background: var(--teal); color: white; }
 .review-card { margin-top: 22px; padding: 23px; box-shadow: none; }
 .review-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #f3eadf; color: #9c714e; font-size: 18px; }
@@ -144,7 +197,7 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
 .chat-bubble.blu { align-self: flex-start; border-bottom-left-radius: 3px; }
 .chat-form { display: flex; gap: 7px; padding-top: 11px; border-top: 1px solid var(--line); }
 .chat-form input { width: 100%; min-width: 0; border: 0; background: transparent; color: var(--ink); font-size: 12px; outline: none; }
-.chat-form button { width: 32px; height: 32px; flex: 0 0 32px; border: 0; border-radius: 50%; background: var(--teal); color: white; cursor: pointer; font-size: 18px; }
+.chat-form button { width: 44px; height: 44px; flex: 0 0 44px; border: 0; border-radius: 50%; background: var(--teal); color: white; cursor: pointer; font-size: 18px; }
 .chat-form button:disabled { opacity: .45; cursor: not-allowed; }
 .chat-privacy { margin: 8px 0 0; color: #8b9892; font-size: 9px; }
 .principle-card { margin-top: 15px; padding: 20px; border-radius: 14px; background: #e9f2e8; }
@@ -166,6 +219,7 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
   .welcome-panel { grid-template-columns: 1fr; gap: 32px; padding-top: 45px; }
   .welcome-copy { max-width: 610px; }
   .welcome-copy h1 { max-width: 550px; font-size: 48px; }
+  .dashboard-hero { grid-template-columns: minmax(0, 1fr) minmax(210px, .7fr); gap: 24px; padding: 32px; }
   .content-grid { grid-template-columns: 1fr; }
   .side-column { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 14px; }
   .principle-card { margin-top: 0; }
@@ -187,12 +241,18 @@ h1, h2 { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: -1.1px; }
   .onboarding-card { padding: 22px 18px; }
   .habit-grid { grid-template-columns: 1fr; }
   .page-footer, .dashboard-footer { flex-direction: column; }
-  .dashboard-intro { padding: 33px 0 28px; }
-  .dashboard-intro h1 { max-width: 330px; font-size: 35px; }
-  .dashboard-intro p { max-width: 320px; font-size: 12px; line-height: 1.6; }
-  .day-orb { width: 67px; height: 67px; flex: 0 0 67px; }
-  .day-orb span { font-size: 21px; }
-  .day-orb small { font-size: 7px; }
+  .dashboard-hero { grid-template-columns: 1fr; gap: 22px; margin: 22px 0 25px; padding: 27px 23px 22px; border-radius: 22px; }
+  .dashboard-hero::before { top: -160px; right: -80px; width: 300px; height: 300px; }
+  .dashboard-hero::after { top: -108px; right: -39px; width: 220px; height: 220px; }
+  .hero-date { margin-top: 14px; }
+  .hero-copy h1 { max-width: 340px; font-size: 37px; letter-spacing: -1.5px; }
+  .hero-description { max-width: 330px; margin: 11px 0 16px; font-size: 12px; }
+  .hero-progress { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0 14px; padding: 15px 16px; border-radius: 16px; }
+  .progress-caption { grid-column: 1 / -1; }
+  .progress-count { grid-column: 1; grid-row: 2 / span 2; margin: 8px 0 0; }
+  .progress-count strong { font-size: 38px; }
+  .progress-track { grid-column: 2; grid-row: 2; align-self: end; width: 100%; }
+  .progress-message { grid-column: 2; grid-row: 3; min-height: 0; margin: 5px 0 0; font-size: 10px; }
   .section-heading h2, .review-top h2 { font-size: 18px; }
   .daily-card { gap: 10px; padding: 12px; }
   .daily-copy p { font-size: 12px; }
@@ -251,4 +311,13 @@ details[open].review-card summary::before {
 }
 .chat-bubble p {
   margin: 0 0 0.25rem;
+}
+
+/* Ciclo 3 UX: resultado del cuestionario compacto en móvil (todo visible, menos scroll) */
+.habit-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.5rem;
+}
+.habit-grid.compact .habit-option {
+  padding: 0.6rem;
 }
