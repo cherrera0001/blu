@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import {
   HABITS,
@@ -29,6 +29,7 @@ import { WeekBars } from "./WeekBars";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import { TraceabilityNote } from "./TraceabilityNote";
+import { activeTelemetry, initTelemetry } from "@/lib/observability/telemetry";
 import SpeakButton, { stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
 import { BLU_GREETING } from "@/lib/conversation";
 import {
@@ -396,8 +397,28 @@ export default function Home() {
     });
     if (!state.checkInsByDate[todayKey]?.includes(habitId)) {
       setHeroPresence("acknowledge"); // primer gesto real: la persona marcó un paso (UX-07)
+      activeTelemetry()?.record("checkin_completado"); // sin hábito: lista blanca v1
     }
   }
+
+  // Telemetría mínima sin PII (BLU-1404): solo con consentimiento «mejora»,
+  // eventos de la lista blanca, buffer local sin frontera de red. La sesión
+  // arranca cuando el consentimiento se activa (nunca antes).
+  const telemetryConsent = useRef(false);
+  const telemetryStarted = useRef(false);
+  useEffect(() => {
+    initTelemetry({
+      hasConsent: () => telemetryConsent.current,
+      now: () => new Date().toISOString(),
+    });
+  }, []);
+  useEffect(() => {
+    telemetryConsent.current = hasPurpose(state.consent, "mejora");
+    if (telemetryConsent.current && !telemetryStarted.current) {
+      telemetryStarted.current = true;
+      activeTelemetry()?.record("app_opened");
+    }
+  }, [state.consent]);
 
   // Recordatorio amable local (BLU-1502): sin servidor ni cuenta; solo con Blu abierta.
   useEffect(() => {
@@ -469,6 +490,9 @@ export default function Home() {
     setChatPresence("responding");
     const result = await respondToMessage(text);
     setAssistantRemote(result.providerId === "remote");
+    activeTelemetry()?.record("chat_mensaje_enviado", {
+      modo: result.providerId === "remote" ? "remoto" : "local",
+    });
     setChatPresence(result.usedFallback ? "unavailable" : "acknowledge");
     if (result.usedFallback) {
       setLocalModeReason((current) => current ?? result.fallbackReason); // una vez por sesión (UX-06)

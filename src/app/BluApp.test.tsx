@@ -40,6 +40,22 @@ beforeEach(() => {
 });
 
 describe("Blu user flows", () => {
+  it("activa telemetría local de la lista blanca solo con consentimiento «mejora»", async () => {
+    const { activeTelemetry } = await import("@/lib/observability/telemetry");
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user, { mejora: true });
+    expect(activeTelemetry()?.events.some((e) => e.name === "app_opened")).toBe(true);
+  });
+
+  it("no registra eventos si no hay consentimiento «mejora»", async () => {
+    const { activeTelemetry } = await import("@/lib/observability/telemetry");
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user, { mejora: false });
+    expect(activeTelemetry()?.events).toHaveLength(0);
+  });
+
   it("usa una presencia ilustrada coherente y presenta el prototipo en lenguaje claro", () => {
     render(<BluApp />);
 
@@ -749,13 +765,21 @@ describe("Blu user flows", () => {
   });
 });
 
-async function completeOnboarding(user: ReturnType<typeof userEvent.setup>): Promise<void> {
+async function completeOnboarding(
+  user: ReturnType<typeof userEvent.setup>,
+  opts: { mejora?: boolean } = {},
+): Promise<void> {
   await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
   await user.click(
     screen.getByRole("checkbox", {
       name: /Entiendo que esto es un prototipo/,
     }),
   );
+  if (opts.mejora) {
+    await user.click(
+      screen.getByRole("checkbox", { name: /mejora del producto/ }),
+    );
+  }
   await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
   await screen.findByRole("region", { name: "Hábitos que elegiste" });
 }
