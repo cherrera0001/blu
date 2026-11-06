@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getISOWeekKey, saveReview, loadReviews } from "./review";
+import { getISOWeekKey, getServerReviewSnapshot, saveReview, loadReviews } from "./review";
+
+describe("review server snapshot", () => {
+  it("reuses a stable empty snapshot during server rendering", () => {
+    expect(getServerReviewSnapshot()).toBe(getServerReviewSnapshot());
+  });
+});
 
 describe("getISOWeekKey — semana ISO determinística (SC-003, FR-004)", () => {
   it("lunes y domingo de la misma semana comparten clave", () => {

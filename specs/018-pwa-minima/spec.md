@@ -9,10 +9,11 @@ funciona tras al menos una visita online (limitación honesta, documentada).
 ## Alcance mínimo
 
 1. **Manifest instalable** (`src/app/manifest.ts`, convención Metadata Route de Next 16):
-   nombre/idioma es, `display: standalone`, colores de los tokens de diseño, iconos desde el
-   avatar propio (`/blu-avatar.jpg`, 560×560 → declarado 192/512 + `sizes: any`).
+   nombre/idioma es, `display: standalone`, colores de los tokens de diseño, iconos desde la
+   ilustración vectorial propia (`/blu-avatar.svg`) declarada para 192 y 512.
 2. **Service worker de app shell** (`public/sw.js`, clásico, sin build):
-   - `install`: precachea `/`, `/cuestionario`, avatar, favicon y manifest.
+   - `install`: precachea `/`, `/cuestionario`, avatar y manifest. La identidad del navegador
+     se declara con `src/app/icon.svg`.
    - `activate`: purga cachés de versiones anteriores.
    - `fetch`: solo GET mismo-origen → cache-first; `/api/*`, cross-origin y no-GET → red directa
      (sin interceptar). Navegaciones fallidas sirven el shell cacheado si existe.

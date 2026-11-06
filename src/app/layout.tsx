@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Blu — tu bienestar, un día a la vez",
   description:
-    "Un prototipo local para explorar hábitos de bienestar. No ofrece consejo médico ni sustituye atención profesional.",
+    "Un prototipo para explorar hábitos de bienestar. No ofrece consejo médico ni sustituye atención profesional.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

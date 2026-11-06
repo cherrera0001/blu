@@ -112,6 +112,7 @@ export function saveReview(input: ReviewInput, now: string): { ok: boolean; erro
 // ---- store con patrón useSyncExternalStore (misma convención que storage.ts) ----
 
 let cached: ReviewsSnapshot | undefined;
+const serverSnapshot: ReviewsSnapshot = { reviews: null, error: null };
 const listeners = new Set<() => void>();
 
 export function getReviewSnapshot(): ReviewsSnapshot {
@@ -123,7 +124,7 @@ export function getReviewSnapshot(): ReviewsSnapshot {
 }
 
 export function getServerReviewSnapshot(): ReviewsSnapshot {
-  return { reviews: null, error: null };
+  return serverSnapshot;
 }
 
 export function subscribeReviews(listener: () => void): () => void {

@@ -171,3 +171,23 @@ eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
 - **CI (#65/#44)**: workflow con `npm run eval:security` (red team) y `npm audit --audit-level=high`.
 - **#63**: `.env.example` con todas las variables server-side documentadas.
 - **Validación**: 316/316 tests (33 archivos), lint 0, build OK, eval:security 3/3, audit 0.
+
+### Ciclo 9 — 2026-11-05 (identidad de Blu y consistencia visual)
+- **Hallazgo**: el avatar principal era una gota 3D con audífonos y mochila, incompatible con la
+  interfaz plana en tonos teal/arena; la misma imagen se repetía en el manifest PWA. La cabecera
+  rotulaba «PROTOTIPO LOCAL» y la lista diaria estaba compuesta por tarjetas rectangulares
+  repetidas.
+- **Decisión**: sustituir la imagen de producto por una ilustración vectorial original, nítida y
+  de geometría estable, construida con los colores ya definidos para Blu; conservar los datos
+  gráficos en local y sin dependencias externas. Cambiar la lista diaria a filas separadas y
+  reforzar la jerarquía de controles con los tokens existentes.
+- **Copy y privacidad**: «Versión de prueba» reemplaza la etiqueta técnica redundante, pero se
+  mantienen las explicaciones sobre el prototipo, el almacenamiento en el navegador y los límites.
+  Los avisos de respaldo ahora aclaran que el mensaje se envió al servidor y no afirman que siga
+  siendo privado en el dispositivo.
+- **TDD**: pruebas añadidas para geometría SVG, usos de avatar en app y cuestionario, icono/manifest,
+  precache y copy del fallback.
+- **Validación**: 336/336 tests (37 archivos), lint, build y eval:security 3/3. Revisión visual en
+  390×844 y 1440×900: sin desbordamiento horizontal ni recursos de avatar rotos; el modo de
+  movimiento reducido desactiva la animación. Se corrigieron y verificaron el contraste del
+  recordatorio y su nota sobre el hero oscuro, junto con el anillo de foco de teclado.
