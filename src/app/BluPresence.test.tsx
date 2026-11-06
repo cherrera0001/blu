@@ -27,14 +27,12 @@ describe("BluPresence — presencia expresiva decorativa (UX-07)", () => {
     expect(marker.className).toContain("blu-presence--sm");
   });
 
-  it("usa una ilustración vectorial propia con silueta y rasgos definidos", () => {
+  it("usa el avatar oficial de Blu (imagen holablu.com), no un dibujo propio", () => {
     render(<BluPresence />);
     const illustration = screen.getByTestId("blu-illustration");
-    expect(illustration.getAttribute("viewBox")).toBe("0 0 120 120");
-    expect(illustration.querySelector(".blu-backdrop")).not.toBeNull();
-    expect(illustration.querySelector(".blu-body")).not.toBeNull();
-    expect(illustration.querySelectorAll(".blu-eye")).toHaveLength(2);
-    expect(illustration.querySelector(".blu-mouth")).not.toBeNull();
+    expect(illustration.tagName).toBe("IMG");
+    expect(illustration.getAttribute("src")).toBe("/blu-newspaper.png");
+    expect(illustration.getAttribute("alt")).toBe("");
   });
 
   it.each(BLU_PRESENCE_STATES.map((state) => [state]))("soporta el estado %s", (state) => {
