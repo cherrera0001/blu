@@ -12,6 +12,12 @@ servidor (tabla `evidence_sources`) gated por ADR-0006 · **Fase:** V1
 > Datos: `src/data/evidence/sources.json` inicia vacío (ninguna afirmación citable sin
 > aprobación humana). La importación de `sourceLabel` genera **borradores pendientes de
 > referencia** (las etiquetas no son identificadores persistentes; no se fabrican).
+> **Flujo de revisión (BLU-1302, #57):** `src/lib/evidence/review.ts` implementa
+> `citationFor` (cita visible solo con fuente aprobada, con fecha y revisor),
+> `resolvePublication` (deny-by-default: pendiente/inexistente → «sin evidencia
+> verificada»; retirada → «en revisión», ocultar con aviso) y `withdrawWithCascade`
+> (retiro con cascada explícita sobre las recomendaciones ligadas). 10 tests en
+> `review.test.ts`.
 
 ## Objetivo
 
