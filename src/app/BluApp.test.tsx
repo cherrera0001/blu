@@ -3,10 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import BluApp from "./BluApp";
 import Page from "./page";
-import { clearBluState } from "@/lib/storage";
+import { clearBluState, updateBluState } from "@/lib/storage";
 import { invalidateReviews } from "@/lib/review";
 import { invalidateGoals } from "@/lib/onboarding/goals-storage";
 import { BLU_GREETING } from "@/lib/conversation";
+import { localDateKey } from "@/lib/blu";
 
 // El optimizer de next/image no corre en jsdom: se renderiza un <img> plano.
 vi.mock("next/image", () => ({
@@ -80,13 +81,66 @@ describe("Blu user flows", () => {
     const progress = screen.getByRole("progressbar", { name: "Acciones de hoy" });
     expect(progress.getAttribute("aria-valuenow")).toBe("0");
     expect(progress.getAttribute("aria-valuemax")).toBe("1");
-    expect(screen.getByRole("link", { name: /Ver mis hábitos/ }).getAttribute("href"))
+    expect(screen.getByRole("link", { name: /Ir a mis hábitos/ }).getAttribute("href"))
       .toBe("#habits-heading");
 
     await user.click(screen.getByRole("button", { name: "Marcar Movimiento natural" }));
 
     expect(progress.getAttribute("aria-valuenow")).toBe("1");
     expect(screen.getByText("Hoy hiciste espacio para ti.")).toBeTruthy();
+  });
+
+  it("uses the selected period for its summary metrics", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.click(screen.getByRole("button", { name: "Marcar Movimiento natural" }));
+
+    const olderDate = new Date();
+    olderDate.setDate(olderDate.getDate() - 12);
+    const olderDateKey = localDateKey(olderDate);
+    updateBluState((current) => ({
+      ...current,
+      checkInsByDate: {
+        ...current.checkInsByDate,
+        [olderDateKey]: ["movement"],
+      },
+    }));
+
+    await user.click(screen.getByRole("radio", { name: "30 días" }));
+
+    const metrics = document.querySelectorAll(".review-stats strong");
+    expect(metrics[0].textContent).toBe("2");
+    expect(metrics[1].textContent).toBe("2 / 30");
+  });
+
+  it("does not render empty charts or repeated no-data rows", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+
+    expect(screen.getByText(/Aún no hay pasos registrados en estos 7 días/i)).toBeTruthy();
+    expect(screen.queryByRole("list", { name: /Acciones registradas por día/i })).toBeNull();
+    expect(document.querySelector('[style*="max-height"]')).toBeNull();
+  });
+
+  it("keeps the idea of the day inside Blu's conversation area", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+
+    const idea = document.querySelector(".principle-card");
+    expect(idea).not.toBeNull();
+    expect(idea?.closest(".chat-card")).not.toBeNull();
+  });
+
+  it("renders one visible title for the weekly plan when its details open", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    await user.click(document.querySelector("#week-plan summary") as HTMLElement);
+
+    expect(document.querySelectorAll("#week-plan-heading")).toHaveLength(1);
   });
 
   it("keeps selections in memory until consent and caps onboarding at three habits", async () => {
@@ -411,6 +465,7 @@ describe("Blu user flows", () => {
     render(<BluApp />);
     await completeOnboarding(user);
     expect(screen.getByRole("heading", { name: /Revisión de tu semana/i })).toBeTruthy();
+    await user.click(screen.getByText("Responder cómo me sentí"));
     await user.click(screen.getByRole("radio", { name: /Se me hizo difícil/i }));
     await user.click(screen.getByRole("radio", { name: /Ajustar un hábito/i }));
     await user.click(screen.getByRole("button", { name: "Guardar revisión" }));
@@ -432,12 +487,13 @@ describe("Blu user flows", () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
+    await user.click(screen.getByText("Responder cómo me sentí"));
     await user.click(screen.getByRole("radio", { name: /Se me hizo difícil/i }));
     await user.click(screen.getByRole("radio", { name: /Ajustar un hábito/i }));
     await user.click(screen.getByRole("button", { name: "Guardar revisión" }));
     expect(screen.getByText(/Elegiste ajustar un hábito/i)).toBeTruthy();
-    const link = screen.getByRole("link", { name: /Ir a mis hábitos/i });
-    expect(link.getAttribute("href")).toBe("/");
+    const link = screen.getAllByRole("link", { name: /Ir a mis hábitos/i }).find(l => l.getAttribute("href") === "/");
+    expect(link).toBeTruthy();
     // la UI no modifica hábitos por sí sola: no hay adaptaciones nuevas
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
       adaptations: unknown[];
@@ -457,6 +513,7 @@ describe("Blu user flows", () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
+    await user.click(screen.getByText("Responder cómo me sentí"));
     await user.click(screen.getByRole("button", { name: /Prefiero no responder/i }));
     const saved = JSON.parse(window.localStorage.getItem("blu.review.v1") ?? "null") as Array<{
       weekKey: string;
@@ -523,7 +580,7 @@ describe("Blu user flows", () => {
     await completeOnboarding(user);
     expect(screen.getByRole("heading", { name: /Objetivos que aceptaste/i })).toBeTruthy();
 
-    await user.click(screen.getByRole("button", { name: "Borrar todos los datos" }));
+    await user.click(screen.getByRole("button", { name: /Borrar todos los datos/ }));
     expect(window.localStorage.getItem("blu.goals.v1")).toBeNull();
     expect(screen.queryByRole("heading", { name: /Objetivos que aceptaste/i })).toBeNull();
     expect(screen.queryByText(/Observar el entorno durante un minuto/i)).toBeNull();
@@ -634,14 +691,15 @@ describe("Blu user flows", () => {
     expect(screen.getByText(/quedó como tu versión actual/i)).toBeTruthy();
   });
 
-  it("week bars with accessible labels and a gentle empty state that clears on check-in", async () => {
+  it("shows a clear empty state and adds the chart only after a check-in", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
-    expect(screen.getByRole("list", { name: /Acciones registradas por día/i })).toBeTruthy();
-    expect(screen.getByText(/tu primer paso puede ser pequeñísimo/i)).toBeTruthy();
+    expect(screen.queryByRole("list", { name: /Acciones registradas por día/i })).toBeNull();
+    expect(screen.getByText(/Aún no hay pasos registrados en estos 7 días/i)).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "Marcar Movimiento natural" }));
-    expect(screen.queryByText(/tu primer paso puede ser pequeñísimo/i)).toBeNull();
+    expect(screen.getByRole("list", { name: /Acciones registradas por día/i })).toBeTruthy();
+    expect(screen.queryByText(/Aún no hay pasos registrados/i)).toBeNull();
   });
 
   it("history panel: switch period to 30 days and shows usage-not-efficacy label", async () => {
@@ -658,9 +716,9 @@ describe("Blu user flows", () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
-    await user.click(screen.getAllByText(/Intenciones sugeridas/i)[0]);
+    await user.click(screen.getByText("Tu plan de la semana"));
     await user.click(screen.getByRole("button", { name: /Sugerir mi semana/i }));
-    expect(screen.getAllByRole("heading", { name: /Intenciones sugeridas/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { name: "Tu plan de la semana" })).toBeTruthy();
     const removeButtons = screen.getAllByRole("button", { name: /^Quitar / });
     expect(removeButtons.length).toBeGreaterThan(0);
     await user.click(removeButtons[0]);
@@ -765,6 +823,19 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
   });
 });
 
+
+
+  it("presenta la privacidad como un panel profesional con acciones claras", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+    await completeOnboarding(user);
+    expect(screen.getByRole("heading", { name: /Tus datos, bajo tu control/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Exportar mis datos/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Consentimientos/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Borrar todos los datos/i })).toBeTruthy();
+    expect(screen.getByText(/no diagnostica ni trata/i)).toBeTruthy();
+    expect(screen.queryByText(/descarga un JSON con todo/i)).toBeNull();
+  });
 
 describe("presencia expresiva de Blu (UX-07) — estados ligados a eventos reales", () => {
   it("responding mientras espera la respuesta, con equivalente textual; acknowledge al completar", async () => {
@@ -874,15 +945,15 @@ describe("agrupación del dashboard en móvil (UX-05) — secciones secundarias 
     expect(screen.getByPlaceholderText(/Apodo/i)).toBeTruthy();
   });
 
-  it("la revisión semanal queda colapsada tras guardarla (formulario dentro de details)", async () => {
+  it("la revisión opcional empieza cerrada y vuelve a cerrarse tras guardarla", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
     const details = document.querySelector("details.review-details");
     expect(details).not.toBeNull();
-    // sin revisión previa: abierta para invitar a responder
-    expect(details?.hasAttribute("open")).toBe(true);
+    expect(details?.hasAttribute("open")).toBe(false);
 
+    await user.click(screen.getByText("Responder cómo me sentí"));
     await user.click(screen.getByRole("radio", { name: "Me sentí bien" }));
     await user.click(screen.getByRole("radio", { name: "Mantener como está" }));
     await user.click(screen.getByRole("button", { name: "Guardar revisión" }));
@@ -905,6 +976,7 @@ describe("accesibilidad adicional (BLU-1501)", () => {
     const links = [...document.querySelectorAll("a")];
     expect(links[0].textContent).toMatch(/Saltar al contenido principal/i);
     expect(links[0].getAttribute("href")).toBe("#contenido-principal");
+    expect(links[0].classList.contains("skip-link")).toBe(true);
   });
 });
 

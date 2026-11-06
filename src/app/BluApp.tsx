@@ -711,15 +711,14 @@ export default function Home() {
             No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias.
           </p>
           <a className="hero-link" href="#habits-heading">
-            Ver mis hábitos <span aria-hidden="true">↓</span>
+            Ir a mis hábitos <span aria-hidden="true">↓</span>
           </a>
         </div>
         <div className="hero-blu">
-          <BluPresence size="lg" state={heroPresence} />
-          <p className="hero-blu-line">«Estoy aquí para lo que elijas hoy.»</p>
+          <BluPresence size="md" state={heroPresence} />
         </div>
         <div className="hero-progress">
-          <span className="progress-caption">TUS PASOS DE HOY</span>
+          <span className="progress-caption">TU PASO DE HOY</span>
           <div className="progress-count">
             <strong>{todayHabitsCompleted}</strong>
             <span>
@@ -859,8 +858,9 @@ export default function Home() {
             <details className="space-details">
               <summary>
                 <h2 id="space-heading" className="tiny-note">
-                  Tu espacio (opcional)
+                  Personaliza tu espacio
                 </h2>
+                <span className="optional-label">Opcional</span>
               </summary>
             <p className="tiny-note">
               Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni
@@ -928,15 +928,9 @@ export default function Home() {
             <summary aria-labelledby="week-plan-heading" className="review-top">
               <div>
                 <span className="eyebrow">TU SEMANA</span>
-                <h2 id="week-plan-heading">Intenciones sugeridas ({weekKey})</h2>
+                <h2 id="week-plan-heading">Tu plan de la semana</h2>
               </div>
             </summary>
-            <div className="review-top">
-              <div>
-                <span className="eyebrow">TU SEMANA</span>
-                <h2 id="week-plan-heading">Intenciones sugeridas ({weekKey})</h2>
-              </div>
-            </div>
             <p className="muted">
               Sugerencias, no obligaciones: un día vacío no rompe nada. Máximo 3 por día.
             </p>
@@ -979,26 +973,25 @@ export default function Home() {
             )}
           </details>
 
-          <section className="review-card" aria-labelledby="review-heading">
+          <section className="review-card activity-card" aria-labelledby="review-heading">
             <div className="review-top">
               <div>
-                <span className="eyebrow">MIRADA AMABLE</span>
-                <h2 id="review-heading">Tus últimos siete días</h2>
+                <span className="eyebrow">REGISTRO PERSONAL</span>
+                <h2 id="review-heading">Tu actividad</h2>
               </div>
-              <span className="review-icon" aria-hidden="true">↗</span>
             </div>
             <div className="review-stats">
               <div>
-                <strong>{weeklySummary.actionsCompleted}</strong>
+                <strong>{historySummary.totalActions}</strong>
                 <span>acciones registradas</span>
               </div>
               <div>
-                <strong>{weeklySummary.activeDays}<small> / 7</small></strong>
+                <strong>{historySummary.activeDays}<small> / {historySummary.periodDays}</small></strong>
                 <span>días con algún registro</span>
               </div>
             </div>
-            <fieldset>
-              <legend className="tiny-note">Período del resumen</legend>
+            <fieldset className="period-picker">
+              <legend>Ver período</legend>
               {([7, 14, 30] as const).map((days) => (
                 <label key={days} className="consent-row">
                   <input
@@ -1015,27 +1008,40 @@ export default function Home() {
               Últimos {historySummary.periodDays} días: {historySummary.totalActions} acciones en{" "}
               {historySummary.activeDays} días con registro.
             </p>
-            {historyPeriod === 7 && <WeekBars days={summarizeDays(state, today, 7).days} />}
             {historySummary.totalActions === 0 && (
-              <p className="muted">
-                Aún no hay registros en este período: tu primer paso puede ser pequeñísimo.
-              </p>
+              <div className="review-empty-state">
+                <p>Aún no hay pasos registrados en estos {historySummary.periodDays} días.</p>
+                <a href="#habits-heading">Cuando pruebes uno, podrás marcarlo aquí.</a>
+              </div>
             )}
-            <div tabIndex={0} style={{ maxHeight: "9rem", overflowY: "auto" }}>
-              <ul role="list">
-                {historySummary.days.map((day) => (
-                  <li key={day.date}>
-                    <span className="tiny-note">{day.date.split("-").reverse().join("/")}</span>{" "}
-                    {day.count === 0 ? <span className="muted">sin registros</span> : `${day.count} acción/es`}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {historySummary.totalActions > 0 && (
+              <div className="review-history">
+                {historyPeriod === 7 && <WeekBars days={historySummary.days} />}
+                <ul
+                  aria-label={`Detalle de los últimos ${historySummary.periodDays} días`}
+                  className="history-days"
+                >
+                  {historySummary.days.map((day) => (
+                    <li
+                      className={day.count > 0 ? "history-day has-activity" : "history-day"}
+                      key={day.date}
+                    >
+                      <time dateTime={day.date}>{formatHistoryDate(day.date)}</time>
+                      <span>
+                        {day.count === 0
+                          ? "Sin pasos"
+                          : `${day.count} ${day.count === 1 ? "paso" : "pasos"}`}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <p className="tiny-note">
               Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).
             </p>
             <p className="review-note">
-              Es un registro personal, no una medida de salud. ¿Te gustaría hacer más pequeño alguno de tus pasos?
+              Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?
             </p>
             <div className="adapt-row">
               <label className="visually-hidden" htmlFor="adapt-habit">Hábito a simplificar</label>
@@ -1096,6 +1102,9 @@ export default function Home() {
               </div>
             </div>
             <p className="muted">Últimos 7 días · es un registro personal, no una medida de salud.</p>
+            <p className="review-intro">
+              Si quieres, cuéntame cómo te fue y qué prefieres para la próxima semana.
+            </p>
             {weeklySummary.actionsCompleted === 0 && (
               <p className="muted">
                 Aún no tienes registros esta semana: también es válido empezar pequeño hoy.
@@ -1114,19 +1123,15 @@ export default function Home() {
             )}
             {thisWeekReview?.decision === "adjust" && (
               <p className="inline-notice" role="status">
-                Elegiste ajustar un hábito. En la pantalla principal, dentro de «Tus últimos siete
-                días», selecciona el hábito y pulsa «Probar más pequeño». Nada cambia hasta que tú
+                Elegiste ajustar un hábito. En la pantalla principal, dentro de «Tu actividad»,
+                selecciona el hábito y pulsa «Probar más pequeño». Nada cambia hasta que tú
                 lo confirmes.{" "}
                 <Link className="text-button" href="/">
                   Ir a mis hábitos
                 </Link>
               </p>
             )}
-            <details
-              className="review-details"
-              open={!thisWeekReview}
-              key={thisWeekReview ? "saved" : "fresh"}
-            >
+            <details className="review-details" key={thisWeekReview ? "saved" : "fresh"}>
               <summary className="text-button review-summary">
                 {thisWeekReview ? "Actualizar mi respuesta" : "Responder cómo me sentí"}
               </summary>
@@ -1283,36 +1288,58 @@ export default function Home() {
               <button aria-label="Enviar mensaje" disabled={!chatInput.trim()} type="submit">↑</button>
             </form>
             <p className="chat-privacy">No incluyas datos personales ni información médica.</p>
-          </section>
-          <section className="principle-card">
-            <span className="eyebrow">UNA IDEA PARA HOY</span>
-            <p>La conexión y el propósito se construyen también con gestos pequeños y elegidos por ti.</p>
-            <span className="principle-caption">Reflexión, no consejo clínico</span>
+            <section className="principle-card" aria-label="Una idea para acompañarte">
+              <span className="eyebrow">UNA IDEA PARA HOY</span>
+              <p>La conexión y el propósito también se construyen con gestos pequeños, elegidos por ti.</p>
+              <span className="principle-caption">Reflexión, no consejo clínico</span>
+            </section>
           </section>
         </aside>
       </div>
 
       <footer className="dashboard-footer" id="privacy-controls">
-        <span>Blu es un prototipo de bienestar; no ofrece diagnóstico ni tratamiento.</span>
-        <p className="tiny-note">
-          «Exportar mis datos» descarga un JSON con todo lo que Blu guarda en este navegador
-          (hábitos, registros, cuestionario, objetivos y revisiones). «Borrar todos los datos»
-          elimina todas esas claves y verifica el borrado.
-        </p>
-        <div className="adapt-row">
-          <button className="text-button" onClick={exportData} type="button">
-            Exportar mis datos
-          </button>
-          <button className="text-button" onClick={openConsentManager} type="button">
-            Consentimientos
-          </button>
-          <button className="text-button" onClick={clearData} type="button">
-            Borrar todos los datos
-          </button>
+        <div className="privacy-panel">
+          <div className="privacy-panel-copy">
+            <h2 className="privacy-title">Tus datos, bajo tu control</h2>
+            <p className="privacy-lead">
+              Todo lo que guardas en Blu vive en este navegador. Puedes llevártelo o borrarlo
+              cuando quieras: sin cuentas y sin nube.
+            </p>
+          </div>
+          <ul className="privacy-actions" role="list">
+            <li>
+              <button className="privacy-action" onClick={exportData} type="button">
+                <span className="privacy-action-name">Exportar mis datos</span>
+                <span className="privacy-action-desc">Un archivo JSON con todo lo guardado aquí.</span>
+              </button>
+            </li>
+            <li>
+              <button className="privacy-action" onClick={openConsentManager} type="button">
+                <span className="privacy-action-name">Consentimientos</span>
+                <span className="privacy-action-desc">Revisa o retira lo que permitiste.</span>
+              </button>
+            </li>
+            <li>
+              <button className="privacy-action privacy-action--danger" onClick={clearData} type="button">
+                <span className="privacy-action-name">Borrar todos los datos</span>
+                <span className="privacy-action-desc">Elimina todo y verifica el borrado.</span>
+              </button>
+            </li>
+          </ul>
         </div>
+        <p className="privacy-legal">
+          Blu es un prototipo de bienestar: acompaña hábitos, no diagnostica ni trata.
+        </p>
       </footer>
     </div>
   );
+}
+
+function formatHistoryDate(dateKey: string): string {
+  const date = new Date(`${dateKey}T12:00:00`);
+  return new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "short" })
+    .format(date)
+    .replace(/\.$/, "");
 }
 
 function subscribeToClock(onChange: () => void): () => void {
