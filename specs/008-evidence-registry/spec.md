@@ -1,11 +1,17 @@
 # Spec de diseño: Registro de evidencia científica (BLU-1301) — V1 gated
 
-**Estado:** diseño preparatorio · **Fase:** V1 (implementación gated por PRD §8)
+**Estado:** registro local implementado y verificado (BLU-1301 cerrado) · persistencia
+servidor (tabla `evidence_sources`) gated por ADR-0006 · **Fase:** V1
 **Relaciona:** constitución I (Evidence-first) · SCIENTIFIC_VALIDATION.md · EPIC-13
 
-> Este documento diseña la solución para ejecutar el día 1 post-aprobación. **No autoriza
-> implementación de backend**; el registro puede prototiparse localmente como datos versionados
-> sin frontera de red cuando se priorice.
+> **Qué existe hoy (evidencia):** `src/lib/evidence/registry.ts` implementa el esquema y
+> reglas de abajo como módulo puro local (sin frontera de red, como permitía este diseño).
+> Verificación: `src/lib/evidence/registry.test.ts` (18 tests) — rechazo listando todos
+> los campos faltantes, formato de referencia por tipo, ciclo de vida con fecha y revisor
+> en cada transición, deny-by-default de citación e importación en lote con reporte.
+> Datos: `src/data/evidence/sources.json` inicia vacío (ninguna afirmación citable sin
+> aprobación humana). La importación de `sourceLabel` genera **borradores pendientes de
+> referencia** (las etiquetas no son identificadores persistentes; no se fabrican).
 
 ## Objetivo
 
@@ -33,7 +39,9 @@ interface EvidenceSource {
   reviewer: string | null;       // persona, no rol genérico
   status: "pendiente" | "aprobada" | "retirada";
   version: number;               // historial de cambios del texto
+  transitionLog: StatusTransition[]; // implementado: fecha y revisor de cada cambio
 }
+interface StatusTransition { from: SourceStatus; to: SourceStatus; at: string; by: string }
 ```
 
 ## Ciclo de vida
