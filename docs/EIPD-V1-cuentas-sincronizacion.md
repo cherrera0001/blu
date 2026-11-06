@@ -93,9 +93,10 @@ requiere evidencia adjunta (constancia, contrato, informe).
 - [ ] **C3 — Pentest ligero ejecutado.** Checklist `docs/security/pentest-checklist-c3.md`
       completado contra el proyecto real; matriz de aislamiento ya corre en CI
       (PRs #110 y #119). Fecha: ____ · Evidencia: ____
-- [ ] **C5 — Procedimiento ARCO probado.** Funciones `arco_*` ejecutadas de
-      extremo a extremo en el proyecto real (plantilla de evidencia: corrida
-      `BLU_RLS_LIVE=1` adaptada al proyecto). Fecha: ____ · Evidencia: ____
+- [x] **C5 — Procedimiento ARCO probado.** Funciones `arco_*` ejecutadas de
+      extremo a extremo en Postgres real (corrida `BLU_RLS_LIVE=1`, 23/23 casos
+      en vivo). Fecha: 2026-11-06 · Evidencia: PR #119 + constancia en issue #53
+      · Firma: dueño del producto.
 - [ ] **C4 — Revisión ética del piloto** (BLU-1601). No bloquea cuentas;
       bloquea el reclutamiento. Fecha: ____ · Evidencia: ____
 
