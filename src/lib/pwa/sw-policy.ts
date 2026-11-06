@@ -7,14 +7,13 @@
  * transcripción ni respuesta queda almacenada en caché.
  */
 
-export const CACHE_NAME = "blu-shell-v1";
+export const CACHE_NAME = "blu-shell-v2";
 
 /** App shell mínimo para arranque sin conexión tras una visita previa online. */
 export const PRECACHE_URLS = [
   "/",
   "/cuestionario",
-  "/blu-avatar.jpg",
-  "/favicon.ico",
+  "/blu-avatar.svg",
   "/manifest.webmanifest",
 ];
 

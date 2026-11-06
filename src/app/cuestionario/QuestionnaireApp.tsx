@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import BluPresence from "../BluPresence";
 import { loadBank } from "@/lib/onboarding/bank-loader";
 import type { Question } from "@/lib/onboarding/bank";
 import {
@@ -196,7 +196,7 @@ function QuestionnaireSession() {
           <span className="step-label">ANTES DE EMPEZAR</span>
           <h1 id="notice-heading">Antes de empezar, un aviso</h1>
           <div className="blu-intro">
-            <Image alt="" className="blu-presence sm" height={28} src="/blu-avatar.jpg" width={28} />
+            <BluPresence size="sm" />
             <p className="blu-intro-line">
               «Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»
             </p>

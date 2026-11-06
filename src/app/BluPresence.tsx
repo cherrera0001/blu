@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 export const BLU_PRESENCE_STATES = [
   "idle",
@@ -50,7 +50,6 @@ export default function BluPresence({
     prefersReducedMotion,
     noReducedOnServer,
   );
-  const gradientId = useId();
   const safe = (BLU_PRESENCE_STATES as readonly string[]).includes(state) ? state : "idle";
   const classes = ["blu-presence", `blu-presence--${size}`, `blu-state--${safe}`];
   if (reduced) classes.push("blu-reduced");
@@ -64,33 +63,33 @@ export default function BluPresence({
     >
       <svg
         className="blu-face-svg"
+        data-testid="blu-illustration"
         focusable="false"
         height="100%"
-        viewBox="0 0 64 64"
+        viewBox="0 0 120 120"
         width="100%"
       >
-        <defs>
-          <linearGradient id={gradientId} x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stopColor="#6ea8ff" />
-            <stop offset="100%" stopColor="#3b6fd4" />
-          </linearGradient>
-        </defs>
+        <circle className="blu-backdrop" cx="60" cy="60" r="57" />
         <path
           className="blu-body"
-          d="M32 4C18.7 4 8 15.8 8 30c0 15.5 10.7 30 24 30s24-14.5 24-30C56 15.8 45.3 4 32 4Z"
-          fill={`url(#${gradientId})`}
+          d="M60 14C50 26 33 45 29 61c-5 20 8 39 31 39s36-19 31-39c-4-16-21-35-31-47Z"
         />
+        <path className="blu-highlight" d="M47 36c-7 9-12 18-14 27" />
         <g className="blu-brows">
-          <path d="M17.5 21.5q5.5-4 11-1" />
-          <path d="M35.5 20.5q5.5-3 11 1" />
+          <path d="M42 48q6-4 12-1" />
+          <path d="M66 47q6-3 12 1" />
         </g>
-        <ellipse className="blu-eye" cx="23" cy="30" rx="4.4" ry="5.4" />
-        <ellipse className="blu-eye" cx="41" cy="30" rx="4.4" ry="5.4" />
-        <path className="blu-mouth" d="M24 42q8 6.5 16 0" />
+        <ellipse className="blu-eye" cx="48" cy="59" rx="6" ry="7" />
+        <ellipse className="blu-eye" cx="72" cy="59" rx="6" ry="7" />
+        <circle className="blu-pupil" cx="49" cy="60" r="2.3" />
+        <circle className="blu-pupil" cx="73" cy="60" r="2.3" />
+        <circle className="blu-eye-glint" cx="50" cy="57" r="1.1" />
+        <circle className="blu-eye-glint" cx="74" cy="57" r="1.1" />
+        <path className="blu-mouth" d="M51 76q9 9 18 0" />
         <g className="blu-dots">
-          <circle cx="23" cy="43" r="2.6" />
-          <circle cx="32" cy="43" r="2.6" />
-          <circle cx="41" cy="43" r="2.6" />
+          <circle cx="48" cy="77" r="2.5" />
+          <circle cx="60" cy="77" r="2.5" />
+          <circle cx="72" cy="77" r="2.5" />
         </g>
       </svg>
     </span>

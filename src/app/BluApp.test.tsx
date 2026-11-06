@@ -39,6 +39,15 @@ beforeEach(() => {
 });
 
 describe("Blu user flows", () => {
+  it("usa una presencia ilustrada coherente y presenta el prototipo en lenguaje claro", () => {
+    render(<BluApp />);
+
+    expect(screen.getByText("Versión de prueba")).toBeTruthy();
+    expect(screen.queryByText("PROTOTIPO LOCAL")).toBeNull();
+    expect(document.querySelectorAll('img[src="/blu-avatar.jpg"]')).toHaveLength(0);
+    expect(document.querySelector(".welcome-copy [data-testid='blu-presence'] svg")).not.toBeNull();
+  });
+
   it("offers accessible section navigation after onboarding", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -143,14 +152,15 @@ describe("Blu user flows", () => {
     ).toHaveLength(0);
   });
 
-  it("shows a one-time local-mode notice when the BFF is unreachable (UX-03)", async () => {
+  it("explains the device fallback when the BFF is unreachable (UX-03)", async () => {
     const user = userEvent.setup();
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("red")));
     render(<BluApp />);
     await completeOnboarding(user);
     await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "hola");
     await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
-    expect(await screen.findByText(/Respondí en modo local/i)).toBeTruthy();
+    expect(await screen.findByText(/El servidor no pudo responder/i)).toBeTruthy();
+    expect(screen.getByText(/Tu mensaje se envió al servidor/i)).toBeTruthy();
     vi.unstubAllGlobals();
   });
 
@@ -264,7 +274,7 @@ describe("Blu user flows", () => {
         expect.objectContaining({ body: JSON.stringify({ text: BLU_GREETING }) }),
       );
       expect(audio.play).toHaveBeenCalledOnce();
-      await user.click(screen.getByRole("button", { name: "Usar solo voz local" }));
+      await user.click(screen.getByRole("button", { name: "Usar voz del dispositivo" }));
       expect(audio.pause).toHaveBeenCalledOnce();
     } finally {
       vi.unstubAllGlobals();
@@ -805,7 +815,7 @@ describe("presencia expresiva de Blu (UX-07) — estados ligados a eventos reale
       await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "¿Estás ahí?");
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
-      expect(await screen.findByText(/Respondí en modo local/i)).toBeTruthy();
+      expect(await screen.findByText(/El servidor no pudo responder/i)).toBeTruthy();
       expect(
         document.querySelector(".chat-card [data-testid='blu-presence']")?.getAttribute("data-blu-state"),
       ).toBe("unavailable");
@@ -823,8 +833,8 @@ describe("presencia expresiva de Blu (UX-07) — estados ligados a eventos reale
       await user.type(screen.getByRole("textbox", { name: "Escribe una reflexión" }), "hola");
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
-      expect(await screen.findByText(/pidió esperar un momento/i)).toBeTruthy();
-      expect(screen.getByText(/demasiados intentos/i)).toBeTruthy();
+      expect(await screen.findByText(/el servidor pidió esperar/i)).toBeTruthy();
+      expect(screen.getByText(/reglas sencillas en tu dispositivo/i)).toBeTruthy();
     } finally {
       vi.unstubAllGlobals();
     }

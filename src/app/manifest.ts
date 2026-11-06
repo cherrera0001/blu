@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 /**
  * Manifest instalable (convención Metadata Route de Next 16, guía PWA instalada).
- * Iconos: avatar propio 560×560 (public/blu-avatar.jpg), sin assets de terceros.
+ * Iconos: ilustración vectorial propia (public/blu-avatar.svg), sin assets de terceros.
  * Colores: tokens de diseño (--teal / --pale de globals.css).
  */
 export default function manifest(): MetadataRoute.Manifest {
@@ -15,12 +15,11 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "es",
     start_url: "/",
     display: "standalone",
-    background_color: "#f5f8f3",
+    background_color: "#faf6ef",
     theme_color: "#167c74",
     icons: [
-      { src: "/blu-avatar.jpg", sizes: "192x192", type: "image/jpeg" },
-      { src: "/blu-avatar.jpg", sizes: "512x512", type: "image/jpeg" },
-      { src: "/blu-avatar.jpg", sizes: "560x560", type: "image/jpeg", purpose: "any" },
+      { src: "/blu-avatar.svg", sizes: "192x192", type: "image/svg+xml" },
+      { src: "/blu-avatar.svg", sizes: "512x512", type: "image/svg+xml" },
     ],
   };
 }

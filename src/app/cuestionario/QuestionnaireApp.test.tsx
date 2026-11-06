@@ -33,6 +33,8 @@ describe("aviso previo del cuestionario (consentimiento)", () => {
     const user = userEvent.setup();
     render(<QuestionnaireApp />);
     expect(screen.getByRole("heading", { name: /Antes de empezar, un aviso/i })).toBeTruthy();
+    expect(document.querySelector("[data-testid='blu-presence'] svg")).not.toBeNull();
+    expect(document.querySelector('img[src="/blu-avatar.jpg"]')).toBeNull();
     expect(screen.getByText(/no está cifrado/i)).toBeTruthy();
     expect(screen.getByText(/Borrar datos del cuestionario|Borrar mis datos/i)).toBeTruthy();
     const comenzar = screen.getByRole("button", { name: "Comenzar" });

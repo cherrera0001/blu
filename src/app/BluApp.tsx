@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   HABITS,
@@ -86,6 +85,11 @@ let reminderSnapshotCache: {
   permission: ReminderPermission;
   version: number;
 } | null = null;
+const serverReminderSnapshot = {
+  enabled: false,
+  permission: "unsupported" as const,
+  version: 0,
+};
 
 /** Snapshot estable para useSyncExternalStore (mismo objeto mientras nada cambia). */
 function getReminderSnapshot(version: number) {
@@ -138,7 +142,7 @@ export default function Home() {
   const reminderState = useSyncExternalStore(
     subscribeReminders,
     () => getReminderSnapshot(reminderVersion),
-    () => ({ enabled: false, permission: "unsupported" as const, version: 0 }),
+    () => serverReminderSnapshot,
   );
   const [voiceProfile, setVoiceProfile] = useState<VoiceProfile>("warm");
   const [azureVoiceEnabled, setAzureVoiceEnabled] = useState(false);
@@ -208,7 +212,7 @@ export default function Home() {
     if (azureVoiceEnabled) {
       stopActiveSpeech();
       setAzureVoiceEnabled(false);
-      setAzureVoiceNotice("Voz local activada. La lectura no envía texto a Microsoft.");
+      setAzureVoiceNotice("Voz del dispositivo activada. La lectura no envía texto a Microsoft.");
       return;
     }
 
@@ -511,12 +515,12 @@ export default function Home() {
     return (
       <div className="error-screen">
         <section className="error-card" role="alert">
-          <span className="eyebrow">Blu · almacenamiento local</span>
+          <span className="eyebrow">Privacidad y datos</span>
           <h1>No pude acceder a tus datos</h1>
           <p>{snapshot.error}</p>
-          <p>Si reinicias, se eliminará el estado local de Blu de este navegador.</p>
+          <p>Si eliges reiniciar, se borrarán los datos de Blu guardados en este navegador.</p>
           <button className="button button-dark" onClick={clearData} type="button">
-            Borrar datos locales y reiniciar
+            Borrar datos y reiniciar
           </button>
         </section>
       </div>
@@ -528,15 +532,15 @@ export default function Home() {
       <div className="onboarding">
         <header className="topbar">
           <a className="brand" href="#" aria-label="Blu, inicio">
-            <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
+            <BluPresence size="sm" />
             <span>blu</span>
           </a>
-          <span className="prototype-tag">PROTOTIPO LOCAL</span>
+          <span className="prototype-tag">Versión de prueba</span>
         </header>
         <section className="welcome-panel">
           <div className="welcome-copy">
             <div className="blu-intro">
-              <Image alt="Blu, tu guía de bienestar" className="blu-presence lg" height={96} src="/blu-avatar.jpg" width={96} />
+              <BluPresence size="lg" state="welcome" />
               <p className="blu-intro-line">
                 «Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.»
               </p>
@@ -658,7 +662,7 @@ export default function Home() {
         </section>
         <footer className="page-footer">
           <span>Inspirado en siete dimensiones de bienestar</span>
-          <span>Sin cuenta · Sin conexión a IA · Datos en este navegador</span>
+          <span>Sin cuenta · Tus hábitos se guardan en este navegador</span>
         </footer>
       </div>
     );
@@ -669,11 +673,11 @@ export default function Home() {
       <header className="app-header">
         <div className="topbar">
           <a className="brand" href="#" aria-label="Blu, inicio">
-            <Image className="brand-mark" src="/blu-avatar.jpg" alt="" width={35} height={35} />
+            <BluPresence size="sm" />
             <span>blu</span>
           </a>
           <div className="topbar-right">
-            <span className="prototype-tag">PROTOTIPO LOCAL</span>
+            <span className="prototype-tag">Versión de prueba</span>
             <button className="text-button" onClick={clearData} type="button">
               Borrar mis datos
             </button>
@@ -1201,8 +1205,9 @@ export default function Home() {
             {localModeReason && (
               <p className="tiny-note" role="status">
                 {localModeReason === "rate_limited"
-                  ? "Respondí en modo local: el servidor pidió esperar un momento (demasiados intentos). El texto sigue privado, en este navegador."
-                  : "Respondí en modo local: no pude contactar al servidor. El texto sigue igual de privado, en este navegador."}
+                  ? "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder."
+                  : "El servidor no pudo responder. Usé reglas sencillas en tu dispositivo."}
+                {" "}Tu mensaje se envió al servidor para intentar responder; evita compartir datos personales o de salud.
               </p>
             )}
             {chatPresence === "responding" && (
@@ -1210,7 +1215,7 @@ export default function Home() {
             )}
             <div className="chat-voice-settings">
               <label className="chat-voice-control" htmlFor="voice-style">
-                <span>Estilo de voz local</span>
+                <span>Estilo de voz</span>
                 <select
                   id="voice-style"
                   onChange={(event) => {
@@ -1225,7 +1230,7 @@ export default function Home() {
                 </select>
               </label>
               <p className="chat-voice-hint">
-                La voz local depende de las opciones de tu dispositivo.
+                La voz disponible depende de las opciones de tu dispositivo.
               </p>
               <p className="chat-voice-cloud-note">
                 Si activas Azure, se enviará a Microsoft solo el texto de Blu que elijas escuchar
@@ -1240,7 +1245,7 @@ export default function Home() {
                 {azureVoiceLoading
                   ? "Comprobando…"
                   : azureVoiceEnabled
-                    ? "Usar solo voz local"
+                    ? "Usar voz del dispositivo"
                     : "Activar voz natural"}
               </button>
               {azureVoiceNotice && <p className="chat-voice-status" role="status">{azureVoiceNotice}</p>}
@@ -1249,7 +1254,7 @@ export default function Home() {
               {chatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
                   {message.role === "blu" && (
-                    <Image alt="" className="blu-presence sm" height={28} src="/blu-avatar.jpg" width={28} />
+                    <BluPresence size="sm" />
                   )}
                   <div className="chat-bubble-body">
                     <p>{message.text}</p>
@@ -1288,7 +1293,7 @@ export default function Home() {
       </div>
 
       <footer className="dashboard-footer" id="privacy-controls">
-        <span>Blu es un prototipo local de bienestar; no diagnostica ni trata.</span>
+        <span>Blu es un prototipo de bienestar; no ofrece diagnóstico ni tratamiento.</span>
         <p className="tiny-note">
           «Exportar mis datos» descarga un JSON con todo lo que Blu guarda en este navegador
           (hábitos, registros, cuestionario, objetivos y revisiones). «Borrar todos los datos»
