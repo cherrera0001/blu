@@ -191,3 +191,22 @@ eval:security 3/3. Outcome registrado en 21st (`record_take_outcome`: adapted).
   390×844 y 1440×900: sin desbordamiento horizontal ni recursos de avatar rotos; el modo de
   movimiento reducido desactiva la animación. Se corrigieron y verificaron el contraste del
   recordatorio y su nota sobre el hero oscuro, junto con el anillo de foco de teclado.
+
+### Ciclo 10 — 2026-11-05 (flujo principal y jerarquía visual)
+- **Diagnóstico**: las capturas desplegadas mostraban un hero verde sobredimensionado, estado
+  vacío con barras/listas repetitivas, historial con scroll anidado, cifras que no seguían el
+  período elegido y el enlace de salto siempre visible. La paleta azul/celeste de marca consta en
+  el commit `26dfb49`; el verde del hero no forma parte de ella.
+- **Implementación**: hero compacto con tokens oficiales; progreso y acciones de hoy más claros;
+  idea del día dentro de la conversación; bloques opcionales agrupados; revisión semanal
+  colapsada por defecto; actividad consistente con 7/14/30 días, sin gráficos vacíos ni scroll
+  interno; skip link oculto fuera de foco y visible con teclado. No se añadió score, dependencia,
+  dato ni solicitud de red.
+- **TDD**: pruebas añadidas para tokens, enlace de salto, estado vacío, período, idea integrada,
+  plan semanal y aparición de la gráfica tras registrar una acción.
+- **Validación**: 359/359 pruebas; `npm run build` y `npm run eval:security` pasan; lint sin
+  errores (1 warning existente en `BluPresence.tsx`). Revisión local con navegador a 390×844 y
+  1440×900, con `prefers-reduced-motion: reduce`: sin overflow horizontal ni errores de consola.
+  Se comprobó el foco por Tab y la navegación del enlace a `#contenido-principal`.
+- **Diferencia de despliegue**: producción sigue mostrando el hero verde y el skip link visible;
+  no se hizo deploy.
