@@ -31,6 +31,8 @@ interface StoredSession {
   accessToken: string;
   refreshToken: string;
   email: string;
+  /** Epoch ms en que caduca el access token (specs/010). */
+  expiresAt?: number;
 }
 
 export interface AccountStore {
@@ -78,7 +80,12 @@ function readStoredSession(): StoredSession | null {
     if (!raw) return null;
     const s = JSON.parse(raw) as Partial<StoredSession>;
     if (!s.accessToken || !s.email) return null;
-    return { accessToken: s.accessToken, refreshToken: s.refreshToken ?? "", email: s.email };
+    return {
+      accessToken: s.accessToken,
+      refreshToken: s.refreshToken ?? "",
+      email: s.email,
+      expiresAt: typeof s.expiresAt === "number" ? s.expiresAt : undefined,
+    };
   } catch {
     return null;
   }
@@ -119,12 +126,13 @@ export function createAccountStore(config: V1Config | null): AccountStore {
         if (status !== 200) {
           return { ok: false, error: mapAuthError(status, body, "signin") };
         }
-        const b = (body ?? {}) as { access_token?: string; refresh_token?: string; user?: unknown };
+        const b = (body ?? {}) as { access_token?: string; refresh_token?: string; expires_in?: number; user?: unknown };
         const user = toUser(b.user);
         persistSession(config, {
           accessToken: b.access_token ?? "",
           refreshToken: b.refresh_token ?? "",
           email: user.email,
+          expiresAt: Date.now() + ((b.expires_in ?? 3600) * 1000),
         });
         return { ok: true, user };
       } catch {
@@ -143,13 +151,14 @@ export function createAccountStore(config: V1Config | null): AccountStore {
         if (status !== 200 && status !== 201) {
           return { ok: false, error: mapAuthError(status, body, "signup") };
         }
-        const b = (body ?? {}) as { session?: { access_token?: string; refresh_token?: string }; user?: unknown };
+        const b = (body ?? {}) as { session?: { access_token?: string; refresh_token?: string; expires_in?: number }; user?: unknown };
         const user = toUser(b.user);
         if (b.session?.access_token) {
           persistSession(config, {
             accessToken: b.session.access_token,
             refreshToken: b.session.refresh_token ?? "",
             email: user.email,
+            expiresAt: Date.now() + ((b.session.expires_in ?? 3600) * 1000),
           });
         }
         return { ok: true, user };
@@ -173,6 +182,40 @@ export function createAccountStore(config: V1Config | null): AccountStore {
     async restoreSession() {
       const stored = readStoredSession();
       if (!stored) return { ok: false, error: "sesion_invalida" };
+      if (stored.expiresAt && Date.now() > stored.expiresAt) {
+        if (!stored.refreshToken) {
+          clearSession();
+          return { ok: false, error: "sesion_invalida" };
+        }
+        try {
+          const refreshed = await request(config, "/auth/v1/token?grant_type=refresh_token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: stored.refreshToken }),
+          });
+          const rb = (refreshed.body ?? {}) as {
+            access_token?: string;
+            refresh_token?: string;
+            expires_in?: number;
+            user?: unknown;
+          };
+          if (refreshed.status !== 200 || !rb.access_token) {
+            clearSession();
+            return { ok: false, error: "sesion_invalida" };
+          }
+          const user = toUser(rb.user ?? { email: stored.email });
+          persistSession(config, {
+            accessToken: rb.access_token,
+            refreshToken: rb.refresh_token ?? stored.refreshToken,
+            email: user.email,
+            expiresAt: Date.now() + ((rb.expires_in ?? 3600) * 1000),
+          });
+          return { ok: true, user };
+        } catch {
+          clearSession();
+          return { ok: false, error: "sesion_invalida" };
+        }
+      }
       try {
         const { status, body } = await request(config, "/auth/v1/user", {
           headers: { Authorization: `Bearer ${stored.accessToken}` },
