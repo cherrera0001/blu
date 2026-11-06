@@ -26,8 +26,8 @@ describe("política de caché del service worker (BLU-1503)", () => {
   it("el precache cubre el app shell mínimo y nada del BFF", () => {
     expect(PRECACHE_URLS).toContain("/");
     expect(PRECACHE_URLS).toContain("/cuestionario");
-    expect(PRECACHE_URLS).toContain("/blu-avatar.svg");
-    expect(PRECACHE_URLS).not.toContain("/blu-avatar.jpg");
+    expect(PRECACHE_URLS).toContain("/blu-newspaper.png");
+    expect(PRECACHE_URLS).not.toContain("/admin");
     expect(PRECACHE_URLS.some((u) => u.startsWith("/api/"))).toBe(false);
     expect(CACHE_NAME).toMatch(/^blu-shell-v\d+$/);
   });

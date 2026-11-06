@@ -13,7 +13,7 @@ export const CACHE_NAME = "blu-shell-v2";
 export const PRECACHE_URLS = [
   "/",
   "/cuestionario",
-  "/blu-avatar.svg",
+  "/blu-newspaper.png",
   "/manifest.webmanifest",
 ];
 
