@@ -110,3 +110,60 @@ describe("account-store V1 (cliente REST mínimo, specs/012)", () => {
     expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 });
+
+
+describe('caducidad y cierre de sesión seguro (BLU-105, specs/010)', () => {
+  beforeEach(() => { window.localStorage.clear(); vi.unstubAllGlobals(); });
+
+  function storeExpiredSession(refreshToken?: string) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      accessToken: 'expirado', refreshToken: refreshToken ?? '', email: 'ana@blu.cl',
+      expiresAt: Date.now() - 1000,
+    }));
+  }
+
+  it('restoreSession con token expirado y sin refresh: no llama a la red y limpia la sesión', async () => {
+    storeExpiredSession();
+    const calls = mockFetch(() => jsonResponse({}));
+    const store = createAccountStore({ url: URL, anonKey: ANON });
+    const r = await store.restoreSession();
+    const err = r.ok ? 'inesperado' : r.error;
+    expect(r.ok).toBe(false);
+    expect(err).toBe('sesion_invalida');
+    expect(calls).toHaveLength(0);
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it('restoreSession expirado con refresh: renueva vía grant_type=refresh_token y persiste la nueva sesión', async () => {
+    storeExpiredSession('ref-viejo');
+    mockFetch((url, init) => {
+      expect(url).toBe(`${URL}/auth/v1/token?grant_type=refresh_token`);
+      expect(JSON.parse(String(init?.body))).toEqual({ refresh_token: 'ref-viejo' });
+      return jsonResponse({ access_token: 'tok-nuevo', refresh_token: 'ref-nuevo', expires_in: 3600, user: { id: 'u1', email: 'ana@blu.cl' } });
+    });
+    const store = createAccountStore({ url: URL, anonKey: ANON });
+    const r = await store.restoreSession();
+    expect(r.ok).toBe(true);
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}');
+    expect(saved.accessToken).toBe('tok-nuevo');
+    expect(saved.expiresAt).toBeGreaterThan(Date.now());
+  });
+
+  it('refresh rechazado: limpia la sesión y devuelve sesion_invalida', async () => {
+    storeExpiredSession('ref-invalido');
+    mockFetch(() => jsonResponse({ error: 'invalid_grant' }, 400));
+    const store = createAccountStore({ url: URL, anonKey: ANON });
+    const r = await store.restoreSession();
+    const err = r.ok ? 'inesperado' : r.error;
+    expect(err).toBe('sesion_invalida');
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it('signIn persiste expiresAt futuro (caducidad conocida, no token eterno)', async () => {
+    mockFetch(() => jsonResponse({ access_token: 't', refresh_token: 'r', expires_in: 3600, user: { id: 'u1', email: 'ana@blu.cl' } }));
+    const store = createAccountStore({ url: URL, anonKey: ANON });
+    await store.signIn('ana@blu.cl', 'clave-larga-1');
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}');
+    expect(saved.expiresAt).toBeGreaterThan(Date.now() + 3590_000);
+  });
+});
