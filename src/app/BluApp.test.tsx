@@ -44,7 +44,7 @@ describe("Blu user flows", () => {
 
     expect(screen.getByText("Versión de prueba")).toBeTruthy();
     expect(screen.queryByText("PROTOTIPO LOCAL")).toBeNull();
-    expect(document.querySelectorAll('img[src="/blu-avatar.jpg"]')).toHaveLength(0);
+    expect(document.querySelectorAll('img[src="/blu-newspaper.png"]')).toHaveLength(0);
     expect(document.querySelector(".welcome-copy [data-testid='blu-presence'] svg")).not.toBeNull();
   });
 
