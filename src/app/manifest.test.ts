@@ -13,7 +13,7 @@ describe("manifest instalable (BLU-1503)", () => {
   });
 
   it("usa los tokens de diseño para colores", () => {
-    expect(m.theme_color).toBe("#35a9ef");
+    expect(m.theme_color).toBe("#2f8fbf");
     expect(m.background_color).toBe("#faf6ef");
   });
 
