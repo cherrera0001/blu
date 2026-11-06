@@ -57,9 +57,11 @@ try {
   if (!ready) throw new Error("Postgres no quedó listo a tiempo");
 
   const bootstrap = readFileSync(ROOT + "tests/bootstrap-local.sql", "utf8");
-  const migration = readFileSync(ROOT + "migrations/0001_owner_only.sql", "utf8");
+  const migration1 = readFileSync(ROOT + "migrations/0001_owner_only.sql", "utf8");
+  const migration2 = readFileSync(ROOT + "migrations/0002_arco_procedures.sql", "utf8");
   psql("postgres", bootstrap);
-  psql("postgres", migration);
+  psql("postgres", migration1);
+  psql("postgres", migration2);
 
   // --- Escenario: la cuenta A crea su contenido --------------------------------
   psql("blu_user_a",
@@ -137,6 +139,34 @@ try {
   // Sin sesión (sin claims): auth.uid() es null → 0 filas visibles.
   const anonRead = psql("blu_user_b", "select count(*) from habit_plans;");
   check("Sin claims: auth.uid() null → 0 filas", anonRead === "0", `count=${anonRead}`);
+
+  // --- Procedimientos ARCO (C5, migración 0002) ---------------------------------
+  const accessA = psql("blu_user_a", "select jsonb_array_length(arco_access() -> 'habit_plans');", USER_A);
+  check("ARCO acceso: A solo ve sus propios planes en el JSON", accessA === "1", `count=${accessA}`);
+
+  const accessB = psql("blu_user_b", "select jsonb_array_length(arco_access() -> 'habit_plans');", USER_B);
+  check("ARCO acceso: B solo ve sus 2 planes (nunca los de A)", accessB === "2", `count=${accessB}`);
+
+  const cancelA = psql("blu_user_a", "select arco_cancel();", USER_A);
+  check("ARCO cancelación: marca deleted_at en las 5 filas restantes de A", cancelA === "5", cancelA.split("\n")[0]);
+  const stillReadable = psql("blu_user_a", "select count(*) from habit_plans where deleted_at is not null;", USER_A);
+  check("Borrado lógico verificable: A ve su fila marcada", stillReadable === "1", `count=${stillReadable}`);
+
+  const objection = psql("blu_user_a", "select arco_objection('mejora', '2.0.0') is not null;", USER_A);
+  check("ARCO oposición: registra retiro de propósito", objection === "t", objection);
+
+  const purgeAsUser = psql("blu_user_a", "select arco_purge(30);", USER_A);
+  check("Purge revocada para autenticadas (permission denied)", /ERROR:.*permission denied/.test(purgeAsUser), purgeAsUser.split("\n")[0]);
+
+  // Fila vieja eliminada por purga; la cancelación reciente de A NO se toca.
+  psql("postgres",
+    `insert into habit_plans (owner_id, habit_id, goal_version, deleted_at)
+     values ('${USER_A}', 'viejo', 'v1', now() - interval '40 days');`);
+  const purgeService = psql("blu_service", "select arco_purge(30);");
+  check("Purge con service_role elimina solo lo antiguo (1 fila)", purgeService.startsWith("1"), purgeService.split("\n")[0]);
+  const recentKept = psql("postgres",
+    "select count(*) from habit_plans where owner_id = '11111111-1111-1111-1111-111111111111' and deleted_at is not null;");
+  check("Cancelación reciente de A sobrevive a la purga", recentKept === "1", `count=${recentKept}`);
 
   const failed = results.filter((r) => !r.ok);
   console.log(`\n[rls-live-check] ${results.length - failed.length}/${results.length} casos en verde`);
