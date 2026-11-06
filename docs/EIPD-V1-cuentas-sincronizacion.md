@@ -1,6 +1,6 @@
 # EIPD-V1 — Evaluación de Impacto en la Protección de Datos: cuentas y sincronización
 
-**Estado:** BORRADOR para revisión jurídica (no es asesoría legal) · **Fecha:** 2026-11-05
+**Estado:** READY FOR HUMAN REVIEW (firma jurídica pendiente, §10) · **Fecha:** 2026-11-06
 **Relaciona:** ADR-0006 (apertura del gate) · PRD §8 · specs/009–013 · THREAT_MODEL (anexo V1)
 **Marco de referencia:** Constitución de Blu (II minimización, VI privacidad, VII trazabilidad);
 Ley 19.628 de Chile y Ley 21.719 (publicada 2024, en vigencia escalonada) — **requiere validación
@@ -80,3 +80,26 @@ caducidad y cierre remoto (010/012); pentest ligero pre-lanzamiento (C3).
 | Pentest ligero + CI de aislamiento (C3) | Seguridad | Activación |
 | Correo de contacto ARCO | Producto | Activación |
 | Revisión ética piloto (C4) | Revisión ética | Piloto (no cuentas) |
+
+## 10. Hoja de firmas (C1–C3/C5)
+
+Condiciones de ADR-0006 para activar producción con datos reales. Cada firma
+requiere evidencia adjunta (constancia, contrato, informe).
+
+- [ ] **C1 — EIPD aprobada.** Firma responsable del tratamiento + validación
+      jurídica. Fecha: ____ · Evidencia: ____
+- [ ] **C2 — Contrato con proveedor gestionado.** Región elegida y documentada
+      (Ley 21.719). Fecha: ____ · Evidencia: ____
+- [ ] **C3 — Pentest ligero ejecutado.** Checklist `docs/security/pentest-checklist-c3.md`
+      completado contra el proyecto real; matriz de aislamiento ya corre en CI
+      (PRs #110 y #119). Fecha: ____ · Evidencia: ____
+- [ ] **C5 — Procedimiento ARCO probado.** Funciones `arco_*` ejecutadas de
+      extremo a extremo en el proyecto real (plantilla de evidencia: corrida
+      `BLU_RLS_LIVE=1` adaptada al proyecto). Fecha: ____ · Evidencia: ____
+- [ ] **C4 — Revisión ética del piloto** (BLU-1601). No bloquea cuentas;
+      bloquea el reclutamiento. Fecha: ____ · Evidencia: ____
+
+**Nota:** la activación de la exportación de investigación con datos reales
+(BLU-1203) exige además el protocolo aprobado y el registro público
+(BLU-1601/1602); el gate operativo en código (`exportGateStatus`) lo hace
+técnicamente exigible.

@@ -1,9 +1,16 @@
-# Protocolo del piloto de ocho semanas (BLU-1601) — BORRADOR
+# Protocolo del piloto de ocho semanas (BLU-1601) — PAQUETE DE SUMISIÓN COMPLETO
 
-**Estado:** BORRADOR para revisión ética. **No recluta personas.** La
-aprobación del comité de ética (o determinación institucional) es
-condición previa a cualquier reclutamiento, junto con el registro público
-(BLU-1602) y las firmas de privacidad (ADR-0006, C1–C3/C5).
+**Estado:** listo para presentar a revisión ética (protocolo + anexos A–C).
+**No recluta personas.** La aprobación del comité de ética (o determinación
+institucional) es condición previa a cualquier reclutamiento, junto con el
+registro público (BLU-1602) y las firmas de privacidad (ADR-0006, C1–C3/C5).
+
+**Anexos de este paquete:**
+- [Anexo A — Consentimiento informado del estudio](anexo-consentimiento-informado.md)
+- [Anexo B — Plan de gestión de datos](anexo-gestion-datos.md)
+- [Anexo C — Valoración de riesgos para participantes](anexo-valoracion-riesgos.md)
+- [Preespecificación H1 (BLU-1602)](preespecificacion-blu-h1.md) ·
+  [Instrucciones de registro OSF](registro-osf-instrucciones.md)
 
 ## 1. Población
 
@@ -51,7 +58,11 @@ condición previa a cualquier reclutamiento, junto con el registro público
 
 ## Pendientes antes de reclutar
 
-- [ ] Asesoría metodológica y jurídica (DoR del issue).
-- [ ] Aprobación/determinación ética, constancia archivada.
-- [ ] Registro público del estudio (OSF/ClinicalTrials).
-- [ ] Firmas de privacidad C1–C3/C5 (ADR-0006).
+- [x] Protocolo completo con anexos (consentimiento informado, gestión de datos, valoración de riesgos) — entregado
+- [x] Mecanismo de exportación endurecido y dictamen de minimización (BLU-1203) — READY FOR HUMAN REVIEW
+- [x] Procedimientos ARCO probados de extremo a extremo (C5, PR #119)
+- [ ] Asesoría metodológica y jurídica (DoR del issue)
+- [ ] Aprobación/determinación ética, constancia archivada
+- [ ] Registro público del estudio en OSF (instrucciones listas: `registro-osf-instrucciones.md`)
+- [ ] Firmas de privacidad C1–C3/C5 (hoja de firmas en EIPD-V1 §10)
+- [ ] C3: pentest ligero contra el proyecto real (checklist: `docs/security/pentest-checklist-c3.md`)
