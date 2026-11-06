@@ -7,6 +7,18 @@ producción condicionada a firmas C1–C3/C5 · **Fase:** V1 · **Relaciona:** B
 > por el dueño del producto. El correo es el único dato de identidad obligatorio; todo lo demás
 > sigue siendo opt-in (constitución II: minimización). Ver EIPD-V1 (borrador) antes de producción.
 
+**Implementación (2026-11-05, primera vertical):**
+- `src/lib/v1/config.ts` — activación exclusiva por `SUPABASE_URL` + `SUPABASE_ANON_KEY`
+  (sin ellas: app local intacta, `/cuenta` muestra aviso honesto).
+- `src/lib/v1/account-store.ts` — cliente Auth REST mínimo (fetch, cero dependencias):
+  signIn/signUp/signOut/restoreSession; errores estables (nunca mensajes crudos del servidor);
+  sesión en localStorage (`blu.account.v1`) sin contraseña; signUp exige consentimiento del
+  propósito «sincronización»; la anon key es pública por diseño (RLS es la frontera real).
+- `src/app/cuenta/` — pantalla accesible (etiquetas, aria-live, validación de correo y
+  contraseña ≥ 8); modo local honesto cuando V1 no está configurado.
+- Pendiente sobre esta base: verificación de correo, caducidad/rotación (specs/010), tablas
+  con RLS owner-only (specs/009) y montaje en navegación (diferido a limpiar WIP ajeno).
+
 ## Flujo
 
 1. **Registro**: correo (+ apodo opcional, reutiliza `blu.profile.v1` si existe local).
