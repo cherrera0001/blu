@@ -28,6 +28,7 @@ import { summarizeDays } from "@/lib/history";
 import { WeekBars } from "./WeekBars";
 import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
+import { TraceabilityNote } from "./TraceabilityNote";
 import SpeakButton, { stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
 import { BLU_GREETING } from "@/lib/conversation";
 import {
@@ -824,17 +825,16 @@ export default function Home() {
                           ))}
                       </ul>
                       <p className="tiny-note">{habitCatalog.disclaimer}</p>
-                      <p className="tiny-note">¿Para qué puede servir?</p>
+                    </details>
+                    <details className="why-suggested">
+                      <summary className="text-button">¿Por qué me lo sugiere?</summary>
                       <ul role="list">
                         {habitEducation.principles
                           .find((entry) => entry.principleId === habit.id)
                           ?.notes.map((note) => (
                             <li key={note.id}>
                               <strong>{note.title}.</strong> {note.text}{" "}
-                              <em>
-                                Fuente: {note.sourceLabel} (
-                                {note.sourceStatus === "verificada" ? "verificada" : "sin evidencia verificada"})
-                              </em>
+                              <TraceabilityNote note={note} />
                             </li>
                           ))}
                       </ul>

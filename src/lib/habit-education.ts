@@ -8,6 +8,8 @@ export interface EducationNote {
   text: string;
   sourceLabel: string;
   sourceStatus: SourceStatus;
+  /** Ligadura opcional al registro de evidencia (ev-AAAA-NNN); ver specs/008. */
+  evidenceId?: string;
 }
 
 export interface PrincipleEducation {
@@ -71,12 +73,18 @@ export function validateEducation(raw: unknown): HabitEducation {
       if (n.sourceStatus !== "pendiente" && n.sourceStatus !== "verificada") {
         fail(`«${String(n.id)}» tiene un estado de fuente inválido.`);
       }
+      if (n.evidenceId !== undefined) {
+        if (typeof n.evidenceId !== "string" || !/^ev-\d{4}-\d{3}$/.test(n.evidenceId)) {
+          fail(`«${String(n.id)}» tiene una ligadura de evidencia inválida (ev-AAAA-NNN).`);
+        }
+      }
       return {
         id: n.id,
         title: n.title,
         text: n.text,
         sourceLabel: n.sourceLabel,
         sourceStatus: n.sourceStatus as SourceStatus,
+        ...(typeof n.evidenceId === "string" ? { evidenceId: n.evidenceId } : {}),
       };
     });
     return { principleId: pr.principleId, notes };
