@@ -273,12 +273,15 @@ export function validateRegistry(raw: unknown): EvidenceRegistry {
 }
 
 let cachedRegistry: EvidenceRegistry | null = null;
+let overrideRegistry: EvidenceRegistry | null = null;
 
 export function loadRegistry(): EvidenceRegistry {
+  if (overrideRegistry) return overrideRegistry;
   if (!cachedRegistry) cachedRegistry = validateRegistry(registryJson);
   return cachedRegistry;
 }
 
-export function resetRegistryCacheForTests(): void {
-  cachedRegistry = null;
+/** Solo para pruebas: inyecta un registro en memoria (null restaura el empaquetado). */
+export function injectRegistryForTests(registry: EvidenceRegistry | null): void {
+  overrideRegistry = registry;
 }
