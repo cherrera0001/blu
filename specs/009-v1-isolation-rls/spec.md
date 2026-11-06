@@ -1,10 +1,21 @@
 # Spec de diseño V1: Aislamiento de datos entre personas (BLU-104) — gated
 
-**Estado:** diseño preparatorio · **Fase:** V1 (implementación gated por PRD §8)
-**Relaciona:** ADR-0002 (Supabase+RLS por defecto) · THREAT_MODEL.md (suplantación, divulgación)
+**Estado:** migración entregada y verificada (área construible de ADR-0006); activación en
+producción gated por firmas C1–C3 · **Fase:** V1
+**Relaciona:** ADR-0002 (Supabase+RLS por defecto) · ADR-0006 (apertura formal del gate V1) · THREAT_MODEL.md (suplantación, divulgación)
 
-> Diseño listo para ejecutar tras aprobaciones. **No implementa backend.** Todo acceso cruzado
-> queda prohibido por defecto: la autorización vive en la base de datos, jamás solo en el cliente.
+> **Qué existe hoy (evidencia):** `supabase/migrations/0001_owner_only.sql` implementa el
+> modelo de abajo (tablas + políticas + roles). Verificación doble:
+> 1. Estática en CI — `supabase/migrations.test.ts` (57 aserciones: catálogo exacto de tablas,
+>    owner_id→auth.users, RLS habilitado, políticas owner_select/owner_insert/owner_update/
+>    no_delete, catálogo reviewer-only, sin bypass service_role).
+> 2. En vivo — `BLU_RLS_LIVE=1 node supabase/tests/rls-live-check.mjs` (Docker + postgres:18):
+>    levanta la migración con un bootstrap local del esquema `auth` y ejecuta la matriz de
+>    aislamiento. Última corrida: **15/15 PASS** (lectura/update/insert cruzados bloqueados,
+>    enumeración acotada, borrado físico denegado, borrado lógico ARCO permitido, catálogo
+>    legible y reviewer-escrito, sin sesión = 0 filas).
+> No se creó ningún proyecto/recurso cloud (ADR-0006). Queda pendiente del DoD: ejecución en
+> el proyecto Supabase real y pentest de API (este último vive en specs/016, con el BFF).
 
 ## Modelo de propiedad
 
