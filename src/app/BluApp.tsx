@@ -205,20 +205,12 @@ export default function Home() {
     }
     return text;
   }
-  const welcomeSpeech = [
-    translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes."),
-    translate(locale, "Un cambio pequeño también cuenta."),
-    translate(
-      locale,
-      "Elige algo que te gustaría explorar. No necesitas cambiarlo todo hoy ni hacerlo perfecto.",
-    ),
-  ].join(" ");
-  const todaySpeech = [
-    translate(locale, "Hoy, elige un paso a tu ritmo."),
-    translate(locale, "No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias."),
-    translate(locale, companion.line),
-    todayProgressMessage,
-  ].join(" ");
+  // Scripts cortos para Escuchar: compañía, no locución del dashboard completo.
+  const welcomeSpeech = translate(
+    locale,
+    "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.",
+  );
+  const todaySpeech = translate(locale, companion.line);
   const screenSpeech =
     !state.consentAcceptedAt || state.selectedHabitIds.length === 0 || editingSelection
       ? welcomeSpeech
@@ -241,7 +233,7 @@ export default function Home() {
         if (available) {
           setAzureVoiceEnabled(true);
           setAzureVoiceNotice(
-            translate(locale, "Voz natural activa (ElevenLabs). Escuchar usa el audio del servidor."),
+            translate(locale, "Voz natural activa. Escuchar usa el audio del servidor."),
           );
         }
       } catch {
@@ -353,7 +345,7 @@ export default function Home() {
       setNaturalVoiceReady(true);
       setAzureVoiceEnabled(true);
       setAzureVoiceNotice(
-        translate(locale, "Voz natural activa (ElevenLabs). Escuchar usa el audio del servidor."),
+        translate(locale, "Voz natural activa. Escuchar usa el audio del servidor."),
       );
     } catch {
       setAzureVoiceNotice(
@@ -1211,13 +1203,13 @@ export default function Home() {
             )}
           </details>
 
-          <section className="review-card activity-card" aria-labelledby="review-heading">
-            <div className="review-top">
+          <details className="review-card activity-card" id="activity">
+            <summary aria-labelledby="review-heading" className="review-top">
               <div>
                 <span className="eyebrow">{translate(locale, "REGISTRO PERSONAL")}</span>
                 <h2 id="review-heading">{translate(locale, "Tu actividad")}</h2>
               </div>
-            </div>
+            </summary>
             <div className="review-stats">
               <div>
                 <strong>{historySummary.totalActions}</strong>
@@ -1279,7 +1271,7 @@ export default function Home() {
               </div>
             )}
             <p className="tiny-note">
-              {translate(locale, "Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).")}
+              {translate(locale, "Estas cifras son solo un registro de uso, no una medida de salud ni de eficacia.")}
             </p>
             <p className="review-note">
               {translate(locale, "Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?")}
@@ -1335,15 +1327,15 @@ export default function Home() {
                 </button>
               </div>
             )}
-          </section>
+          </details>
 
-          <section className="review-card" aria-labelledby="weekly-review-heading">
-            <div className="review-top">
+          <details className="review-card" id="weekly-review">
+            <summary aria-labelledby="weekly-review-heading" className="review-top">
               <div>
                 <span className="eyebrow">{translate(locale, "MIRADA SEMANAL")}</span>
                 <h2 id="weekly-review-heading">{translate(locale, "Revisión de tu semana")}</h2>
               </div>
-            </div>
+            </summary>
             <p className="muted">{translate(locale, "Últimos 7 días · es un registro personal, no una medida de salud.")}</p>
             <p className="review-intro">
               {translate(locale, "Si quieres, cuéntame cómo te fue y qué prefieres para la próxima semana.")}
@@ -1427,7 +1419,7 @@ export default function Home() {
                 {reviewNotice}
               </p>
             )}
-          </section>
+          </details>
 
           <p className="evidence-note">
             <span aria-hidden="true">ⓘ</span>{" "}
@@ -1446,8 +1438,8 @@ export default function Home() {
             </div>
             <p aria-live="polite" className="chat-disclosure">
               {assistantRemote
-                ? translate(locale, "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud.")
-                : translate(locale, "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación.")}
+                ? translate(locale, "Estoy aquí para una pausa breve, con ayuda a través de Blu. No guardamos tu historial; evita compartir datos personales o de salud.")
+                : translate(locale, "Estoy aquí para una pausa breve. Tu mensaje pasa por Blu para preparar la respuesta; no guardamos el historial de la conversación.")}
             </p>
             {localModeReason && (
               <p className="tiny-note" role="status">
@@ -1461,7 +1453,8 @@ export default function Home() {
             {chatPresence === "responding" && (
               <p className="chat-thinking" role="status">{translate(locale, "Blu está pensando…")}</p>
             )}
-            <div className="chat-voice-settings">
+            <details className="chat-voice-settings">
+              <summary>{translate(locale, "Opciones de voz")}</summary>
               <label className="chat-voice-control" htmlFor="voice-style">
                 <span>{translate(locale, "Estilo de voz")}</span>
                 <select
@@ -1496,7 +1489,7 @@ export default function Home() {
                     : translate(locale, "Activar voz natural")}
               </button>
               {azureVoiceNotice && <p className="chat-voice-status" role="status">{azureVoiceNotice}</p>}
-            </div>
+            </details>
             <div aria-live="polite" className="chat-messages" role="log">
               {chatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
@@ -1563,7 +1556,7 @@ export default function Home() {
               <button className="privacy-action" onClick={exportData} type="button">
                 <span className="privacy-action-name">{translate(locale, "Exportar mis datos")}</span>
                 <span className="privacy-action-desc">
-                  {translate(locale, "Un archivo JSON con todo lo guardado aquí.")}
+                  {translate(locale, "Un archivo con todo lo guardado aquí.")}
                 </span>
               </button>
             </li>
@@ -1693,13 +1686,20 @@ function PortraitPanel({
   if (!open) {
     const portraitHasDeclaration = refined.habits.some((item) => item.declared);
     return (
-      <section className="portrait-card" aria-labelledby="portrait-heading">
-        <div className="section-heading">
+      <details className="portrait-card">
+        <summary className="section-heading">
           <h2 id="portrait-heading">{translate(locale, "Tu punto de partida")}</h2>
-          <button className="text-button" onClick={onEdit} type="button">
+          <button
+            className="text-button"
+            onClick={(event) => {
+              event.preventDefault();
+              onEdit();
+            }}
+            type="button"
+          >
             {translate(locale, portraitHasDeclaration ? "Actualizar lo que declaré" : "Completar punto de partida")}
           </button>
-        </div>
+        </summary>
         <ul className="portrait-list">
           {refined.habits.map((item) => {
             const habit = HABITS.find((entry) => entry.id === item.habitId);
@@ -1711,7 +1711,7 @@ function PortraitPanel({
             );
           })}
         </ul>
-      </section>
+      </details>
     );
   }
 

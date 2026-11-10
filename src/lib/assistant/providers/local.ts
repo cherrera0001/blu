@@ -31,12 +31,15 @@ export class LocalRuleProvider implements AssistantProvider {
     } else if (/\b(ocupad\w*|trabaj\w*|tiempo|agenda|apuro)|\b(busy|workload|schedule|in a rush)\b|\btime\b|很忙|工作太忙|没时间|赶时间/i.test(text)) {
       reply =
         "El tiempo aprieta, lo entiendo. Sin asumir nada: ¿una versión de dos minutos, otro momento del día, o lo dejamos para mañana sin culpa?";
+    } else if (/\b(olvid|culpa|guilt|forgot)\b|忘记|内疚/i.test(text)) {
+      reply =
+        "Olvidar un día no borra lo que ya cuidaste. Un paso minúsculo ahora: cambia de postura o da tres respiraciones tranquilas. Cuando quieras, lo marcamos juntos.";
     } else if (/\b(cansad\w*|agotad\w*|energia|dificil|no pude|falle\w*)|\b(tired|exhausted|no energy|couldn'?t|i failed)\b|好累|精疲力尽|没精力|没做到/i.test(text)) {
       reply =
-        "Gracias por contarme. No es un fallo: es información. ¿Qué pesó más esta vez: tiempo, energía o acordarte? Puedes ajustar el plan o dejarlo igual.";
+        "Gracias por contarlo. Con poca energía, un paso minúsculo basta: estira los hombros veinte segundos o toma un sorbo de agua con calma. Cuando quieras, lo marcamos juntos.";
     } else {
       reply =
-        "Gracias por compartirlo. Si quieres, elegimos juntos una versión pequeña y realista. Y si no, también está bien.";
+        "Gracias por compartirlo. Un paso minúsculo ahora: pausa veinte segundos y respira. Si quieres, elegimos juntos otra versión pequeña; y si no, también está bien.";
     }
 
     return { text: reply, meta: { providerId: this.id, model: "rules-1.0" } };

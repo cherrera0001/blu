@@ -319,9 +319,9 @@
     "en-US": "I'm sorry you're going through this. I can't help in an emergency: if you are in immediate danger, contact emergency services in your area, or someone you trust, right now. If you want, when you feel safer we can think of a small step together.",
     "zh-CN": "很抱歉你正在经历这些。我没法处理紧急情况：如果眼下有危险，请马上联系当地紧急服务，或一个你信任的人。如果你愿意，等你安定一些，我们可以一起想一个小步骤。"
   },
-  "No puedo evaluar síntomas ni orientar tratamientos. Para una consulta de salud, habla con un profesional cualificado. Si hay peligro inmediato, contacta los servicios de emergencia locales.": {
-    "en-US": "I can't assess symptoms or guide treatment. For a health question, talk with a qualified professional. If there is immediate danger, contact local emergency services.",
-    "zh-CN": "我不能判断症状，也不能指导治疗。健康上的问题，请找有资质的专业人员。如果眼下有危险，请联系当地紧急服务。"
+  "Gracias por decirlo. No puedo evaluar síntomas ni orientar tratamientos; eso corresponde a un profesional de salud. Si hay peligro inmediato, contacta los servicios de emergencia de tu zona. Aquí sigo para pasos pequeños de bienestar cuando estés en condiciones.": {
+    "en-US": "Thank you for saying that. I can't assess symptoms or guide treatment; that belongs with a health professional. If there is immediate danger, contact emergency services in your area. I am still here for small wellbeing steps when you are able.",
+    "zh-CN": "谢谢你说出来。我不能判断症状，也不能指导治疗；这属于健康专业人员。如果眼下有危险，请联系当地紧急服务。等你状况允许时，我仍在这里陪你走小小的身心步骤。"
   },
   "No puedo hacer eso. Estoy aquí para acompañarte en hábitos pequeños de bienestar, dentro de mis límites. ¿Qué versión pequeña te gustaría probar hoy?": {
     "en-US": "I can't do that. I'm here to keep you company with small wellbeing habits, within my limits. What small version would you like to try today?",
@@ -339,13 +339,17 @@
     "en-US": "Time is tight, I get it. No assumptions: a two-minute version, another moment in the day, or we leave it for tomorrow with no guilt?",
     "zh-CN": "时间很紧，我懂。我不替你下结论：要两分钟的版本，换一天里的另一个时候，还是留到明天、不必自责？"
   },
-  "Gracias por contarme. No es un fallo: es información. ¿Qué pesó más esta vez: tiempo, energía o acordarte? Puedes ajustar el plan o dejarlo igual.": {
-    "en-US": "Thanks for telling me. This isn't a failure: it's information. What weighed more this time: time, energy, or remembering? You can adjust the plan or leave it as it is.",
-    "zh-CN": "谢谢你告诉我。这不是失败，是一条信息。这次更难的是哪一件：时间、精力，还是想起来？你可以调整计划，也可以保持原样。"
+  "Gracias por contarlo. Con poca energía, un paso minúsculo basta: estira los hombros veinte segundos o toma un sorbo de agua con calma. Cuando quieras, lo marcamos juntos.": {
+    "en-US": "Thanks for sharing that. With little energy, a tiny step is enough: stretch your shoulders for twenty seconds, or take a calm sip of water. When you want, we can mark it together.",
+    "zh-CN": "谢谢你说出来。精力不多时，一小步就够：活动肩膀二十秒，或慢慢喝一口水。你想的时候，我们一起记下。"
   },
-  "Gracias por compartirlo. Si quieres, elegimos juntos una versión pequeña y realista. Y si no, también está bien.": {
-    "en-US": "Thanks for sharing that. If you want, we can pick a small, realistic version together. And if not, that's fine too.",
-    "zh-CN": "谢谢你愿意说。如果你想，我们一起选一个小而做得到的版本。不想的话，也完全可以。"
+  "Olvidar un día no borra lo que ya cuidaste. Un paso minúsculo ahora: cambia de postura o da tres respiraciones tranquilas. Cuando quieras, lo marcamos juntos.": {
+    "en-US": "Forgetting one day does not erase what you already cared for. A tiny step now: change your posture, or take three calm breaths. When you want, we can mark it together.",
+    "zh-CN": "忘了一天，不会抹掉你已经照顾过的。现在一小步：换个姿势，或慢慢呼吸三次。你想的时候，我们一起记下。"
+  },
+  "Gracias por compartirlo. Un paso minúsculo ahora: pausa veinte segundos y respira. Si quieres, elegimos juntos otra versión pequeña; y si no, también está bien.": {
+    "en-US": "Thanks for sharing that. A tiny step now: pause for twenty seconds and breathe. If you want, we can pick another small version together; and if not, that is fine too.",
+    "zh-CN": "谢谢你说出来。现在一小步：停二十秒，呼吸一下。如果你想，我们再一起选另一个小小版本；不想的话，也完全可以。"
   },
   "Pequeños momentos de movimiento que encajen en tu día.": {
     "en-US": "Small moments of movement that fit into your day.",
@@ -1531,8 +1535,28 @@
     "en-US": "If you turn on natural voice, only the Blu text you choose to hear is sent to a voice provider to make the audio. Do not share personal or health information.",
     "zh-CN": "如果打开自然语音，只有你选择朗读的 Blu 文字会发给语音服务来生成声音。请不要分享个人或健康信息。"
   },
-  "Voz natural activa (ElevenLabs). Escuchar usa el audio del servidor.": {
-    "en-US": "Natural voice is on (ElevenLabs). Listen uses server audio.",
-    "zh-CN": "自然语音已开启（ElevenLabs）。朗读使用服务器音频。"
+  "Voz natural activa. Escuchar usa el audio del servidor.": {
+    "en-US": "Natural voice is on. Listen uses server audio.",
+    "zh-CN": "自然语音已开启。朗读使用服务器音频。"
+  },
+  "Opciones de voz": {
+    "en-US": "Voice options",
+    "zh-CN": "语音选项"
+  },
+  "Estas cifras son solo un registro de uso, no una medida de salud ni de eficacia.": {
+    "en-US": "These figures are only a use record, not a measure of health or effectiveness.",
+    "zh-CN": "这些数字只是使用记录，不是健康或效果的衡量。"
+  },
+  "Estoy aquí para una pausa breve, con ayuda a través de Blu. No guardamos tu historial; evita compartir datos personales o de salud.": {
+    "en-US": "I am here for a short pause, with help through Blu. We do not keep your history; avoid sharing personal or health data.",
+    "zh-CN": "我在这里陪你短暂停一下，通过 Blu 得到帮助。我们不保存记录；请不要分享个人或健康信息。"
+  },
+  "Estoy aquí para una pausa breve. Tu mensaje pasa por Blu para preparar la respuesta; no guardamos el historial de la conversación.": {
+    "en-US": "I am here for a short pause. Your message goes through Blu to prepare a reply; we do not keep the conversation history.",
+    "zh-CN": "我在这里陪你短暂停一下。你的消息会经 Blu 准备回复；我们不保存对话记录。"
+  },
+  "Un archivo con todo lo guardado aquí.": {
+    "en-US": "A file with everything saved here.",
+    "zh-CN": "一个包含这里全部记录的文件。"
   }
 }

@@ -2,7 +2,7 @@ export const SAFE_CRISIS_RESPONSE =
   "Lamento que estés pasando por esto. No puedo intervenir en emergencias: si estás en peligro inmediato, contacta a los servicios de emergencia de tu zona o a una persona de confianza ahora mismo. Si quieres, cuando estés bien podemos pensar juntos en un paso pequeño.";
 
 export const SAFE_CLINICAL_RESPONSE =
-  "No puedo evaluar síntomas ni orientar tratamientos. Para una consulta de salud, habla con un profesional cualificado. Si hay peligro inmediato, contacta los servicios de emergencia locales.";
+  "Gracias por decirlo. No puedo evaluar síntomas ni orientar tratamientos; eso corresponde a un profesional de salud. Si hay peligro inmediato, contacta los servicios de emergencia de tu zona. Aquí sigo para pasos pequeños de bienestar cuando estés en condiciones.";
 
 export const SAFE_BOUNDARY_RESPONSE =
   "No puedo hacer eso. Estoy aquí para acompañarte en hábitos pequeños de bienestar, dentro de mis límites. ¿Qué versión pequeña te gustaría probar hoy?";

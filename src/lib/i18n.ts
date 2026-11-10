@@ -138,9 +138,9 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
     "zh-CN": "你在 Blu 里保存的一切都留在这个浏览器中。你可以随时带走或删除：没有账号，也没有云端。",
   },
   "Exportar mis datos": { "en-US": "Export my data", "zh-CN": "导出我的数据" },
-  "Un archivo JSON con todo lo guardado aquí.": {
-    "en-US": "A JSON file with everything saved here.",
-    "zh-CN": "一个包含这里全部记录的 JSON 文件。",
+  "Un archivo con todo lo guardado aquí.": {
+    "en-US": "A file with everything saved here.",
+    "zh-CN": "一个包含这里全部记录的文件。",
   },
   Consentimientos: { "en-US": "Consents", "zh-CN": "同意事项" },
   "Revisa o retira lo que permitiste.": {
@@ -222,6 +222,10 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
   "Voz natural activada para esta sesión.": {
     "en-US": "Natural voice is on for this session.",
     "zh-CN": "本次已开启自然语音。",
+  },
+  "Voz natural activa. Escuchar usa el audio del servidor.": {
+    "en-US": "Natural voice is on. Listen uses server audio.",
+    "zh-CN": "自然语音已开启。朗读使用服务器音频。",
   },
   "No pude comprobar la voz natural. Puedes seguir usando la voz de tu dispositivo.": {
     "en-US": "I could not check the natural voice. You can keep using your device voice.",
@@ -315,14 +319,15 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
   },
   "ACOMPAÑAMIENTO": { "en-US": "COMPANIONSHIP", "zh-CN": "陪伴" },
   "Una pausa con Blu": { "en-US": "A pause with Blu", "zh-CN": "和 Blu 停一下" },
-  "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud.": {
-    "en-US": "I am answering with AI (remote mode): your message is processed by an outside provider through Blu’s server. We do not keep your history; avoid sharing personal or health data.",
-    "zh-CN": "我现在用人工智能回答（远程模式）：你的消息会经 Blu 的服务器交给外部服务处理。我们不保存记录；请不要分享个人或健康信息。",
+  "Estoy aquí para una pausa breve, con ayuda a través de Blu. No guardamos tu historial; evita compartir datos personales o de salud.": {
+    "en-US": "I am here for a short pause, with help through Blu. We do not keep your history; avoid sharing personal or health data.",
+    "zh-CN": "我在这里陪你短暂停一下，通过 Blu 得到帮助。我们不保存记录；请不要分享个人或健康信息。",
   },
-  "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación.": {
-    "en-US": "I answer with simple rules, not generative AI. Your message reaches Blu’s server so a reply can be prepared; we do not keep a conversation history.",
-    "zh-CN": "我用简单规则回答，不是生成式人工智能。你的消息会到 Blu 的服务器以准备回复；我们不保存对话记录。",
+  "Estoy aquí para una pausa breve. Tu mensaje pasa por Blu para preparar la respuesta; no guardamos el historial de la conversación.": {
+    "en-US": "I am here for a short pause. Your message goes through Blu to prepare a reply; we do not keep the conversation history.",
+    "zh-CN": "我在这里陪你短暂停一下。你的消息会经 Blu 准备回复；我们不保存对话记录。",
   },
+  "Opciones de voz": { "en-US": "Voice options", "zh-CN": "语音选项" },
   "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder.": {
     "en-US": "The server asked to wait. I used simple rules on your device to answer.",
     "zh-CN": "服务器请你稍等。我改用你设备上的简单规则来回答。",
@@ -350,9 +355,9 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
   "Comprobando…": { "en-US": "Checking…", "zh-CN": "正在确认…" },
   "Usar voz del dispositivo": { "en-US": "Use this device’s voice", "zh-CN": "用这台设备的声音" },
   "Activar voz natural": { "en-US": "Turn on natural voice", "zh-CN": "打开自然语音" },
-  "Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).": {
-    "en-US": "Product use metrics (descriptive): they do not measure health or effectiveness (BLU-1204).",
-    "zh-CN": "产品使用指标（描述性）：不衡量健康或效果（BLU-1204）。",
+  "Estas cifras son solo un registro de uso, no una medida de salud ni de eficacia.": {
+    "en-US": "These figures are only a use record, not a measure of health or effectiveness.",
+    "zh-CN": "这些数字只是使用记录，不是健康或效果的衡量。",
   },
   "Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?": {
     "en-US": "It is a personal record, not a measure of health. Want to try a smaller version?",

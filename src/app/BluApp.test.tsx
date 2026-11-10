@@ -331,7 +331,8 @@ describe("Blu user flows", () => {
         ),
       );
       await completeOnboarding(user);
-      expect(await screen.findByText(/Voz natural activa \(ElevenLabs\)/)).toBeTruthy();
+      expect(await screen.findByText(/Voz natural activa/)).toBeTruthy();
+      expect(screen.queryByText(/ElevenLabs/i)).toBeNull();
       expect(screen.getByRole("button", { name: "Usar voz del dispositivo" })).toBeTruthy();
 
       const listen = screen
@@ -346,7 +347,8 @@ describe("Blu user flows", () => {
       expect(postCall).toBeTruthy();
       const postBody = JSON.parse(String((postCall?.[1] as RequestInit).body));
       expect(postBody.locale).toBe("es");
-      expect(postBody.text).toContain("Hoy, elige un paso a tu ritmo.");
+      expect(postBody.text.length).toBeLessThan(120);
+      expect(postBody.text).toMatch(/Blu/i);
       expect(audio.play).toHaveBeenCalledOnce();
       await user.click(screen.getByRole("button", { name: "Usar voz del dispositivo" }));
       expect(audio.pause).toHaveBeenCalledOnce();
@@ -728,10 +730,11 @@ describe("Blu user flows", () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await completeOnboarding(user);
-    expect(screen.getByText(/Métricas de uso del producto/i)).toBeTruthy();
+    expect(screen.getByText(/registro de uso/i)).toBeTruthy();
+    expect(screen.queryByText(/BLU-1204/i)).toBeNull();
     await user.click(screen.getByRole("radio", { name: "30 días" }));
     expect(screen.getByRole("status").textContent).toMatch(/Últimos 30 días/i);
-    expect(screen.getByText(/no miden salud ni eficacia/i)).toBeTruthy();
+    expect(screen.getByText(/no una medida de salud ni de eficacia/i)).toBeTruthy();
   });
 
   it("suggests a weekly plan, shows intentions and removes them", async () => {
@@ -805,7 +808,7 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
       const user = userEvent.setup();
       render(<BluApp />);
       await completeOnboarding(user);
-      expect(screen.getByText(/reglas sencillas, no con IA generativa/i)).toBeTruthy();
+      expect(screen.getByText(/Estoy aquí para una pausa breve\. Tu mensaje pasa por Blu/i)).toBeTruthy();
 
       await user.type(
         screen.getByRole("textbox", { name: "Escribe una reflexión" }),
@@ -813,9 +816,9 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
       );
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
-      expect(await screen.findByText(/respondo con IA/i)).toBeTruthy();
+      expect(await screen.findByText(/con ayuda a través de Blu/i)).toBeTruthy();
       expect(screen.getByText(/evita compartir datos personales o de salud/i)).toBeTruthy();
-      expect(screen.queryByText(/reglas sencillas, no con IA generativa/i)).toBeNull();
+      expect(screen.queryByText(/Tu mensaje pasa por Blu para preparar la respuesta/i)).toBeNull();
       expect(fetchMock).toHaveBeenCalledWith(
         "/api/assistant",
         expect.objectContaining({ method: "POST" }),
@@ -845,8 +848,8 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
       expect(await screen.findByText(/El tiempo aprieta/)).toBeTruthy();
-      expect(screen.getByText(/reglas sencillas, no con IA generativa/i)).toBeTruthy();
-      expect(screen.queryByText(/respondo con IA \(modo remoto\)/i)).toBeNull();
+      expect(screen.getByText(/Estoy aquí para una pausa breve\. Tu mensaje pasa por Blu/i)).toBeTruthy();
+      expect(screen.queryByText(/con ayuda a través de Blu/i)).toBeNull();
     } finally {
       vi.unstubAllGlobals();
     }
