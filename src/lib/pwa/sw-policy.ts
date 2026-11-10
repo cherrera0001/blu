@@ -7,7 +7,7 @@
  * transcripción ni respuesta queda almacenada en caché.
  */
 
-export const CACHE_NAME = "blu-shell-v4";
+export const CACHE_NAME = "blu-shell-v5";
 
 /** App shell mínimo para arranque sin conexión tras una visita previa online. */
 export const PRECACHE_URLS = [
