@@ -46,7 +46,7 @@ import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import { TraceabilityNote } from "./TraceabilityNote";
 import { activeTelemetry, initTelemetry } from "@/lib/observability/telemetry";
-import SpeakButton, { speakLocalText, stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
+import SpeakButton, { speakNaturalText, speakLocalText, stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
 import { BLU_GREETING } from "@/lib/conversation";
 import {
   getProfileSnapshot,
@@ -173,6 +173,7 @@ export default function Home() {
   const [azureVoiceEnabled, setAzureVoiceEnabled] = useState(false);
   const [azureVoiceLoading, setAzureVoiceLoading] = useState(false);
   const [azureVoiceNotice, setAzureVoiceNotice] = useState("");
+  const [naturalVoiceReady, setNaturalVoiceReady] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "blu",
@@ -224,14 +225,48 @@ export default function Home() {
       : todaySpeech;
   const spokenLocale = useRef<Locale | null>(null);
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch("/api/voice", { cache: "no-store" });
+        const result: unknown = await response.json();
+        const available =
+          response.ok &&
+          typeof result === "object" &&
+          result !== null &&
+          (("naturalAvailable" in result && result.naturalAvailable === true) ||
+            ("elevenlabsAvailable" in result && result.elevenlabsAvailable === true));
+        if (cancelled) return;
+        setNaturalVoiceReady(available);
+        if (available) {
+          setAzureVoiceEnabled(true);
+          setAzureVoiceNotice(
+            translate(locale, "Voz natural activa (ElevenLabs). Escuchar usa el audio del servidor."),
+          );
+        }
+      } catch {
+        if (!cancelled) setNaturalVoiceReady(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Solo al montar: detectar si ElevenLabs está disponible en este despliegue.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
     if (spokenLocale.current === null) {
       spokenLocale.current = locale;
       return;
     }
     if (spokenLocale.current === locale) return;
     spokenLocale.current = locale;
-    speakLocalText(screenSpeech, locale);
-  }, [locale, screenSpeech]);
+    if (azureVoiceEnabled && naturalVoiceReady) {
+      void speakNaturalText(screenSpeech, locale, { fallbackLocal: true });
+    } else {
+      speakLocalText(screenSpeech, locale);
+    }
+  }, [locale, screenSpeech, azureVoiceEnabled, naturalVoiceReady]);
   const refined = refinePortrait(portrait, state, today);
   const consentReady = hasPurpose(state.consent, "operativo") && !needsReconsent(state.consent);
   const showConsentEditor = !consentReady || managingConsent;
@@ -309,13 +344,17 @@ export default function Home() {
           ("elevenlabsAvailable" in result && result.elevenlabsAvailable === true) ||
           ("azureAvailable" in result && result.azureAvailable === true));
       if (!response.ok || !natural) {
+        setNaturalVoiceReady(false);
         setAzureVoiceNotice(
           translate(locale, "La voz natural aún no está configurada. Puedes seguir usando la voz de tu dispositivo."),
         );
         return;
       }
+      setNaturalVoiceReady(true);
       setAzureVoiceEnabled(true);
-      setAzureVoiceNotice(translate(locale, "Voz natural activada para esta sesión."));
+      setAzureVoiceNotice(
+        translate(locale, "Voz natural activa (ElevenLabs). Escuchar usa el audio del servidor."),
+      );
     } catch {
       setAzureVoiceNotice(
         translate(locale, "No pude comprobar la voz natural. Puedes seguir usando la voz de tu dispositivo."),
@@ -674,6 +713,8 @@ export default function Home() {
               </p>
               <SpeakButton
                 locale={locale}
+                mode={azureVoiceEnabled ? "natural" : "local"}
+                naturalAvailable={azureVoiceEnabled}
                 text={translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
               />
             </div>
@@ -881,7 +922,12 @@ export default function Home() {
         <div className="hero-blu">
           <BluPresence mood={companion.mood} pose={companion.pose} size="lg" state={heroPresence} />
           <p className="companion-line">{translate(locale, companion.line)}</p>
-          <SpeakButton locale={locale} text={todaySpeech} />
+          <SpeakButton
+            locale={locale}
+            mode={azureVoiceEnabled ? "natural" : "local"}
+            naturalAvailable={azureVoiceEnabled}
+            text={todaySpeech}
+          />
         </div>
         <div className="hero-progress">
           <span className="progress-caption">{translate(locale, "TU PASO DE HOY")}</span>
@@ -1461,9 +1507,9 @@ export default function Home() {
                     <p>{message.role === "blu" ? translate(locale, message.text) : message.text}</p>
                     {message.role === "blu" && (
                       <SpeakButton
-                        azureAvailable={azureVoiceEnabled}
                         locale={locale}
-                        mode={azureVoiceEnabled ? "azure" : "local"}
+                        mode={azureVoiceEnabled ? "natural" : "local"}
+                        naturalAvailable={azureVoiceEnabled}
                         profile={voiceProfile}
                         text={translate(locale, message.text)}
                       />

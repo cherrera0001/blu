@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import BluApp from "./BluApp";
@@ -6,7 +6,6 @@ import Page from "./page";
 import { clearBluState, updateBluState } from "@/lib/storage";
 import { invalidateReviews } from "@/lib/review";
 import { invalidateGoals } from "@/lib/onboarding/goals-storage";
-import { BLU_GREETING } from "@/lib/conversation";
 import { localDateKey } from "@/lib/blu";
 
 // El optimizer de next/image no corre en jsdom: se renderiza un <img> plano.
@@ -287,13 +286,18 @@ describe("Blu user flows", () => {
     }
   });
 
-  it("uses Azure voice only after explicit activation and a separate listen click", async () => {
-    const fetchMock = vi.fn()
-      .mockResolvedValueOnce(Response.json({ azureAvailable: false, elevenlabsAvailable: true, naturalAvailable: true }))
-      .mockResolvedValueOnce({
-        ok: true,
-        blob: async () => new Blob(["synthetic audio"]),
-      });
+  it("activa ElevenLabs al cargar y Escuchar pide audio al servidor", async () => {
+    const fetchMock = vi.fn((url: string, init?: RequestInit) => {
+      if (init?.method === "POST") {
+        return Promise.resolve({
+          ok: true,
+          blob: async () => new Blob(["synthetic audio"]),
+        });
+      }
+      return Promise.resolve(
+        Response.json({ azureAvailable: false, elevenlabsAvailable: true, naturalAvailable: true }),
+      );
+    });
     const audio = {
       play: vi.fn().mockResolvedValue(undefined),
       pause: vi.fn(),
@@ -313,37 +317,36 @@ describe("Blu user flows", () => {
       constructor(readonly src: string) {}
     });
     vi.stubGlobal("URL", {
-      createObjectURL: vi.fn(() => "blob:azure-audio"),
+      createObjectURL: vi.fn(() => "blob:natural-audio"),
       revokeObjectURL: vi.fn(),
     });
 
     try {
       const user = userEvent.setup();
       render(<BluApp />);
-      await completeOnboarding(user);
-      expect(fetchMock).not.toHaveBeenCalled();
-      expect(screen.getByText(/se enviará solo el texto de Blu que elijas escuchar a un proveedor de voz/)).toBeTruthy();
-
-      await user.click(screen.getByRole("button", { name: "Activar voz natural" }));
-      expect(await screen.findByText("Voz natural activada para esta sesión.")).toBeTruthy();
-      expect(fetchMock).toHaveBeenCalledOnce();
-      expect(fetchMock).toHaveBeenCalledWith(
-        "/api/voice",
-        expect.objectContaining({ cache: "no-store" }),
+      await waitFor(() =>
+        expect(fetchMock).toHaveBeenCalledWith(
+          "/api/voice",
+          expect.objectContaining({ cache: "no-store" }),
+        ),
       );
+      await completeOnboarding(user);
+      expect(await screen.findByText(/Voz natural activa \(ElevenLabs\)/)).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Usar voz del dispositivo" })).toBeTruthy();
 
       const listen = screen
         .getAllByRole("button", { name: "Escuchar respuesta en voz alta" })
         .find((button) => !button.hasAttribute("disabled"));
-      if (!listen) throw new Error("Falta el botón de voz en la nube");
+      if (!listen) throw new Error("Falta el botón de voz natural");
       await user.click(listen);
       expect(await screen.findByRole("button", { name: "Detener lectura" })).toBeTruthy();
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      expect(fetchMock).toHaveBeenNthCalledWith(
-        2,
-        "/api/voice",
-        expect.objectContaining({ body: JSON.stringify({ text: BLU_GREETING, locale: "es" }) }),
+      const postCall = fetchMock.mock.calls.find(
+        (call) => call[0] === "/api/voice" && (call[1] as RequestInit | undefined)?.method === "POST",
       );
+      expect(postCall).toBeTruthy();
+      const postBody = JSON.parse(String((postCall?.[1] as RequestInit).body));
+      expect(postBody.locale).toBe("es");
+      expect(postBody.text).toContain("Hoy, elige un paso a tu ritmo.");
       expect(audio.play).toHaveBeenCalledOnce();
       await user.click(screen.getByRole("button", { name: "Usar voz del dispositivo" }));
       expect(audio.pause).toHaveBeenCalledOnce();
@@ -353,18 +356,21 @@ describe("Blu user flows", () => {
   });
 
   it("keeps local voice mode when Azure is not configured", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      Response.json({ azureAvailable: false, elevenlabsAvailable: false, naturalAvailable: false }),
+    const fetchMock = vi.fn(() =>
+      Promise.resolve(
+        Response.json({ azureAvailable: false, elevenlabsAvailable: false, naturalAvailable: false }),
+      ),
     );
     vi.stubGlobal("fetch", fetchMock);
     try {
       const user = userEvent.setup();
       render(<BluApp />);
+      await waitFor(() => expect(fetchMock).toHaveBeenCalled());
       await completeOnboarding(user);
-      await user.click(screen.getByRole("button", { name: "Activar voz natural" }));
-      expect(await screen.findByText(/aún no está configurada/)).toBeTruthy();
       expect(screen.getByRole("button", { name: "Activar voz natural" })).toBeTruthy();
-      expect(fetchMock).toHaveBeenCalledOnce();
+      await user.click(screen.getByRole("button", { name: "Activar voz natural" }));
+      expect(await screen.findByText(/aún no está configurada/i)).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Activar voz natural" })).toBeTruthy();
     } finally {
       vi.unstubAllGlobals();
     }

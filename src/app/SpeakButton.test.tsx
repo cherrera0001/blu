@@ -225,7 +225,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     vi.unstubAllGlobals();
   });
 
-  it("sends only the chosen reply to the Azure endpoint after an explicit listen action", async () => {
+  it("sends only the chosen reply to ElevenLabs (/api/voice) after an explicit listen action", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       blob: async () => new Blob(["audio"]),
@@ -254,7 +254,9 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
       revokeObjectURL: vi.fn(),
     });
     const user = userEvent.setup();
-    render(<SpeakButton text="Una pausa breve puede bastar." mode="azure" azureAvailable />);
+    render(
+      <SpeakButton text="Una pausa breve puede bastar." mode="natural" naturalAvailable />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
 
@@ -268,6 +270,49 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     vi.unstubAllGlobals();
   });
 
+  it("usa ElevenLabs por defecto si naturalAvailable sin mode explícito", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: async () => new Blob(["synthetic audio"]),
+    });
+    const audio = {
+      play: vi.fn().mockResolvedValue(undefined),
+      pause: vi.fn(),
+      removeAttribute: vi.fn(),
+      load: vi.fn(),
+      onended: null as (() => void) | null,
+      onerror: null as (() => void) | null,
+    };
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("Audio", class {
+      play = audio.play;
+      pause = audio.pause;
+      removeAttribute = audio.removeAttribute;
+      load = audio.load;
+      onended = audio.onended;
+      onerror = audio.onerror;
+      constructor(readonly src: string) {}
+    });
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn(() => "blob:elevenlabs-audio"),
+      revokeObjectURL: vi.fn(),
+    });
+    const user = userEvent.setup();
+    render(<SpeakButton text="Audio natural por defecto." naturalAvailable />);
+
+    await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/voice",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ text: "Audio natural por defecto.", locale: "es" }),
+      }),
+    );
+    expect(audio.play).toHaveBeenCalledOnce();
+    vi.unstubAllGlobals();
+  });
+
   it("surfaces Azure synthesis failures without silently using the local voice", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));
     vi.stubGlobal("URL", {
@@ -275,7 +320,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
       revokeObjectURL: vi.fn(),
     });
     const user = userEvent.setup();
-    render(<SpeakButton text="Hola" mode="azure" azureAvailable />);
+    render(<SpeakButton text="Hola" mode="natural" naturalAvailable />);
 
     await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
 
@@ -291,7 +336,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     });
     vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
-    render(<SpeakButton text="Hola" mode="azure" azureAvailable />);
+    render(<SpeakButton text="Hola" mode="natural" naturalAvailable />);
 
     await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
     await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
@@ -302,7 +347,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
   });
 
   it("does not render a cloud voice button unless the server confirms availability", () => {
-    render(<SpeakButton text="Hola" mode="azure" />);
+    render(<SpeakButton text="Hola" mode="natural" />);
 
     expect(screen.queryByRole("button")).toBeNull();
   });

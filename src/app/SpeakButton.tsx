@@ -5,7 +5,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 let activeSpeechStop: (() => void) | null = null;
 
 export type VoiceProfile = "warm" | "balanced";
-export type VoiceMode = "local" | "azure";
+/** `natural` pide audio a `/api/voice` (ElevenLabs). `azure` se conserva como alias. */
+export type VoiceMode = "local" | "natural" | "azure";
 /** `es` es el idioma de la app; la voz del dispositivo busca `es-CL`. */
 export type SpeechLocale = "es" | "es-CL" | "en-US" | "zh-CN";
 
@@ -17,6 +18,10 @@ function uiLocale(locale: SpeechLocale): UiLocale {
 
 function voiceTag(locale: SpeechLocale): "es-CL" | "en-US" | "zh-CN" {
   return locale === "es" ? "es-CL" : locale;
+}
+
+function isNaturalMode(mode: VoiceMode): boolean {
+  return mode === "natural" || mode === "azure";
 }
 
 const SPEAK_UI: Record<UiLocale, { listen: string; stop: string; loading: string; listenName: string; stopName: string }> = {
@@ -108,6 +113,61 @@ export function speakLocalText(text: string, locale: SpeechLocale): boolean {
   return true;
 }
 
+/** Reproduce con ElevenLabs vía BFF; si falla, opcionalmente cae a la voz local. */
+export async function speakNaturalText(
+  text: string,
+  locale: SpeechLocale,
+  options: { fallbackLocal?: boolean } = {},
+): Promise<"natural" | "local" | "failed"> {
+  const controller = new AbortController();
+  activeSpeechStop?.();
+  const stop = () => {
+    controller.abort();
+    if (activeSpeechStop === stop) activeSpeechStop = null;
+  };
+  activeSpeechStop = stop;
+  try {
+    const response = await fetch("/api/voice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, locale: uiLocale(locale) }),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error("voice_request_failed");
+    const audioUrl = URL.createObjectURL(await response.blob());
+    if (controller.signal.aborted) {
+      URL.revokeObjectURL(audioUrl);
+      return "failed";
+    }
+    const audio = new Audio(audioUrl);
+    const finish = () => {
+      audio.pause();
+      URL.revokeObjectURL(audioUrl);
+      if (activeSpeechStop === stop) activeSpeechStop = null;
+    };
+    activeSpeechStop = () => {
+      controller.abort();
+      finish();
+    };
+    await new Promise<void>((resolve, reject) => {
+      audio.onended = () => {
+        finish();
+        resolve();
+      };
+      audio.onerror = () => {
+        finish();
+        reject(new Error("audio_play_failed"));
+      };
+      void audio.play().then(() => undefined).catch(reject);
+    });
+    return "natural";
+  } catch {
+    if (controller.signal.aborted) return "failed";
+    if (options.fallbackLocal !== false && speakLocalText(text, locale)) return "local";
+    return "failed";
+  }
+}
+
 function subscribeToVoiceChanges(onStoreChange: () => void): () => void {
   const synth = getSynth();
   if (!synth) return () => {};
@@ -121,22 +181,29 @@ function hasLocalVoice(locale: SpeechLocale): boolean {
 }
 
 /**
- * The local mode only uses voices the browser identifies as local. Azure mode
- * is separately gated and only sends text after an explicit listen action.
+ * Escuchar prioriza la voz natural del servidor (ElevenLabs vía `/api/voice`).
+ * La voz local del navegador queda como respaldo cuando no hay proveedor natural.
  */
 export default function SpeakButton({
   text,
   profile = "warm",
-  mode = "local",
+  mode,
   azureAvailable = false,
-  locale = "es-CL",
+  naturalAvailable = azureAvailable,
+  locale = "es",
 }: {
   text: string;
   profile?: VoiceProfile;
   mode?: VoiceMode;
+  /** @deprecated usa naturalAvailable */
   azureAvailable?: boolean;
+  naturalAvailable?: boolean;
   locale?: SpeechLocale;
 }) {
+  // ElevenLabs (vía /api/voice) es el camino por defecto cuando el servidor lo ofrece.
+  // Solo se usa speechSynthesis si mode="local" o si no hay voz natural disponible.
+  const resolvedMode: VoiceMode = mode ?? (naturalAvailable ? "natural" : "local");
+  const natural = isNaturalMode(resolvedMode) && naturalAvailable;
   const supported = useSyncExternalStore(
     subscribeToVoiceChanges,
     () => hasLocalVoice(locale),
@@ -156,8 +223,8 @@ export default function SpeakButton({
     };
   }, []);
 
-  if (mode === "azure" && !azureAvailable) return null;
-  const unavailable = mode === "local" && !supported;
+  if (isNaturalMode(resolvedMode) && !naturalAvailable) return null;
+  const unavailable = !natural && !supported;
 
   function clearAudio(): void {
     const audio = audioRef.current;
@@ -186,7 +253,7 @@ export default function SpeakButton({
     return stop;
   }
 
-  async function speakWithAzure(): Promise<void> {
+  async function speakWithNatural(): Promise<void> {
     const controller = new AbortController();
     const stop = makeStop(controller);
     activeSpeechStop?.();
@@ -254,8 +321,8 @@ export default function SpeakButton({
       speechStop.current?.();
       return;
     }
-    if (mode === "azure") {
-      void speakWithAzure();
+    if (natural) {
+      void speakWithNatural();
     } else {
       speakLocally();
     }

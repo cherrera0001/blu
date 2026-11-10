@@ -1530,5 +1530,9 @@
   "Si activas la voz natural, se enviará solo el texto de Blu que elijas escuchar a un proveedor de voz para crear el audio. No compartas información personal o de salud.": {
     "en-US": "If you turn on natural voice, only the Blu text you choose to hear is sent to a voice provider to make the audio. Do not share personal or health information.",
     "zh-CN": "如果打开自然语音，只有你选择朗读的 Blu 文字会发给语音服务来生成声音。请不要分享个人或健康信息。"
+  },
+  "Voz natural activa (ElevenLabs). Escuchar usa el audio del servidor.": {
+    "en-US": "Natural voice is on (ElevenLabs). Listen uses server audio.",
+    "zh-CN": "自然语音已开启（ElevenLabs）。朗读使用服务器音频。"
   }
 }
