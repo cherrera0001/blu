@@ -966,7 +966,8 @@ export default function Home() {
           </div>
           <p className="progress-message" aria-live="polite">{todayProgressMessage}</p>
         </div>
-        <div className="reminder-box">
+        <details className="reminder-box">
+          <summary className="tiny-note">{translate(locale, "Recordatorio opcional")}</summary>
           <button
             className="text-button"
             disabled={reminderState.permission === "unsupported"}
@@ -988,7 +989,7 @@ export default function Home() {
           {reminderNotice && (
             <p className="inline-notice" role="status">{reminderNotice}</p>
           )}
-        </div>
+        </details>
       </section>
 
       {notice && <p className="toast" role="status">{notice}</p>}

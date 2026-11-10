@@ -332,6 +332,10 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
     "en-US": "Optional improvement and research choices",
     "zh-CN": "可选的改进与研究选项",
   },
+  "Recordatorio opcional": {
+    "en-US": "Optional reminder",
+    "zh-CN": "可选提醒",
+  },
   "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder.": {
     "en-US": "The server asked to wait. I used simple rules on your device to answer.",
     "zh-CN": "服务器请你稍等。我改用你设备上的简单规则来回答。",
