@@ -8,6 +8,30 @@ export type VoiceProfile = "warm" | "balanced";
 export type VoiceMode = "local" | "azure";
 export type SpeechLocale = "es-CL" | "en-US" | "zh-CN";
 
+const SPEAK_UI: Record<SpeechLocale, { listen: string; stop: string; loading: string; listenName: string; stopName: string }> = {
+  "es-CL": {
+    listen: "Escuchar",
+    stop: "Detener",
+    loading: "Generando audio…",
+    listenName: "Escuchar respuesta en voz alta",
+    stopName: "Detener lectura",
+  },
+  "en-US": {
+    listen: "Listen",
+    stop: "Stop",
+    loading: "Making audio…",
+    listenName: "Listen to this aloud",
+    stopName: "Stop reading",
+  },
+  "zh-CN": {
+    listen: "朗读",
+    stop: "停止",
+    loading: "正在生成声音…",
+    listenName: "朗读屏幕上的文字",
+    stopName: "停止朗读",
+  },
+};
+
 const MISSING_VOICE: Record<SpeechLocale, string> = {
   "es-CL": "Este dispositivo no tiene una voz local en español.",
   "en-US": "This device does not have a local English voice.",
@@ -213,14 +237,14 @@ export default function SpeakButton({
   return (
     <div className="speak-control">
       <button
-        aria-label={speaking || loading ? "Detener lectura" : "Escuchar respuesta en voz alta"}
+        aria-label={speaking || loading ? SPEAK_UI[locale].stopName : SPEAK_UI[locale].listenName}
         aria-pressed={speaking || loading}
         className="text-button"
         disabled={unavailable}
         onClick={toggle}
         type="button"
       >
-        {loading ? "Generando audio…" : speaking ? "■ Detener" : "🔊 Escuchar"}
+        {loading ? SPEAK_UI[locale].loading : speaking ? `■ ${SPEAK_UI[locale].stop}` : `🔊 ${SPEAK_UI[locale].listen}`}
       </button>
       {unavailable && (
         <p className="speak-status">{MISSING_VOICE[locale]}</p>

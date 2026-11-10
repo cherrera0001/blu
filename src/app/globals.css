@@ -79,7 +79,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   outline-offset: 3px;
 }
 .dashboard { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
-.topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); gap: 8px; }
+.topbar { min-height: 64px; height: auto; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); gap: 8px; padding: 8px 0; }
 .brand { min-height: 44px; display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font: 750 24px/1 "Segoe UI", sans-serif; letter-spacing: -1.2px; text-decoration: none; }
 .prototype-tag { padding: 7px 12px; border: 1px solid var(--line); border-radius: 99px; background: var(--paper); color: var(--blu-glow); font-size: 11px; font-weight: 650; }
 .topbar-right { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
@@ -133,8 +133,8 @@ h1, h2 { color: var(--blu-glow); font-family: "Segoe UI", Arial, sans-serif; let
 .cancel-edit { display: block; margin: 8px auto 0; }
 .page-footer, .dashboard-footer { display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding: 18px 0; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 14px; }
 
-.app-header { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--pale) 94%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
-.dashboard > .app-header .topbar { height: 66px; border-bottom: 0; }
+.app-header { position: sticky; top: 0; z-index: 20; background: #12324f; border-bottom: 1px solid var(--line); }
+.dashboard > .app-header .topbar { min-height: 66px; height: auto; border-bottom: 0; }
 .dashboard-nav {
   position: fixed;
   z-index: 30;
@@ -173,12 +173,12 @@ h1, h2 { color: var(--blu-glow); font-family: "Segoe UI", Arial, sans-serif; let
 .hero-copy { max-width: 610px; }
 .hero-kicker { display: inline-flex; align-items: center; gap: 9px; color: var(--blu-sky); font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
 .hero-kicker-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blu-blue); box-shadow: 0 0 0 4px rgb(47 143 191 / 14%); }
-.hero-date { margin: 12px 0 6px; color: var(--blu-sky); font-size: 12px; font-weight: 600; letter-spacing: .2px; text-transform: capitalize; }
+.hero-date { margin: 12px 0 6px; color: var(--blu-sky); font-size: 15px; font-weight: 600; letter-spacing: .2px; }
 .hero-copy h1 { max-width: none; margin: 0; color: var(--blu-glow); font-size: 30px; line-height: 1.08; letter-spacing: -0.4px; }
 .hero-copy h1 span { color: var(--blu-sky); }
 .hero-description { max-width: 430px; margin: 10px 0 14px; color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
 .hero-link { min-height: 44px; display: inline-flex; align-items: center; gap: 10px; padding: 0 16px; border: 1px solid var(--blu-blue); border-radius: 999px; background: var(--blu-blue); color: white; font-size: 12px; font-weight: 700; text-decoration: none; transition: background .18s ease, border-color .18s ease; }
-.hero-link:hover { border-color: var(--blu-deep); background: var(--blu-deep); }
+.hero-link:hover { border-color: var(--blu-glow); background: var(--blu-glow); color: var(--blu-ink); }
 .hero-link span { color: var(--blu-sun); font-size: 16px; }
 .hero-blu { display: flex; flex-direction: column; align-items: center; gap: 8px; order: -1; }
 .hero-blu .blu-presence { width: 148px; height: 168px; }
@@ -313,8 +313,8 @@ h1, h2 { color: var(--blu-glow); font-family: "Segoe UI", Arial, sans-serif; let
 .chat-bubble.you { align-self: flex-end; border-bottom-right-radius: 3px; background: color-mix(in srgb, var(--blu-sky) 22%, var(--blu-ink)); color: var(--blu-foam); }
 .chat-bubble.blu { align-self: flex-start; border-bottom-left-radius: 3px; }
 .chat-form { display: flex; gap: 7px; padding-top: 11px; border-top: 1px solid var(--line); }
-.chat-form input { width: 100%; min-width: 0; border: 0; background: transparent; color: var(--ink); font-size: 12px; outline: none; }
-.chat-form button { width: 44px; height: 44px; flex: 0 0 44px; border: 0; border-radius: 50%; background: var(--teal); color: white; cursor: pointer; font-size: 18px; }
+.chat-form input { width: 100%; min-width: 0; border: 0; background: transparent; color: var(--ink); font-size: 16px; outline: none; }
+.chat-form button { min-width: 44px; min-height: 44px; height: 44px; flex: 0 0 auto; padding: 0 16px; border: 0; border-radius: 999px; background: var(--blu-sky); color: var(--blu-ink); cursor: pointer; font-size: 16px; font-weight: 700; }
 .chat-form button:disabled { opacity: .45; cursor: not-allowed; }
 .chat-privacy { margin: 8px 0 0; color: var(--ink-soft); font-size: 11px; }
 .principle-card { margin-top: 18px; padding: 16px 0 0; border-top: 1px solid var(--line); }
@@ -339,8 +339,6 @@ h1, h2 { color: var(--blu-glow); font-family: "Segoe UI", Arial, sans-serif; let
 
 @media (max-width: 540px) {
   .onboarding, .dashboard { padding-left: 16px; padding-right: 16px; }
-  .topbar { height: 64px; }
-  .dashboard > .app-header .topbar { height: 60px; }
   .hero-copy h1 { font-size: 28px; }
   .progress-caption { grid-column: 1 / -1; }
   .progress-count { grid-column: 1; grid-row: 2 / span 2; margin: 6px 0 0; }
@@ -528,11 +526,15 @@ details[open].review-card summary::after {
 
 /* Ciclo 3 UX: resultado del cuestionario compacto en móvil (todo visible, menos scroll) */
 .habit-grid.compact {
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 .habit-grid.compact .habit-option {
-  padding: 0.6rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 14px;
+  overflow-wrap: break-word;
 }
 
 /* Ciclo 4 UX — sistema de foco visible (WCAG 2.2 AA 2.4.7/2.4.11) y acabado de botones */
@@ -550,7 +552,7 @@ details[open].review-card summary::after {
   border-radius: var(--radius-sm);
 }
 .text-button:hover {
-  color: var(--teal);
+  color: var(--blu-glow);
 }
 .check-button:focus-visible,
 .habit-option:focus-visible {

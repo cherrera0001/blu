@@ -263,12 +263,12 @@ export default function Home() {
       levels: portraitDraft,
     };
     if (!savePortrait(next)) {
-      setNotice("No pude guardar el punto de partida en este navegador.");
+      setNotice(translate(locale, "No pude guardar el punto de partida en este navegador."));
       return;
     }
     setPortraitEditing(false);
     setPortraitDismissed(false);
-    setNotice("Punto de partida guardado. Se irá afinando con los pasos que marques.");
+    setNotice(translate(locale, "Punto de partida guardado. Se irá afinando con los pasos que marques."));
   }
 
   function openConsentManager() {
@@ -285,7 +285,7 @@ export default function Home() {
     if (azureVoiceEnabled) {
       stopActiveSpeech();
       setAzureVoiceEnabled(false);
-      setAzureVoiceNotice("Voz del dispositivo activada. La lectura no envía texto a Microsoft.");
+      setAzureVoiceNotice(translate(locale, "Voz del dispositivo activada. La lectura no envía texto a Microsoft."));
       return;
     }
 
@@ -302,15 +302,15 @@ export default function Home() {
         result.azureAvailable !== true
       ) {
         setAzureVoiceNotice(
-          "La voz natural aún no está configurada. Puedes seguir usando la voz de tu dispositivo.",
+          translate(locale, "La voz natural aún no está configurada. Puedes seguir usando la voz de tu dispositivo."),
         );
         return;
       }
       setAzureVoiceEnabled(true);
-      setAzureVoiceNotice("Voz natural activada para esta sesión.");
+      setAzureVoiceNotice(translate(locale, "Voz natural activada para esta sesión."));
     } catch {
       setAzureVoiceNotice(
-        "No pude comprobar la voz natural. Puedes seguir usando la voz de tu dispositivo.",
+        translate(locale, "No pude comprobar la voz natural. Puedes seguir usando la voz de tu dispositivo."),
       );
     } finally {
       setAzureVoiceLoading(false);
@@ -340,9 +340,9 @@ export default function Home() {
     setNotice(
       ok
         ? partial
-          ? "La exportación quedó incompleta: no pude leer algunas categorías. El JSON descargado incluye el detalle en «errors»."
-          : "Exportaste tus datos. Revisa tu carpeta de descargas."
-        : "No pude preparar la exportación en este navegador.",
+          ? translate(locale, "La exportación quedó incompleta: no pude leer algunas categorías. El JSON descargado incluye el detalle en «errors».")
+          : translate(locale, "Exportaste tus datos. Revisa tu carpeta de descargas.")
+        : translate(locale, "No pude preparar la exportación en este navegador."),
     );
   }
 
@@ -355,7 +355,7 @@ export default function Home() {
   function applyMicrohabit(habitId: HabitId, item: CatalogItem) {
     const previous = currentAction(state, habitId);
     if (previous === item.smallerAction) {
-      setNotice("Esa versión ya está activa para este hábito.");
+      setNotice(translate(locale, "Esa versión ya está activa para este hábito."));
       return;
     }
     updateBluState((current) => ({
@@ -365,7 +365,9 @@ export default function Home() {
         { habitId, from: previous, to: item.smallerAction, barrier: "other", at: new Date().toISOString() },
       ],
     }));
-    setNotice(`Listo: «${item.title}» quedó como tu versión actual.`);
+    setNotice(
+      translate(locale, "Listo: «{title}» quedó como tu versión actual.").replace("{title}", item.title),
+    );
   }
   const acceptedGoals = (goalDecisions?.accepted ?? []).filter((goal) =>
     HABITS.some((habit) => habit.id === goal.habitId),
@@ -379,7 +381,11 @@ export default function Home() {
     });
     const plan = buildDefaultPlan(weekKey, habitsForPlan, now);
     const saved = savePlan(plan);
-    setPlanNotice(saved.ok ? "Semana sugerida creada; puedes moverla como quieras." : (saved.error ?? "No se pudo guardar."));
+    setPlanNotice(
+      saved.ok
+        ? translate(locale, "Semana sugerida creada; puedes moverla como quieras.")
+        : (saved.error ?? translate(locale, "No se pudo guardar.")),
+    );
   }
 
   function handleToggleIntention(dayIndex: number, habitId: HabitId) {
@@ -396,7 +402,7 @@ export default function Home() {
       return;
     }
     const saved = savePlan(result.plan);
-    setPlanNotice(saved.ok ? "" : (saved.error ?? "No se pudo guardar."));
+    setPlanNotice(saved.ok ? "" : (saved.error ?? translate(locale, "No se pudo guardar.")));
   }
 
   function includeGoal(goal: AcceptedGoal) {
@@ -411,7 +417,12 @@ export default function Home() {
       selectedHabitIds: [...current.selectedHabitIds, habitId],
     }));
     const habit = HABITS.find((item) => item.id === habitId);
-    setNotice(`Incluí «${habit?.title ?? goal.habitId}» en tus hábitos.`);
+    setNotice(
+      translate(locale, "Incluí «{title}» en tus hábitos.").replace(
+        "{title}",
+        habit?.title ?? goal.habitId,
+      ),
+    );
   }
 
   function submitReview(event: FormEvent<HTMLFormElement>) {
@@ -426,8 +437,8 @@ export default function Home() {
     );
     setReviewNotice(
       result.ok
-        ? "Revisión guardada. Gracias por mirar tu semana."
-        : (result.error ?? "No se pudo guardar tu revisión."),
+        ? translate(locale, "Revisión guardada. Gracias por mirar tu semana.")
+        : (result.error ?? translate(locale, "No se pudo guardar tu revisión.")),
     );
     if (result.ok) setReviewDraft({ felt: null, decision: null });
   }
@@ -436,7 +447,7 @@ export default function Home() {
     const result = saveReview({ weekKey }, new Date().toISOString());
     setReviewNotice(
       result.ok
-        ? "Quedó registrado que omitiste esta semana."
+        ? translate(locale, "Quedó registrado que omitiste esta semana.")
         : (result.error ?? "No se pudo guardar tu revisión."),
     );
   }
@@ -512,15 +523,15 @@ export default function Home() {
     if (reminderState.enabled) {
       disableReminders();
       setReminderVersion((v) => v + 1);
-      setReminderNotice("Recordatorio desactivado. Puedes activarlo cuando quieras.");
+      setReminderNotice(translate(locale, "Recordatorio desactivado. Puedes activarlo cuando quieras."));
       return;
     }
     const result = await enableReminders();
     setReminderVersion((v) => v + 1);
     setReminderNotice(
       result.ok
-        ? "Recordatorio activado: máximo uno al día, solo si quedan pasos sin marcar."
-        : "Sin permiso del navegador, no activo nada. Puedes intentarlo de nuevo desde la configuración del sitio.",
+        ? translate(locale, "Recordatorio activado: máximo uno al día, solo si quedan pasos sin marcar.")
+        : translate(locale, "Sin permiso del navegador, no activo nada. Puedes intentarlo de nuevo desde la configuración del sitio."),
     );
   }
 
@@ -530,7 +541,7 @@ export default function Home() {
     if (!habit) return;
     const previous = currentAction(state, habit.id);
     if (previous === habit.smallerAction) {
-      setNotice("Este hábito ya está en su versión más pequeña.");
+      setNotice(translate(locale, "Este hábito ya está en su versión más pequeña."));
       return;
     }
     updateBluState((current) => ({
@@ -546,7 +557,7 @@ export default function Home() {
         },
       ],
     }));
-    setNotice("Listo. Dejé registrada la versión más pequeña que elegiste.");
+    setNotice(translate(locale, "Listo. Dejé registrada la versión más pequeña que elegiste."));
   }
 
   function undoLastAdaptation() {
@@ -554,7 +565,7 @@ export default function Home() {
       ...current,
       adaptations: current.adaptations.slice(0, -1),
     }));
-    setNotice("Se deshizo el último ajuste. Puedes elegir otro cuando quieras.");
+    setNotice(translate(locale, "Se deshizo el último ajuste. Puedes elegir otro cuando quieras."));
   }
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
@@ -591,7 +602,7 @@ export default function Home() {
     if (
       state.consentAcceptedAt &&
       !window.confirm(
-        "¿Borrar de este navegador tus hábitos, registros, cuestionario, objetivos y revisiones de Blu?",
+        translate(locale, "¿Borrar de este navegador tus hábitos, registros, cuestionario, objetivos y revisiones de Blu?"),
       )
     ) {
       return;
@@ -613,7 +624,7 @@ export default function Home() {
       ]);
       setChatPresence("welcome");
       setHeroPresence("welcome");
-      setNotice("Se borraron todos los datos de Blu en este navegador.");
+      setNotice(translate(locale, "Se borraron todos los datos de Blu en este navegador."));
     } else {
       setNotice(
         `No se pudieron borrar algunas claves: ${erased.remaining.join(", ")}. Inténtalo desde la configuración del navegador.`,
@@ -821,7 +832,7 @@ export default function Home() {
             <span className="prototype-tag">{translate(locale, "Versión de prueba")}</span>
             <LanguageControl locale={locale} />
             <button className="text-button" onClick={clearData} type="button">
-              Borrar mis datos
+              {translate(locale, "Borrar mis datos")}
             </button>
           </div>
         </div>
@@ -843,7 +854,7 @@ export default function Home() {
             {translate(locale, "Un día a la vez")}
           </span>
           <p className="hero-date">
-            {today.toLocaleDateString("es-CL", { dateStyle: "long" })}
+            {today.toLocaleDateString(speechLocale, { day: "numeric", month: "long", year: "numeric" })}
           </p>
           <h1 id="today-heading">
             {locale === "es" ? (
@@ -1037,19 +1048,23 @@ export default function Home() {
               futura versión.
             </p>
             <div className="adapt-row">
-              <label className="visually-hidden" htmlFor="nickname">Apodo (opcional)</label>
+              <label className="visually-hidden" htmlFor="nickname">{translate(locale, "Apodo (opcional)")}</label>
               <input
                 id="nickname"
                 maxLength={24}
                 onChange={(event) => setNicknameDraft(event.target.value)}
-                placeholder="Apodo (opcional)"
+                placeholder={translate(locale, "Apodo (opcional)")}
                 value={nicknameDraft}
               />
               <button
                 className="button button-light"
                 onClick={() => {
                   const result = saveNickname(nicknameDraft || null, new Date().toISOString());
-                  setNotice(result.ok ? "Tu espacio quedó guardado en este navegador." : (result.error ?? "No se pudo guardar."));
+                  setNotice(
+                    result.ok
+                      ? translate(locale, "Tu espacio quedó guardado en este navegador.")
+                      : (result.error ?? translate(locale, "No se pudo guardar.")),
+                  );
                 }}
                 type="button"
               >
@@ -1195,11 +1210,11 @@ export default function Home() {
                       className={day.count > 0 ? "history-day has-activity" : "history-day"}
                       key={day.date}
                     >
-                      <time dateTime={day.date}>{formatHistoryDate(day.date)}</time>
+                      <time dateTime={day.date}>{formatHistoryDate(day.date, speechLocale)}</time>
                       <span>
                         {day.count === 0
-                          ? "Sin pasos"
-                          : `${day.count} ${day.count === 1 ? "paso" : "pasos"}`}
+                          ? translate(locale, "Sin pasos")
+                          : `${day.count} ${translate(locale, day.count === 1 ? "paso" : "pasos")}`}
                       </span>
                     </li>
                   ))}
@@ -1207,10 +1222,10 @@ export default function Home() {
               </div>
             )}
             <p className="tiny-note">
-              Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).
+              {translate(locale, "Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).")}
             </p>
             <p className="review-note">
-              Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?
+              {translate(locale, "Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?")}
             </p>
             <div className="adapt-row">
               <label className="visually-hidden" htmlFor="adapt-habit">Hábito a simplificar</label>
@@ -1222,7 +1237,7 @@ export default function Home() {
                 }}
                 value={adaptHabitId}
               >
-                <option value="">Elige un hábito</option>
+                <option value="">{translate(locale, "Elige un hábito")}</option>
                 {state.selectedHabitIds.map((id) => {
                   const habit = HABITS.find((item) => item.id === id);
                   return habit ? <option key={id} value={id}>{habit.title}</option> : null;
@@ -1236,10 +1251,10 @@ export default function Home() {
                 }}
                 value={barrier}
               >
-                <option value="time">Me faltó tiempo</option>
-                <option value="energy">Tenía poca energía</option>
-                <option value="remembering">Se me olvidó</option>
-                <option value="other">Otra razón</option>
+                <option value="time">{translate(locale, "Me faltó tiempo")}</option>
+                <option value="energy">{translate(locale, "Tenía poca energía")}</option>
+                <option value="remembering">{translate(locale, "Se me olvidó")}</option>
+                <option value="other">{translate(locale, "Otra razón")}</option>
               </select>
               <button
                 className="button button-light"
@@ -1247,7 +1262,7 @@ export default function Home() {
                 onClick={simplifyHabit}
                 type="button"
               >
-                Probar más pequeño
+                {translate(locale, "Probar más pequeño")}
               </button>
             </div>
             {state.adaptations.length > 0 && (
@@ -1266,13 +1281,13 @@ export default function Home() {
           <section className="review-card" aria-labelledby="weekly-review-heading">
             <div className="review-top">
               <div>
-                <span className="eyebrow">MIRADA SEMANAL</span>
-                <h2 id="weekly-review-heading">Revisión de tu semana</h2>
+                <span className="eyebrow">{translate(locale, "MIRADA SEMANAL")}</span>
+                <h2 id="weekly-review-heading">{translate(locale, "Revisión de tu semana")}</h2>
               </div>
             </div>
-            <p className="muted">Últimos 7 días · es un registro personal, no una medida de salud.</p>
+            <p className="muted">{translate(locale, "Últimos 7 días · es un registro personal, no una medida de salud.")}</p>
             <p className="review-intro">
-              Si quieres, cuéntame cómo te fue y qué prefieres para la próxima semana.
+              {translate(locale, "Si quieres, cuéntame cómo te fue y qué prefieres para la próxima semana.")}
             </p>
             {weeklySummary.actionsCompleted === 0 && (
               <p className="muted">
@@ -1302,11 +1317,11 @@ export default function Home() {
             )}
             <details className="review-details" key={thisWeekReview ? "saved" : "fresh"}>
               <summary className="text-button review-summary">
-                {thisWeekReview ? "Actualizar mi respuesta" : "Responder cómo me sentí"}
+                {thisWeekReview ? translate(locale, "Actualizar mi respuesta") : translate(locale, "Responder cómo me sentí")}
               </summary>
             <form onSubmit={submitReview}>
               <fieldset>
-                <legend>¿Cómo te sentiste con tus hábitos?</legend>
+                <legend>{translate(locale, "¿Cómo te sentiste con tus hábitos?")}</legend>
                 {FEEL_OPTIONS.map((option) => (
                   <label key={option.value} className="consent-row">
                     <input
@@ -1320,7 +1335,7 @@ export default function Home() {
                 ))}
               </fieldset>
               <fieldset>
-                <legend>¿Qué quieres hacer la próxima semana?</legend>
+                <legend>{translate(locale, "¿Qué quieres hacer la próxima semana?")}</legend>
                 {DECISION_OPTIONS.map((option) => (
                   <label key={option.value} className="consent-row">
                     <input
@@ -1341,10 +1356,10 @@ export default function Home() {
                   disabled={reviewDraft.felt === null && reviewDraft.decision === null}
                   type="submit"
                 >
-                  Guardar revisión
+                  {translate(locale, "Guardar revisión")}
                 </button>
                 <button className="text-button" onClick={skipReview} type="button">
-                  Prefiero no responder
+                  {translate(locale, "Prefiero no responder")}
                 </button>
               </div>
             </form>
@@ -1357,8 +1372,8 @@ export default function Home() {
           </section>
 
           <p className="evidence-note">
-            <span aria-hidden="true">ⓘ</span> Las ideas de este prototipo no son recomendaciones clínicas;
-            su evidencia específica está pendiente de revisión.
+            <span aria-hidden="true">ⓘ</span>{" "}
+            {translate(locale, "Las ideas de este prototipo no son recomendaciones clínicas; su evidencia específica está pendiente de revisión.")}
           </p>
         </section>
 
@@ -1367,29 +1382,30 @@ export default function Home() {
             <div className="chat-heading">
               <BluPresence size="sm" state={chatPresence} />
               <div>
-                <span className="eyebrow">ACOMPAÑAMIENTO</span>
-                <h2 id="chat-heading">Una pausa con Blu</h2>
+                <span className="eyebrow">{translate(locale, "ACOMPAÑAMIENTO")}</span>
+                <h2 id="chat-heading">{translate(locale, "Una pausa con Blu")}</h2>
               </div>
             </div>
             <p aria-live="polite" className="chat-disclosure">
               {assistantRemote
-                ? "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud."
-                : "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación."}
+                ? translate(locale, "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud.")
+                : translate(locale, "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación.")}
             </p>
             {localModeReason && (
               <p className="tiny-note" role="status">
                 {localModeReason === "rate_limited"
-                  ? "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder."
-                  : "El servidor no pudo responder. Usé reglas sencillas en tu dispositivo."}
-                {" "}Tu mensaje se envió al servidor para intentar responder; evita compartir datos personales o de salud.
+                  ? translate(locale, "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder.")
+                  : translate(locale, "El servidor no pudo responder. Usé reglas sencillas en tu dispositivo.")}
+                {" "}
+                {translate(locale, "Tu mensaje se envió al servidor para intentar responder; evita compartir datos personales o de salud.")}
               </p>
             )}
             {chatPresence === "responding" && (
-              <p className="chat-thinking" role="status">Blu está pensando…</p>
+              <p className="chat-thinking" role="status">{translate(locale, "Blu está pensando…")}</p>
             )}
             <div className="chat-voice-settings">
               <label className="chat-voice-control" htmlFor="voice-style">
-                <span>Estilo de voz</span>
+                <span>{translate(locale, "Estilo de voz")}</span>
                 <select
                   id="voice-style"
                   onChange={(event) => {
@@ -1399,16 +1415,15 @@ export default function Home() {
                   }}
                   value={voiceProfile}
                 >
-                  <option value="warm">Cálida</option>
-                  <option value="balanced">Equilibrada</option>
+                  <option value="warm">{translate(locale, "Cálida")}</option>
+                  <option value="balanced">{translate(locale, "Equilibrada")}</option>
                 </select>
               </label>
               <p className="chat-voice-hint">
-                La voz disponible depende de las opciones de tu dispositivo.
+                {translate(locale, "La voz disponible depende de las opciones de tu dispositivo.")}
               </p>
               <p className="chat-voice-cloud-note">
-                Si activas Azure, se enviará a Microsoft solo el texto de Blu que elijas escuchar
-                para crear el audio. No compartas información personal o de salud.
+                {translate(locale, "Si activas Azure, se enviará a Microsoft solo el texto de Blu que elijas escuchar para crear el audio. No compartas información personal o de salud.")}
               </p>
               <button
                 className="text-button chat-voice-toggle"
@@ -1417,10 +1432,10 @@ export default function Home() {
                 type="button"
               >
                 {azureVoiceLoading
-                  ? "Comprobando…"
+                  ? translate(locale, "Comprobando…")
                   : azureVoiceEnabled
-                    ? "Usar voz del dispositivo"
-                    : "Activar voz natural"}
+                    ? translate(locale, "Usar voz del dispositivo")
+                    : translate(locale, "Activar voz natural")}
               </button>
               {azureVoiceNotice && <p className="chat-voice-status" role="status">{azureVoiceNotice}</p>}
             </div>
@@ -1455,7 +1470,9 @@ export default function Home() {
                 placeholder={translate(locale, "¿Qué tienes en mente?")}
                 value={chatInput}
               />
-              <button aria-label="Enviar mensaje" disabled={!chatInput.trim()} type="submit">↑</button>
+              <button aria-label="Enviar mensaje" disabled={!chatInput.trim()} type="submit">
+                {translate(locale, "Enviar")}
+              </button>
             </form>
             <p className="chat-privacy">{translate(locale, "No incluyas datos personales ni información médica.")}</p>
             <section className="principle-card" aria-label="Una idea para acompañarte">
@@ -1521,9 +1538,9 @@ export default function Home() {
   );
 }
 
-function formatHistoryDate(dateKey: string): string {
+function formatHistoryDate(dateKey: string, locale: SpeechLocale = "es-CL"): string {
   const date = new Date(`${dateKey}T12:00:00`);
-  return new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "short" })
+  return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" })
     .format(date)
     .replace(/\.$/, "");
 }

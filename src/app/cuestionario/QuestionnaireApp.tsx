@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import { getLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
 import Link from "next/link";
 import BluPresence from "../BluPresence";
 import { loadBank } from "@/lib/onboarding/bank-loader";
@@ -37,6 +38,7 @@ const EXPERIMENTAL_NOTICE =
   "Esta autoevaluación es experimental y orientativa: no es un diagnóstico ni una medida de salud.";
 
 export default function QuestionnaireApp() {
+  const locale = useLocale();
   const bankState = useMemo(() => {
     try {
       return { bank: loadBank(), error: null as string | null };
@@ -49,9 +51,9 @@ export default function QuestionnaireApp() {
     return (
       <main className="onboarding">
         <section className="error-card" role="alert">
-          <span className="eyebrow">Autodiagnóstico</span>
-          <h1>No pude cargar el cuestionario</h1>
-          <p>{bankState.error}</p>
+          <span className="eyebrow">{translate(locale, "Autodiagnóstico")}</span>
+          <h1>{translate(locale, "No pude cargar el cuestionario")}</h1>
+          <p>{translate(locale, bankState.error ?? "")}</p>
           <button
             className="button button-dark"
             type="button"
@@ -61,7 +63,7 @@ export default function QuestionnaireApp() {
               window.location.reload();
             }}
           >
-            Borrar datos del cuestionario y reintentar
+            {translate(locale, "Borrar datos del cuestionario y reintentar")}
           </button>
         </section>
       </main>
@@ -75,7 +77,12 @@ function subscribeNothing(): () => void {
   return () => {};
 }
 
+function useLocale(): Locale {
+  return useSyncExternalStore(subscribeLocale, getLocale, () => "es" as Locale);
+}
+
 function QuestionnaireFlow() {
+  const locale = useLocale();
   // La puerta de monteo evita valores no deterministas (new Date) durante el prerender
   // y mantiene el contenido interactivo fuera del SSR (reglas de Next.js 16).
   const ready = useSyncExternalStore(subscribeNothing, () => true, () => false);
@@ -83,7 +90,7 @@ function QuestionnaireFlow() {
     return (
       <main className="onboarding">
         <section className="onboarding-card">
-          <p className="muted">Preparando tu autodiagnóstico…</p>
+          <p className="muted">{translate(locale, "Preparando tu autodiagnóstico…")}</p>
         </section>
       </main>
     );
@@ -92,6 +99,7 @@ function QuestionnaireFlow() {
 }
 
 function QuestionnaireSession() {
+  const locale = useLocale();
   const bank = loadBank();
   const [notice, setNotice] = useState("");
   const [assessment, setAssessment] = useState<Assessment>(() => {
@@ -135,8 +143,10 @@ function QuestionnaireSession() {
   }, [profile, bank, assessment]);
   const current: Question | undefined = complete ? undefined : effective[index];
   const progressText = complete
-    ? "Cuestionario completado"
-    : `Pregunta ${index + 1} de ${effective.length}`;
+    ? translate(locale, "Cuestionario completado")
+    : translate(locale, "Pregunta {n} de {total}")
+        .replace("{n}", String(index + 1))
+        .replace("{total}", String(effective.length));
 
   function commit(next: Assessment) {
     const saved = saveOnboarding(next);
@@ -171,9 +181,9 @@ function QuestionnaireSession() {
     return (
       <main className="onboarding">
         <section className="error-card" role="alert">
-          <span className="eyebrow">Autodiagnóstico</span>
-          <h1>No pude leer tu aceptación del aviso</h1>
-          <p>{noticeGateError}</p>
+          <span className="eyebrow">{translate(locale, "Autodiagnóstico")}</span>
+          <h1>{translate(locale, "No pude leer tu aceptación del aviso")}</h1>
+          <p>{translate(locale, noticeGateError)}</p>
           <button
             className="button button-dark"
             type="button"
@@ -182,7 +192,7 @@ function QuestionnaireSession() {
               window.location.reload();
             }}
           >
-            Borrar el aviso y reintentar
+            {translate(locale, "Borrar el aviso y reintentar")}
           </button>
         </section>
       </main>
@@ -193,23 +203,20 @@ function QuestionnaireSession() {
     return (
       <main className="onboarding">
         <section className="onboarding-card" aria-labelledby="notice-heading">
-          <span className="step-label">ANTES DE EMPEZAR</span>
-          <h1 id="notice-heading">Antes de empezar, un aviso</h1>
+          <span className="step-label">{translate(locale, "ANTES DE EMPEZAR")}</span>
+          <h1 id="notice-heading">{translate(locale, "Antes de empezar, un aviso")}</h1>
           <div className="blu-intro">
             <BluPresence size="sm" />
             <p className="blu-intro-line">
-              «Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»
+              {translate(locale, "«Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»")}
             </p>
           </div>
           <p>
-            Este almacenamiento <strong>no está cifrado</strong>: evita datos médicos o que te
-            identifiquen. Puedes borrar todo con «Borrar datos del cuestionario» o «Borrar mis
-            datos».
+            {translate(locale, "Este almacenamiento no está cifrado: evita datos médicos o que te identifiquen. Puedes borrar todo con «Borrar datos del cuestionario» o «Borrar mis datos».")}
           </p>
           {noticeOutdated && (
             <p className="inline-notice" role="status">
-              Actualizamos el aviso del cuestionario desde tu última aceptación. Márcalo de nuevo
-              para continuar.
+              {translate(locale, "Actualizamos el aviso del cuestionario desde tu última aceptación. Márcalo de nuevo para continuar.")}
             </p>
           )}
           <label className="consent-row">
@@ -218,7 +225,7 @@ function QuestionnaireSession() {
               onChange={(event) => setNoticeChecked(event.target.checked)}
               type="checkbox"
             />
-            <span>Entiendo dónde se guardan mis respuestas y cómo borrarlas.</span>
+            <span>{translate(locale, "Entiendo dónde se guardan mis respuestas y cómo borrarlas.")}</span>
           </label>
           <div className="adapt-row">
             <button
@@ -227,15 +234,15 @@ function QuestionnaireSession() {
               onClick={startAfterNotice}
               type="button"
             >
-              Comenzar
+              {translate(locale, "Comenzar")}
             </button>
             <Link className="text-button" href="/">
-              Volver sin guardar nada
+              {translate(locale, "Volver sin guardar nada")}
             </Link>
           </div>
           {notice && (
             <p className="inline-notice" role="status">
-              {notice}
+              {translate(locale, notice)}
             </p>
           )}
         </section>
@@ -274,41 +281,44 @@ function QuestionnaireSession() {
     return (
       <main className="onboarding">
         <section className="onboarding-card" aria-labelledby="result-heading">
-          <span className="step-label">RESULTADO</span>
-          <h1 id="result-heading">Tu autodiagnóstico de hábitos</h1>
-          <p className="muted">{EXPERIMENTAL_NOTICE}</p>
+          <span className="step-label">{translate(locale, "RESULTADO")}</span>
+          <h1 id="result-heading">{translate(locale, "Tu autodiagnóstico de hábitos")}</h1>
+          <p className="muted">{translate(locale, EXPERIMENTAL_NOTICE)}</p>
           {versionNotice && (
             <p className="inline-notice" role="status">
-              El cuestionario se actualizó desde que empezaste; este resultado usa la versión que
-              respondiste ({profile.bankVersion}).
+              {translate(locale, "El cuestionario se actualizó desde que empezaste; este resultado usa la versión que respondiste ({version}).").replace("{version}", profile.bankVersion)}
             </p>
           )}
           {notice && (
             <p className="inline-notice" role="status">
-              {notice}
+              {translate(locale, notice)}
             </p>
           )}
           {baseline && (
             <section className="review-card" aria-labelledby="baseline-heading">
-              <span className="eyebrow">TU LÍNEA BASE</span>
-              <h2 id="baseline-heading">Punto de partida</h2>
+              <span className="eyebrow">{translate(locale, "TU LÍNEA BASE")}</span>
+              <h2 id="baseline-heading">{translate(locale, "Punto de partida")}</h2>
               {baseline.value === null ? (
                 <p className="muted" role="status">
-                  Aún no hay base suficiente: respondiste {baseline.coverage} de{" "}
-                  {baseline.totalPrinciples} dimensiones y se necesitan al menos{" "}
-                  {BASELINE_MIN_PRINCIPLES}. Revisa tus respuestas y vuelve: se recalcula al
-                  instante.
+                  {translate(locale, "Aún no hay base suficiente: respondiste {coverage} de {total} dimensiones y se necesitan al menos {minimum}. Revisa tus respuestas y vuelve: se recalcula al instante.")
+                    .replace("{coverage}", String(baseline.coverage))
+                    .replace("{total}", String(baseline.totalPrinciples))
+                    .replace("{minimum}", String(BASELINE_MIN_PRINCIPLES))}
                 </p>
               ) : (
                 <p className="baseline-value" role="status">
-                  <strong>{baseline.value}</strong> de 100 · basado en {baseline.coverage} de{" "}
-                  {baseline.totalPrinciples} dimensiones ({baseline.answeredQuestions} de {baseline.totalQuestions} respuestas puntuables)
+                  <strong>{baseline.value}</strong>{" "}
+                  {translate(locale, "de 100 · basado en {coverage} de {total} dimensiones ({answered} de {questions} respuestas puntuables)")
+                    .replace("{coverage}", String(baseline.coverage))
+                    .replace("{total}", String(baseline.totalPrinciples))
+                    .replace("{answered}", String(baseline.answeredQuestions))
+                    .replace("{questions}", String(baseline.totalQuestions))}
                 </p>
               )}
-              <p className="muted">{baseline.disclaimer}</p>
+              <p className="muted">{translate(locale, baseline.disclaimer)}</p>
               <details>
-                <summary className="text-button">¿Cómo se calcula?</summary>
-                <p className="tiny-note">{baseline.formula}</p>
+                <summary className="text-button">{translate(locale, "¿Cómo se calcula?")}</summary>
+                <p className="tiny-note">{translate(locale, baseline.formula)}</p>
               </details>
               <div className="adapt-row">
                 <button
@@ -319,15 +329,14 @@ function QuestionnaireSession() {
                   }}
                   type="button"
                 >
-                  Revisar mis respuestas
+                  {translate(locale, "Revisar mis respuestas")}
                 </button>
                 <span className="tiny-note">
-                  Corregir recalcula tu línea base al momento.
+                  {translate(locale, "Corregir recalcula tu línea base al momento.")}
                 </span>
               </div>
               <p className="tiny-note">
-                Cuando repitas la autoevaluación, la nueva línea base reemplaza a esta: por ahora
-                no guardamos historial.
+                {translate(locale, "Cuando repitas la autoevaluación, la nueva línea base reemplaza a esta: por ahora no guardamos historial.")}
               </p>
             </section>
           )}
@@ -335,24 +344,27 @@ function QuestionnaireSession() {
           <ul className="habit-grid compact" role="list">
             {profile.results.map((r) => (
               <li key={r.principleId} className="habit-option">
-                <span className="category-label">{principleTitle(r.principleId)}</span>
+                <span className="category-label">{principleTitle(r.principleId, locale)}</span>
                 <strong>
-                  {r.band ? BAND_LABELS[r.band] : "Sin nivel aún"}
+                  {r.band ? translate(locale, BAND_LABELS[r.band]) : translate(locale, "Sin nivel aún")}
                   {r.score !== null ? ` · ${r.score}/100` : ""}
                 </strong>
                 <span className="muted">
-                  {r.confidence === "reduced" ? "Menor confianza (omitiste algunas preguntas)." : ""}
+                  {r.confidence === "reduced" ? translate(locale, "Menor confianza (omitiste algunas preguntas).") : ""}
                 </span>
               </li>
             ))}
           </ul>
 
           <section aria-labelledby="suggestions-heading">
-            <h2 id="suggestions-heading">Sugerencias para partir (hasta tres)</h2>
+            <h2 id="suggestions-heading">{translate(locale, "Sugerencias para partir")}</h2>
+            <p className="muted">
+              {translate(locale, "Este cuestionario propone hasta tres ideas. En Blu puedes cuidar hasta cuatro.")}
+            </p>
             {suggestions.length === 0 ? (
               <p className="muted">
-                Sin sugerencias por ahora. Puedes{" "}
-                <Link href="/">elegir tus hábitos manualmente</Link>: tú decides siempre.
+                {translate(locale, "Sin sugerencias por ahora. Tú decides siempre.")}{" "}
+                <Link href="/">{translate(locale, "Elegir tus hábitos manualmente")}</Link>
               </p>
             ) : (
               <ul className="habit-grid compact" role="list">
@@ -361,31 +373,31 @@ function QuestionnaireSession() {
                   const rejected = activeDecisions?.rejected.includes(s.id);
                   return (
                     <li key={s.id} className="habit-option">
-                      <span className="category-label">{s.title}</span>
-                      <p>{s.explanation}</p>
+                      <span className="category-label">{translate(locale, s.title)}</span>
+                      <p>{translate(locale, s.explanation)}</p>
                       {accepted ? (
                         <p className="inline-notice" role="status">
-                          Guardado en tus objetivos. Puedes ajustarlo en la pantalla de hábitos.
+                          {translate(locale, "Guardado en tus objetivos. Puedes ajustarlo en la pantalla de hábitos.")}
                         </p>
                       ) : rejected ? (
-                        <p className="inline-notice" role="status">Rechazada; no se guardó nada.</p>
+                        <p className="inline-notice" role="status">{translate(locale, "Rechazada; no se guardó nada.")}</p>
                       ) : (
                         <div className="adapt-row">
                           <button
-                            aria-label={`Aceptar ${s.title}`}
+                            aria-label={translate(locale, "Aceptar {title}").replace("{title}", s.title)}
                             className="button button-light"
                             type="button"
                             onClick={() => decideAccept(s)}
                           >
-                            Aceptar
+                            {translate(locale, "Aceptar")}
                           </button>
                           <button
-                            aria-label={`Rechazar ${s.title}`}
+                            aria-label={translate(locale, "Rechazar {title}").replace("{title}", s.title)}
                             className="text-button"
                             type="button"
                             onClick={() => decideReject(s.id)}
                           >
-                            Rechazar
+                            {translate(locale, "Rechazar")}
                           </button>
                         </div>
                       )}
@@ -397,14 +409,14 @@ function QuestionnaireSession() {
           </section>
 
           <p className="tiny-note">
-            Puedes usar esto para elegir hábitos, o ignorarlo por completo: tú decides.
+            {translate(locale, "Puedes usar esto para elegir hábitos, o ignorarlo por completo: tú decides.")}
           </p>
           <div className="adapt-row">
             <button className="button button-dark" type="button" onClick={restart}>
-              Repetir evaluación
+              {translate(locale, "Repetir evaluación")}
             </button>
             <Link className="text-button" href="/">
-              Volver a Blu
+              {translate(locale, "Volver a Blu")}
             </Link>
           </div>
         </section>
@@ -420,12 +432,12 @@ function QuestionnaireSession() {
         </p>
         {versionNotice && (
           <p className="inline-notice" role="status">
-            El cuestionario cambió de versión desde tu última sesión; conservamos tu avance.
+            {translate(locale, "El cuestionario cambió de versión desde tu última sesión; conservamos tu avance.")}
           </p>
         )}
         {notice && (
           <p className="inline-notice" role="status">
-            {notice}
+            {translate(locale, notice)}
           </p>
         )}
         {reviewing && (
@@ -437,7 +449,7 @@ function QuestionnaireSession() {
             }}
             type="button"
           >
-            Volver a mi resultado
+            {translate(locale, "Volver a mi resultado")}
           </button>
         )}
         {current && (
@@ -451,15 +463,15 @@ function QuestionnaireSession() {
             onBack={index > 0 ? () => setIndex(index - 1) : null}
           />
         )}
-        <p className="tiny-note">{bank.disclaimer}</p>
+        <p className="tiny-note">{translate(locale, bank.disclaimer)}</p>
       </section>
     </main>
   );
 }
 
-function principleTitle(id: string): string {
+function principleTitle(id: string, locale: Locale): string {
   const found = loadBank().principles.find((p) => p.id === id);
-  return found ? found.title : id;
+  return found ? translate(locale, found.title) : id;
 }
 
 interface StepProps {
@@ -472,6 +484,7 @@ interface StepProps {
 }
 
 function QuestionStep({ question, previous, isLast, onAnswer, onSkip, onBack }: StepProps) {
+  const locale = useLocale();
   const [pending, setPending] = useState<number | string | Array<number | string> | null>(null);
   const [multiPending, setMultiPending] = useState<Array<number | string>>([]);
 
@@ -499,14 +512,14 @@ function QuestionStep({ question, previous, isLast, onAnswer, onSkip, onBack }: 
 
   return (
     <form onSubmit={submit}>
-      <h1 id="question-heading">{question.text}</h1>
+      <h1 id="question-heading">{translate(locale, question.text)}</h1>
 
       {question.type === "likert5" && question.likertAnchors && (
         <>
           <LikertScale question={question} value={typeof effectiveValue === "number" ? effectiveValue : null} onSelect={(v) => setPending(v)} anchors={question.likertAnchors} />
           <div className="adapt-row" aria-hidden="true">
-            <span className="tiny-note">{question.likertAnchors.low}</span>
-            <span className="tiny-note">{question.likertAnchors.high}</span>
+            <span className="tiny-note">{translate(locale, question.likertAnchors.low)}</span>
+            <span className="tiny-note">{translate(locale, question.likertAnchors.high)}</span>
           </div>
         </>
       )}
@@ -521,7 +534,7 @@ function QuestionStep({ question, previous, isLast, onAnswer, onSkip, onBack }: 
                 checked={effectiveValue === option.value}
                 onChange={() => setPending(option.value)}
               />
-              <span>{option.label}</span>
+              <span>{translate(locale, option.label)}</span>
             </label>
           ))}
         </div>
@@ -529,7 +542,7 @@ function QuestionStep({ question, previous, isLast, onAnswer, onSkip, onBack }: 
 
       {question.type === "multi_choice" && (
         <fieldset>
-          <legend className="visually-hidden">{question.text}</legend>
+          <legend className="visually-hidden">{translate(locale, question.text)}</legend>
           {question.options?.map((option) => (
             <label key={String(option.value)} className="consent-row">
               <input
@@ -537,7 +550,7 @@ function QuestionStep({ question, previous, isLast, onAnswer, onSkip, onBack }: 
                 checked={multiPending.includes(option.value)}
                 onChange={() => toggleMulti(option.value)}
               />
-              <span>{option.label}</span>
+              <span>{translate(locale, option.label)}</span>
             </label>
           ))}
         </fieldset>
@@ -546,16 +559,16 @@ function QuestionStep({ question, previous, isLast, onAnswer, onSkip, onBack }: 
       <div className="adapt-row">
         {onBack && (
           <button className="text-button" type="button" onClick={onBack}>
-            Anterior
+            {translate(locale, "Anterior")}
           </button>
         )}
         {onSkip && (
           <button className="text-button" type="button" onClick={onSkip}>
-            Prefiero no responder
+            {translate(locale, "Prefiero no responder")}
           </button>
         )}
         <button className="button button-dark" type="submit" disabled={!canContinue}>
-          {isLast ? "Ver mi resultado" : "Siguiente"}
+          {isLast ? translate(locale, "Ver mi resultado") : translate(locale, "Siguiente")}
         </button>
       </div>
     </form>
@@ -573,6 +586,7 @@ function LikertScale({
   onSelect: (v: number) => void;
   anchors: { low: string; high: string };
 }) {
+  const locale = useLocale();
   return (
     <div role="radiogroup" aria-labelledby="question-heading" className="adapt-row likert-row">
       {[0, 1, 2, 3, 4].map((v) => (
@@ -580,7 +594,7 @@ function LikertScale({
           <input
             type="radio"
             name={question.id}
-            aria-label={v === 0 ? anchors.low : v === 4 ? anchors.high : String(v + 1)}
+            aria-label={v === 0 ? translate(locale, anchors.low) : v === 4 ? translate(locale, anchors.high) : String(v + 1)}
             checked={value === v}
             onChange={() => onSelect(v)}
           />
