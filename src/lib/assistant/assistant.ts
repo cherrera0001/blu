@@ -2,6 +2,7 @@ import type { AssistantProvider, AssistantReply, ChatMessage, GuardianAction, Pr
 import {
   classifyInput,
   validateOutput,
+  polishPresentableReply,
   guardianLog,
   SAFE_CRISIS_RESPONSE,
   SAFE_CLINICAL_RESPONSE,
@@ -78,7 +79,7 @@ export class BluAssistant {
 
   private withSafety(reply: ProviderReply, guardianAction: GuardianAction, started: number): AssistantReply {
     return {
-      text: reply.text,
+      text: polishPresentableReply(reply.text),
       meta: {
         providerId: reply.meta.providerId,
         model: reply.meta.model,

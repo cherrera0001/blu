@@ -385,6 +385,7 @@ describe("Blu user flows", () => {
     await user.click(
       screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
     );
+    await user.click(screen.getByText(/Opciones opcionales de mejora e investigación/i));
     await user.click(
       screen.getByRole("checkbox", { name: /investigación con revisión ética/i }),
     );
@@ -785,6 +786,7 @@ async function completeOnboarding(
     }),
   );
   if (opts.mejora) {
+    await user.click(screen.getByText(/Opciones opcionales de mejora e investigación/i));
     await user.click(
       screen.getByRole("checkbox", { name: /mejora del producto/ }),
     );

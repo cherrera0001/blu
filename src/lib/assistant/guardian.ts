@@ -71,4 +71,19 @@ export function validateOutput(text: string): boolean {
   return !PROHIBITED_OUTPUT_RE.test(normalizeInput(text));
 }
 
+/**
+ * Pulido de presentación: quita emojis y signos de fiesta que rompen el tono
+ * de compañía calmada (p. ej. salidas remotas con 🎉).
+ */
+export function polishPresentableReply(text: string): string {
+  return text
+    .replace(/\p{Extended_Pictographic}/gu, "")
+    .replace(/[\uFE0F\u200D]/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([,.!?;:…])/g, "$1")
+    .replace(/!{2,}/g, "!")
+    .replace(/¡{2,}/g, "¡")
+    .trim();
+}
+
 export const guardianLog = { logEvent };

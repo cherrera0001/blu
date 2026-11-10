@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   classifyInput,
   validateOutput,
+  polishPresentableReply,
   SAFE_CLINICAL_RESPONSE,
   SAFE_CRISIS_RESPONSE,
 } from "./guardian";
@@ -64,5 +65,12 @@ describe("validateOutput", () => {
     expect(validateOutput(SAFE_CRISIS_RESPONSE)).toBe(true);
     expect(validateOutput("¿Qué versión pequeña y realista te gustaría probar?")).toBe(true);
     expect(validateOutput("No asumiré qué necesitas: ¿te serviría elegir una versión de dos minutos?")).toBe(true);
+  });
+});
+
+describe("polishPresentableReply", () => {
+  it("quita emojis de fiesta y limpia espacios", () => {
+    expect(polishPresentableReply("¡Qué bien! 🎉 Estira un poco.")).toBe("¡Qué bien! Estira un poco.");
+    expect(polishPresentableReply("Hola 🎈🎈 mundo!!!")).toBe("Hola mundo!");
   });
 });

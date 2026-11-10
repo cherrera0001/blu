@@ -785,7 +785,7 @@ export default function Home() {
                 <legend className="tiny-note">
                   {phrase("Consentimientos · aviso versión {version}", { version: CONSENT_VERSION })}
                 </legend>
-                {PURPOSES.map((purpose) => (
+                {PURPOSES.filter((purpose) => purpose.id === "operativo").map((purpose) => (
                   <label key={purpose.id} className="consent-row">
                     <input
                       checked={purposeDraft[purpose.id]}
@@ -801,6 +801,26 @@ export default function Home() {
                     <span>{translate(locale, purpose.label)}</span>
                   </label>
                 ))}
+                <details className="consent-optional">
+                  <summary className="tiny-note">
+                    {translate(locale, "Opciones opcionales de mejora e investigación")}
+                  </summary>
+                  {PURPOSES.filter((purpose) => purpose.id !== "operativo").map((purpose) => (
+                    <label key={purpose.id} className="consent-row">
+                      <input
+                        checked={purposeDraft[purpose.id]}
+                        onChange={(event) =>
+                          setPurposeDraft((draft) => ({
+                            ...draft,
+                            [purpose.id]: event.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                      />
+                      <span>{translate(locale, purpose.label)}</span>
+                    </label>
+                  ))}
+                </details>
                 {consentReady && (
                   <p className="tiny-note">
                     {translate(locale, "Para retirar el propósito operativo usa «Borrar mis datos».")}

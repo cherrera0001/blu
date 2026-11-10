@@ -106,4 +106,13 @@ describe("BluAssistant — US2 guardián deny-by-default", () => {
     expect(reply.text.length).toBeGreaterThan(0);
     expect(getEvents()).toHaveLength(0);
   });
+
+  it("limpia emojis del proveedor remoto antes de mostrar la respuesta", async () => {
+    const assistant = new BluAssistant(
+      fakeProvider("¡Qué bien que completaste el paso! 🎉 Prueba estirarte un minuto."),
+    );
+    const reply = await assistant.ask([{ role: "user", text: "Hoy no tengo energía" }]);
+    expect(reply.text).not.toMatch(/🎉/);
+    expect(reply.text).toMatch(/estirarte/i);
+  });
 });

@@ -328,6 +328,10 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
     "zh-CN": "我在这里陪你短暂停一下。你的消息会经 Blu 准备回复；我们不保存对话记录。",
   },
   "Opciones de voz": { "en-US": "Voice options", "zh-CN": "语音选项" },
+  "Opciones opcionales de mejora e investigación": {
+    "en-US": "Optional improvement and research choices",
+    "zh-CN": "可选的改进与研究选项",
+  },
   "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder.": {
     "en-US": "The server asked to wait. I used simple rules on your device to answer.",
     "zh-CN": "服务器请你稍等。我改用你设备上的简单规则来回答。",
