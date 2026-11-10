@@ -1,3 +1,9 @@
+import {
+  getElevenLabsConfig,
+  isAppSpeechLocale,
+  synthesizeWithElevenLabs,
+} from "@/lib/voice/elevenlabs";
+
 const MAX_TEXT_LENGTH = 500;
 const MAX_BODY_BYTES = 2_048;
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -94,10 +100,16 @@ async function readBoundedBody(request: Request): Promise<string | null> {
   return new TextDecoder().decode(bytes);
 }
 
-function isTextBody(value: unknown): value is { text: string } {
+function isVoiceBody(value: unknown): value is { text: string; locale?: string } {
   if (typeof value !== "object" || value === null || !("text" in value)) return false;
   const text = value.text;
-  return typeof text === "string" && text.trim().length > 0 && text.length <= MAX_TEXT_LENGTH;
+  if (typeof text !== "string" || text.trim().length === 0 || text.length > MAX_TEXT_LENGTH) {
+    return false;
+  }
+  if ("locale" in value && value.locale !== undefined && !isAppSpeechLocale(value.locale)) {
+    return false;
+  }
+  return true;
 }
 
 function escapeXml(text: string): string {
@@ -145,43 +157,35 @@ async function readBoundedAudio(response: Response): Promise<ArrayBuffer | null>
   return audio;
 }
 
+function audioResponse(audio: ArrayBuffer): Response {
+  return new Response(audio, {
+    headers: {
+      "Cache-Control": "no-store",
+      "Content-Length": String(audio.byteLength),
+      "Content-Type": "audio/mpeg",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
+
 export async function GET(): Promise<Response> {
+  const elevenlabsAvailable = getElevenLabsConfig() !== null;
+  const azureAvailable = getAzureConfig() !== null;
   return Response.json(
-    { azureAvailable: getAzureConfig() !== null },
+    {
+      azureAvailable,
+      elevenlabsAvailable,
+      naturalAvailable: elevenlabsAvailable || azureAvailable,
+    },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
 
-export async function POST(request: Request): Promise<Response> {
-  const config = getAzureConfig();
-  if (!config) return Response.json({ error: "voice_unavailable" }, { status: 503 });
-  if (!request.headers.get("content-type")?.toLowerCase().includes("application/json")) {
-    return Response.json({ error: "invalid_request" }, { status: 415 });
-  }
-
-  let rawBody: string | null;
-  try {
-    rawBody = await readBoundedBody(request);
-  } catch {
-    return Response.json({ error: "invalid_request" }, { status: 400 });
-  }
-  if (rawBody === null) return Response.json({ error: "request_too_large" }, { status: 413 });
-
-  let body: unknown;
-  try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return Response.json({ error: "invalid_json" }, { status: 400 });
-  }
-  if (!isTextBody(body)) return Response.json({ error: "invalid_request" }, { status: 400 });
-  if (isRateLimited(request)) {
-    return Response.json({ error: "rate_limited" }, { status: 429 });
-  }
-
+async function synthesizeAzure(text: string, config: AzureConfig): Promise<Response> {
   const ssml = [
     `<speak version="1.0" xml:lang="${config.locale}">`,
     `<voice name="${config.voice}">`,
-    escapeXml(body.text),
+    escapeXml(text),
     "</voice></speak>",
   ].join("");
 
@@ -220,12 +224,63 @@ export async function POST(request: Request): Promise<Response> {
   if (!audio) {
     return Response.json({ error: "invalid_audio_response" }, { status: 502 });
   }
-  return new Response(audio, {
-    headers: {
-      "Cache-Control": "no-store",
-      "Content-Length": String(audio.byteLength),
-      "Content-Type": "audio/mpeg",
-      "X-Content-Type-Options": "nosniff",
-    },
-  });
+  return audioResponse(audio);
+}
+
+export async function POST(request: Request): Promise<Response> {
+  const eleven = getElevenLabsConfig();
+  const azure = getAzureConfig();
+  if (!eleven && !azure) {
+    return Response.json({ error: "voice_unavailable" }, { status: 503 });
+  }
+  if (!request.headers.get("content-type")?.toLowerCase().includes("application/json")) {
+    return Response.json({ error: "invalid_request" }, { status: 415 });
+  }
+
+  let rawBody: string | null;
+  try {
+    rawBody = await readBoundedBody(request);
+  } catch {
+    return Response.json({ error: "invalid_request" }, { status: 400 });
+  }
+  if (rawBody === null) return Response.json({ error: "request_too_large" }, { status: 413 });
+
+  let body: unknown;
+  try {
+    body = JSON.parse(rawBody);
+  } catch {
+    return Response.json({ error: "invalid_json" }, { status: 400 });
+  }
+  if (!isVoiceBody(body)) return Response.json({ error: "invalid_request" }, { status: 400 });
+  if (isRateLimited(request)) {
+    return Response.json({ error: "rate_limited" }, { status: 429 });
+  }
+
+  if (eleven) {
+    let providerResponse: Response;
+    try {
+      providerResponse = await synthesizeWithElevenLabs(body.text, body.locale, {
+        timeoutMs: REQUEST_TIMEOUT_MS,
+      });
+    } catch {
+      return Response.json({ error: "voice_provider_unavailable" }, { status: 502 });
+    }
+    if (!providerResponse.ok) {
+      return providerResponse.status === 429
+        ? Response.json({ error: "voice_quota_exceeded" }, { status: 429 })
+        : Response.json({ error: "voice_provider_unavailable" }, { status: 502 });
+    }
+    let audio: ArrayBuffer | null;
+    try {
+      audio = await readBoundedAudio(providerResponse);
+    } catch {
+      return Response.json({ error: "voice_provider_unavailable" }, { status: 502 });
+    }
+    if (!audio) {
+      return Response.json({ error: "invalid_audio_response" }, { status: 502 });
+    }
+    return audioResponse(audio);
+  }
+
+  return synthesizeAzure(body.text, azure!);
 }

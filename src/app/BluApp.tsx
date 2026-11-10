@@ -13,7 +13,8 @@ import {
   type HabitId,
 } from "@/lib/blu";
 import { readCompanion } from "@/lib/companion";
-import { getLocale, LOCALES, setLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
+import { getLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
+import { LanguageControl } from "./LanguageControl";
 import {
   DECLARED_LABELS,
   DECLARED_LEVELS,
@@ -45,7 +46,7 @@ import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import { TraceabilityNote } from "./TraceabilityNote";
 import { activeTelemetry, initTelemetry } from "@/lib/observability/telemetry";
-import SpeakButton, { speakLocalText, stopActiveSpeech, type SpeechLocale, type VoiceProfile } from "./SpeakButton";
+import SpeakButton, { speakLocalText, stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
 import { BLU_GREETING } from "@/lib/conversation";
 import {
   getProfileSnapshot,
@@ -196,8 +197,13 @@ export default function Home() {
         : "Ya registraste un paso. Sigue a tu ritmo.",
   );
   const companion = readCompanion(state, today);
-  const speechLocale: SpeechLocale =
-    locale === "en-US" ? "en-US" : locale === "zh-CN" ? "zh-CN" : "es-CL";
+  function phrase(key: string, vars: Record<string, string> = {}): string {
+    let text = translate(locale, key);
+    for (const [name, value] of Object.entries(vars)) {
+      text = text.split(`{${name}}`).join(translate(locale, value));
+    }
+    return text;
+  }
   const welcomeSpeech = [
     translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes."),
     translate(locale, "Un cambio pequeño también cuenta."),
@@ -224,8 +230,8 @@ export default function Home() {
     }
     if (spokenLocale.current === locale) return;
     spokenLocale.current = locale;
-    speakLocalText(screenSpeech, speechLocale);
-  }, [locale, screenSpeech, speechLocale]);
+    speakLocalText(screenSpeech, locale);
+  }, [locale, screenSpeech]);
   const refined = refinePortrait(portrait, state, today);
   const consentReady = hasPurpose(state.consent, "operativo") && !needsReconsent(state.consent);
   const showConsentEditor = !consentReady || managingConsent;
@@ -285,7 +291,9 @@ export default function Home() {
     if (azureVoiceEnabled) {
       stopActiveSpeech();
       setAzureVoiceEnabled(false);
-      setAzureVoiceNotice(translate(locale, "Voz del dispositivo activada. La lectura no envía texto a Microsoft."));
+      setAzureVoiceNotice(
+        translate(locale, "Voz del dispositivo activada. La lectura no envía el texto fuera de tu dispositivo."),
+      );
       return;
     }
 
@@ -294,13 +302,13 @@ export default function Home() {
     try {
       const response = await fetch("/api/voice", { cache: "no-store" });
       const result: unknown = await response.json();
-      if (
-        !response.ok ||
-        typeof result !== "object" ||
-        result === null ||
-        !("azureAvailable" in result) ||
-        result.azureAvailable !== true
-      ) {
+      const natural =
+        typeof result === "object" &&
+        result !== null &&
+        (("naturalAvailable" in result && result.naturalAvailable === true) ||
+          ("elevenlabsAvailable" in result && result.elevenlabsAvailable === true) ||
+          ("azureAvailable" in result && result.azureAvailable === true));
+      if (!response.ok || !natural) {
         setAzureVoiceNotice(
           translate(locale, "La voz natural aún no está configurada. Puedes seguir usando la voz de tu dispositivo."),
         );
@@ -366,7 +374,7 @@ export default function Home() {
       ],
     }));
     setNotice(
-      translate(locale, "Listo: «{title}» quedó como tu versión actual.").replace("{title}", item.title),
+      phrase("Listo: «{title}» quedó como tu versión actual.", { title: item.title }),
     );
   }
   const acceptedGoals = (goalDecisions?.accepted ?? []).filter((goal) =>
@@ -417,12 +425,7 @@ export default function Home() {
       selectedHabitIds: [...current.selectedHabitIds, habitId],
     }));
     const habit = HABITS.find((item) => item.id === habitId);
-    setNotice(
-      translate(locale, "Incluí «{title}» en tus hábitos.").replace(
-        "{title}",
-        habit?.title ?? goal.habitId,
-      ),
-    );
+    setNotice(phrase("Incluí «{title}» en tus hábitos.", { title: habit?.title ?? goal.habitId }));
   }
 
   function submitReview(event: FormEvent<HTMLFormElement>) {
@@ -627,7 +630,9 @@ export default function Home() {
       setNotice(translate(locale, "Se borraron todos los datos de Blu en este navegador."));
     } else {
       setNotice(
-        `No se pudieron borrar algunas claves: ${erased.remaining.join(", ")}. Inténtalo desde la configuración del navegador.`,
+        phrase("No se pudieron borrar algunas claves: {keys}. Inténtalo desde la configuración del navegador.", {
+          keys: erased.remaining.join(", "),
+        }),
       );
     }
   }
@@ -635,13 +640,14 @@ export default function Home() {
   if (snapshot.error) {
     return (
       <div className="error-screen">
+        <LanguageControl locale={locale} />
         <section className="error-card" role="alert">
-          <span className="eyebrow">Privacidad y datos</span>
-          <h1>No pude acceder a tus datos</h1>
-          <p>{snapshot.error}</p>
-          <p>Si eliges reiniciar, se borrarán los datos de Blu guardados en este navegador.</p>
+          <span className="eyebrow">{translate(locale, "Privacidad y datos")}</span>
+          <h1>{translate(locale, "No pude acceder a tus datos")}</h1>
+          <p>{translate(locale, snapshot.error)}</p>
+          <p>{translate(locale, "Si eliges reiniciar, se borrarán los datos de Blu guardados en este navegador.")}</p>
           <button className="button button-dark" onClick={clearData} type="button">
-            Borrar datos y reiniciar
+            {translate(locale, "Borrar datos y reiniciar")}
           </button>
         </section>
       </div>
@@ -652,7 +658,7 @@ export default function Home() {
     return (
       <div className="onboarding">
         <header className="topbar">
-          <a className="brand" href="#" aria-label="Blu, inicio">
+          <a className="brand" href="#" aria-label={translate(locale, "Blu, inicio")}>
             <BluPresence size="sm" />
             <span>blu</span>
           </a>
@@ -667,7 +673,7 @@ export default function Home() {
                 {translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
               </p>
               <SpeakButton
-                locale={speechLocale}
+                locale={locale}
                 text={translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
               />
             </div>
@@ -744,7 +750,7 @@ export default function Home() {
             {showConsentEditor && (
               <fieldset>
                 <legend className="tiny-note">
-                  Consentimientos · aviso versión {CONSENT_VERSION}
+                  {phrase("Consentimientos · aviso versión {version}", { version: CONSENT_VERSION })}
                 </legend>
                 {PURPOSES.map((purpose) => (
                   <label key={purpose.id} className="consent-row">
@@ -764,7 +770,7 @@ export default function Home() {
                 ))}
                 {consentReady && (
                   <p className="tiny-note">
-                    Para retirar el propósito operativo usa «Borrar mis datos».
+                    {translate(locale, "Para retirar el propósito operativo usa «Borrar mis datos».")}
                   </p>
                 )}
               </fieldset>
@@ -773,7 +779,7 @@ export default function Home() {
               <p className="tiny-note" role="status" aria-live="polite">
                 {draftSelectedHabitIds.length === 0
                   ? translate(locale, "Elige al menos un hábito para continuar.")
-                  : "Falta aceptar el aviso (propósito operativo) para continuar."}
+                  : translate(locale, "Falta aceptar el aviso (propósito operativo) para continuar.")}
               </p>
             )}
             <button
@@ -803,7 +809,7 @@ export default function Home() {
               </button>
             )}
             {notice && <p className="inline-notice" role="status">{notice}</p>}
-            <p className="tiny-note">No escribas información médica ni datos que te identifiquen.</p>
+            <p className="tiny-note">{translate(locale, "No escribas información médica ni datos que te identifiquen.")}</p>
             <p className="tiny-note">
               {translate(locale, "¿Prefieres partir con una autoevaluación?")}{" "}
               <Link href="/cuestionario">
@@ -814,7 +820,7 @@ export default function Home() {
         </section>
         <footer className="page-footer">
           <span>{translate(locale, "Cuatro pilares: alimentación, movimiento, comunidad y propósito.")}</span>
-          <span>Sin cuenta · Tus hábitos se guardan en este navegador</span>
+          <span>{translate(locale, "Sin cuenta · Tus hábitos se guardan en este navegador")}</span>
         </footer>
       </div>
     );
@@ -824,7 +830,7 @@ export default function Home() {
     <div className="dashboard">
       <header className="app-header">
         <div className="topbar">
-          <a className="brand" href="#" aria-label="Blu, inicio">
+          <a className="brand" href="#" aria-label={translate(locale, "Blu, inicio")}>
             <BluPresence size="sm" />
             <span>blu</span>
           </a>
@@ -836,7 +842,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <nav className="dashboard-nav" aria-label="Secciones principales">
+        <nav className="dashboard-nav" aria-label={translate(locale, "Secciones principales")}>
           <a href="#chat-heading" onClick={() => setChatPresence("pause")}>
             {translate(locale, "Pausa con Blu")}
           </a>
@@ -854,7 +860,7 @@ export default function Home() {
             {translate(locale, "Un día a la vez")}
           </span>
           <p className="hero-date">
-            {today.toLocaleDateString(speechLocale, { day: "numeric", month: "long", year: "numeric" })}
+            {today.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
           </p>
           <h1 id="today-heading">
             {locale === "es" ? (
@@ -875,7 +881,7 @@ export default function Home() {
         <div className="hero-blu">
           <BluPresence mood={companion.mood} pose={companion.pose} size="lg" state={heroPresence} />
           <p className="companion-line">{translate(locale, companion.line)}</p>
-          <SpeakButton locale={speechLocale} text={todaySpeech} />
+          <SpeakButton locale={locale} text={todaySpeech} />
         </div>
         <div className="hero-progress">
           <span className="progress-caption">{translate(locale, "TU PASO DE HOY")}</span>
@@ -887,7 +893,7 @@ export default function Home() {
             </span>
           </div>
           <div
-            aria-label="Acciones de hoy"
+            aria-label={translate(locale, "Acciones de hoy")}
             aria-valuemax={state.selectedHabitIds.length}
             aria-valuemin={0}
             aria-valuenow={todayHabitsCompleted}
@@ -909,14 +915,17 @@ export default function Home() {
             onClick={toggleReminders}
             type="button"
           >
-            {reminderState.enabled ? "Desactivar recordatorio" : "Activar recordatorio de la mañana"}
+            {translate(locale, reminderState.enabled ? "Desactivar recordatorio" : "Activar recordatorio de la mañana")}
           </button>
           <p className="tiny-note">
-            {reminderState.permission === "unsupported"
-              ? "Tu navegador no permite recordatorios."
-              : reminderState.permission === "denied" && !reminderState.enabled
-                ? "Quedaron bloqueados en el navegador; puedes permitirlos en la configuración del sitio."
-                : "Máximo uno al día, solo si quedan pasos sin marcar. Funciona con Blu abierta; sin cuenta ni servidor."}
+            {translate(
+              locale,
+              reminderState.permission === "unsupported"
+                ? "Tu navegador no permite recordatorios."
+                : reminderState.permission === "denied" && !reminderState.enabled
+                  ? "Quedaron bloqueados en el navegador; puedes permitirlos en la configuración del sitio."
+                  : "Máximo uno al día, solo si quedan pasos sin marcar. Funciona con Blu abierta; sin cuenta ni servidor.",
+            )}
           </p>
           {reminderNotice && (
             <p className="inline-notice" role="status">{reminderNotice}</p>
@@ -949,10 +958,9 @@ export default function Home() {
 
       {state.consentAcceptedAt && needsReconsent(state.consent) && (
         <p className="inline-notice" role="status">
-          Actualizamos el aviso de consentimiento (versión {CONSENT_VERSION}). Tu uso sigue
-          igual hasta que renueves.{" "}
+          {phrase("Actualizamos el aviso de consentimiento (versión {version}). Tu uso sigue igual hasta que renueves.", { version: CONSENT_VERSION })}{" "}
           <button className="text-button" onClick={openConsentManager} type="button">
-            Revisar y renovar
+            {translate(locale, "Revisar y renovar")}
           </button>
         </p>
       )}
@@ -961,7 +969,7 @@ export default function Home() {
         <section className="main-column" aria-labelledby="habits-heading">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">TU ESPACIO</span>
+              <span className="eyebrow">{translate(locale, "TU ESPACIO")}</span>
               <h2 id="habits-heading">{translate(locale, "Hábitos que elegiste")}</h2>
             </div>
             <button
@@ -985,9 +993,9 @@ export default function Home() {
                   <div className="daily-icon" aria-hidden="true">{habit.icon}</div>
                   <div className="daily-copy">
                     <span className="category-label">{translate(locale, habit.title)}</span>
-                    <p>{currentAction(state, habit.id)}</p>
+                    <p>{translate(locale, currentAction(state, habit.id))}</p>
                     <details>
-                      <summary className="text-button">Otras versiones</summary>
+                      <summary className="text-button">{translate(locale, "Otras versiones")}</summary>
                       <ul role="list">
                         {habitCatalog.principles
                           .find((entry) => entry.principleId === habit.id)
@@ -999,22 +1007,22 @@ export default function Home() {
                                 onClick={() => applyMicrohabit(habit.id, item)}
                                 type="button"
                               >
-                                {item.title}: {item.smallerAction}
+                                {translate(locale, item.title)}: {translate(locale, item.smallerAction)}
                               </button>
                             </li>
                           ))}
                       </ul>
-                      <p className="tiny-note">{habitCatalog.disclaimer}</p>
+                      <p className="tiny-note">{translate(locale, habitCatalog.disclaimer)}</p>
                     </details>
                     <details className="why-suggested">
-                      <summary className="text-button">¿Por qué me lo sugiere?</summary>
+                      <summary className="text-button">{translate(locale, "¿Por qué me lo sugiere?")}</summary>
                       <ul role="list">
                         {habitEducation.principles
                           .find((entry) => entry.principleId === habit.id)
                           ?.notes.map((note) => (
                             <li key={note.id}>
-                              <strong>{note.title}.</strong> {note.text}{" "}
-                              <TraceabilityNote note={note} />
+                              <strong>{translate(locale, note.title)}.</strong> {translate(locale, note.text)}{" "}
+                              <TraceabilityNote locale={locale} note={note} />
                             </li>
                           ))}
                       </ul>
@@ -1038,14 +1046,12 @@ export default function Home() {
             <details className="space-details">
               <summary>
                 <h2 id="space-heading" className="tiny-note">
-                  Personaliza tu espacio
+                  {translate(locale, "Personaliza tu espacio")}
                 </h2>
-                <span className="optional-label">Opcional</span>
+                <span className="optional-label">{translate(locale, "Opcional")}</span>
               </summary>
             <p className="tiny-note">
-              Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni
-              otros datos: la verificación de correo llegará solo cuando exista cuenta en una
-              futura versión.
+              {translate(locale, "Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni otros datos: la verificación de correo llegará solo cuando exista cuenta en una futura versión.")}
             </p>
             <div className="adapt-row">
               <label className="visually-hidden" htmlFor="nickname">{translate(locale, "Apodo (opcional)")}</label>
@@ -1068,7 +1074,7 @@ export default function Home() {
                 }}
                 type="button"
               >
-                Guardar
+                {translate(locale, "Guardar")}
               </button>
             </div>
             </details>
@@ -1078,8 +1084,8 @@ export default function Home() {
             <section aria-labelledby="accepted-goals-heading">
               <div className="section-heading">
                 <div>
-                  <span className="eyebrow">DE TU AUTODIAGNÓSTICO</span>
-                  <h2 id="accepted-goals-heading">Objetivos que aceptaste</h2>
+                  <span className="eyebrow">{translate(locale, "DE TU AUTODIAGNÓSTICO")}</span>
+                  <h2 id="accepted-goals-heading">{translate(locale, "Objetivos que aceptaste")}</h2>
                 </div>
               </div>
               <div className="daily-list">
@@ -1089,17 +1095,17 @@ export default function Home() {
                   return (
                     <article key={goal.suggestionId} className="daily-card">
                       <div className="daily-copy">
-                        <span className="category-label">{habit?.title ?? goal.habitId}</span>
-                        <p>{goal.action}</p>
+                        <span className="category-label">{translate(locale, habit?.title ?? goal.habitId)}</span>
+                        <p>{translate(locale, goal.action)}</p>
                       </div>
                       <button
-                        aria-label={`${already ? "Ya está en tu plan" : "Incluir en tus hábitos"}: ${habit?.title ?? goal.habitId}`}
+                        aria-label={`${translate(locale, already ? "Ya está en tu plan" : "Incluir en tus hábitos")}: ${translate(locale, habit?.title ?? goal.habitId)}`}
                         className="check-button"
                         disabled={already}
                         onClick={() => includeGoal(goal)}
                         type="button"
                       >
-                        {already ? "En tu plan" : "Incluir"}
+                        {translate(locale, already ? "En tu plan" : "Incluir")}
                       </button>
                     </article>
                   );
@@ -1111,37 +1117,39 @@ export default function Home() {
           <details className="review-card" id="week-plan">
             <summary aria-labelledby="week-plan-heading" className="review-top">
               <div>
-                <span className="eyebrow">TU SEMANA</span>
-                <h2 id="week-plan-heading">Tu plan de la semana</h2>
+                <span className="eyebrow">{translate(locale, "TU SEMANA")}</span>
+                <h2 id="week-plan-heading">{translate(locale, "Tu plan de la semana")}</h2>
               </div>
             </summary>
             <p className="muted">
-              Sugerencias, no obligaciones: un día vacío no rompe nada. Máximo 3 por día.
+              {translate(locale, "Sugerencias, no obligaciones: un día vacío no rompe nada. Máximo 3 por día.")}
             </p>
             {!weeklyPlan && state.selectedHabitIds.length > 0 && (
               <button className="button button-light" onClick={generateWeekPlan} type="button">
-                Sugerir mi semana
+                {translate(locale, "Sugerir mi semana")}
               </button>
             )}
             {weeklyPlan && (
               <ul role="list">
                 {weeklyPlan.days.map((day) => (
                   <li key={day.dayIndex} className="consent-row">
-                    <span className="category-label">{DAY_NAMES[day.dayIndex]}</span>
+                    <span className="category-label">{translate(locale, DAY_NAMES[day.dayIndex])}</span>
                     {day.intentions.length === 0 ? (
-                      <span className="muted">Sin intenciones (está bien).</span>
+                      <span className="muted">{translate(locale, "Sin intenciones (está bien).")}</span>
                     ) : (
                       day.intentions.map((intention) => {
                         const habit = HABITS.find((item) => item.id === intention.habitId);
+                        const title = translate(locale, habit?.title ?? intention.habitId);
+                        const dayName = translate(locale, DAY_NAMES[day.dayIndex]);
                         return (
                           <button
-                            aria-label={`Quitar ${habit?.title ?? intention.habitId} del ${DAY_NAMES[day.dayIndex]}`}
+                            aria-label={phrase("Quitar {title} del {day}", { title, day: dayName })}
                             className="text-button"
                             key={`${day.dayIndex}-${intention.habitId}`}
                             onClick={() => handleToggleIntention(day.dayIndex, intention.habitId as HabitId)}
                             type="button"
                           >
-                            {habit?.title ?? intention.habitId} ✕
+                            {title} ✕
                           </button>
                         );
                       })
@@ -1160,22 +1168,22 @@ export default function Home() {
           <section className="review-card activity-card" aria-labelledby="review-heading">
             <div className="review-top">
               <div>
-                <span className="eyebrow">REGISTRO PERSONAL</span>
-                <h2 id="review-heading">Tu actividad</h2>
+                <span className="eyebrow">{translate(locale, "REGISTRO PERSONAL")}</span>
+                <h2 id="review-heading">{translate(locale, "Tu actividad")}</h2>
               </div>
             </div>
             <div className="review-stats">
               <div>
                 <strong>{historySummary.totalActions}</strong>
-                <span>acciones registradas</span>
+                <span>{translate(locale, "acciones registradas")}</span>
               </div>
               <div>
                 <strong>{historySummary.activeDays}<small> / {historySummary.periodDays}</small></strong>
-                <span>días con algún registro</span>
+                <span>{translate(locale, "días con algún registro")}</span>
               </div>
             </div>
             <fieldset className="period-picker">
-              <legend>Ver período</legend>
+              <legend>{translate(locale, "Ver período")}</legend>
               {([7, 14, 30] as const).map((days) => (
                 <label key={days} className="consent-row">
                   <input
@@ -1184,25 +1192,28 @@ export default function Home() {
                     onChange={() => setHistoryPeriod(days)}
                     type="radio"
                   />
-                  <span>{days} días</span>
+                  <span>{phrase("{n} días", { n: String(days) })}</span>
                 </label>
               ))}
             </fieldset>
             <p className="review-note" role="status" aria-live="polite">
-              Últimos {historySummary.periodDays} días: {historySummary.totalActions} acciones en{" "}
-              {historySummary.activeDays} días con registro.
+              {phrase("Últimos {period} días: {actions} acciones en {active} días con registro.", {
+                period: String(historySummary.periodDays),
+                actions: String(historySummary.totalActions),
+                active: String(historySummary.activeDays),
+              })}
             </p>
             {historySummary.totalActions === 0 && (
               <div className="review-empty-state">
-                <p>Aún no hay pasos registrados en estos {historySummary.periodDays} días.</p>
-                <a href="#habits-heading">Cuando pruebes uno, podrás marcarlo aquí.</a>
+                <p>{phrase("Aún no hay pasos registrados en estos {period} días.", { period: String(historySummary.periodDays) })}</p>
+                <a href="#habits-heading">{translate(locale, "Cuando pruebes uno, podrás marcarlo aquí.")}</a>
               </div>
             )}
             {historySummary.totalActions > 0 && (
               <div className="review-history">
-                {historyPeriod === 7 && <WeekBars days={historySummary.days} />}
+                {historyPeriod === 7 && <WeekBars days={historySummary.days} locale={locale} />}
                 <ul
-                  aria-label={`Detalle de los últimos ${historySummary.periodDays} días`}
+                  aria-label={phrase("Detalle de los últimos {period} días", { period: String(historySummary.periodDays) })}
                   className="history-days"
                 >
                   {historySummary.days.map((day) => (
@@ -1210,7 +1221,7 @@ export default function Home() {
                       className={day.count > 0 ? "history-day has-activity" : "history-day"}
                       key={day.date}
                     >
-                      <time dateTime={day.date}>{formatHistoryDate(day.date, speechLocale)}</time>
+                      <time dateTime={day.date}>{formatHistoryDate(day.date, locale)}</time>
                       <span>
                         {day.count === 0
                           ? translate(locale, "Sin pasos")
@@ -1228,7 +1239,7 @@ export default function Home() {
               {translate(locale, "Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?")}
             </p>
             <div className="adapt-row">
-              <label className="visually-hidden" htmlFor="adapt-habit">Hábito a simplificar</label>
+              <label className="visually-hidden" htmlFor="adapt-habit">{translate(locale, "Hábito a simplificar")}</label>
               <select
                 id="adapt-habit"
                 onChange={(event) => {
@@ -1240,10 +1251,10 @@ export default function Home() {
                 <option value="">{translate(locale, "Elige un hábito")}</option>
                 {state.selectedHabitIds.map((id) => {
                   const habit = HABITS.find((item) => item.id === id);
-                  return habit ? <option key={id} value={id}>{habit.title}</option> : null;
+                  return habit ? <option key={id} value={id}>{translate(locale, habit.title)}</option> : null;
                 })}
               </select>
-              <label className="visually-hidden" htmlFor="barrier">Qué lo hizo difícil</label>
+              <label className="visually-hidden" htmlFor="barrier">{translate(locale, "Qué lo hizo difícil")}</label>
               <select
                 id="barrier"
                 onChange={(event) => {
@@ -1268,11 +1279,13 @@ export default function Home() {
             {state.adaptations.length > 0 && (
               <div className="adaptation-record">
                 <p>
-                  Último ajuste: «{state.adaptations[state.adaptations.length - 1].from}» → «
-                  {state.adaptations[state.adaptations.length - 1].to}»
+                  {phrase("Último ajuste: «{from}» → «{to}»", {
+                    from: state.adaptations[state.adaptations.length - 1].from,
+                    to: state.adaptations[state.adaptations.length - 1].to,
+                  })}
                 </p>
                 <button className="text-button" onClick={undoLastAdaptation} type="button">
-                  Deshacer último ajuste
+                  {translate(locale, "Deshacer último ajuste")}
                 </button>
               </div>
             )}
@@ -1291,27 +1304,26 @@ export default function Home() {
             </p>
             {weeklySummary.actionsCompleted === 0 && (
               <p className="muted">
-                Aún no tienes registros esta semana: también es válido empezar pequeño hoy.
+                {translate(locale, "Aún no tienes registros esta semana: también es válido empezar pequeño hoy.")}
               </p>
             )}
             {reviewState.error && (
               <p className="inline-notice" role="alert">
-                No pude leer tus revisiones guardadas: {reviewState.error}
+                {phrase("No pude leer tus revisiones guardadas: {detail}", { detail: reviewState.error })}
               </p>
             )}
             {thisWeekReview && (
               <p className="inline-notice" role="status">
-                Revisión de esta semana guardada ({thisWeekReview.updatedAt.slice(0, 10)}). Puedes
-                actualizarla cuando quieras.
+                {phrase("Revisión de esta semana guardada ({date}). Puedes actualizarla cuando quieras.", {
+                  date: thisWeekReview.updatedAt.slice(0, 10),
+                })}
               </p>
             )}
             {thisWeekReview?.decision === "adjust" && (
               <p className="inline-notice" role="status">
-                Elegiste ajustar un hábito. En la pantalla principal, dentro de «Tu actividad»,
-                selecciona el hábito y pulsa «Probar más pequeño». Nada cambia hasta que tú
-                lo confirmes.{" "}
+                {translate(locale, "Elegiste ajustar un hábito. En «Tu actividad», selecciona el hábito y pulsa «Probar más pequeño». Nada cambia hasta que tú lo confirmes.")}{" "}
                 <Link className="text-button" href="/">
-                  Ir a mis hábitos
+                  {translate(locale, "Ir a mis hábitos")}
                 </Link>
               </p>
             )}
@@ -1423,7 +1435,7 @@ export default function Home() {
                 {translate(locale, "La voz disponible depende de las opciones de tu dispositivo.")}
               </p>
               <p className="chat-voice-cloud-note">
-                {translate(locale, "Si activas Azure, se enviará a Microsoft solo el texto de Blu que elijas escuchar para crear el audio. No compartas información personal o de salud.")}
+                {translate(locale, "Si activas la voz natural, se enviará solo el texto de Blu que elijas escuchar a un proveedor de voz para crear el audio. No compartas información personal o de salud.")}
               </p>
               <button
                 className="text-button chat-voice-toggle"
@@ -1450,7 +1462,7 @@ export default function Home() {
                     {message.role === "blu" && (
                       <SpeakButton
                         azureAvailable={azureVoiceEnabled}
-                        locale={speechLocale}
+                        locale={locale}
                         mode={azureVoiceEnabled ? "azure" : "local"}
                         profile={voiceProfile}
                         text={translate(locale, message.text)}
@@ -1470,12 +1482,12 @@ export default function Home() {
                 placeholder={translate(locale, "¿Qué tienes en mente?")}
                 value={chatInput}
               />
-              <button aria-label="Enviar mensaje" disabled={!chatInput.trim()} type="submit">
+              <button aria-label={translate(locale, "Enviar mensaje")} disabled={!chatInput.trim()} type="submit">
                 {translate(locale, "Enviar")}
               </button>
             </form>
             <p className="chat-privacy">{translate(locale, "No incluyas datos personales ni información médica.")}</p>
-            <section className="principle-card" aria-label="Una idea para acompañarte">
+            <section className="principle-card" aria-label={translate(locale, "Una idea para acompañarte")}>
               <span className="eyebrow">{translate(locale, "UNA IDEA PARA HOY")}</span>
               <p>
                 {translate(
@@ -1538,7 +1550,7 @@ export default function Home() {
   );
 }
 
-function formatHistoryDate(dateKey: string, locale: SpeechLocale = "es-CL"): string {
+function formatHistoryDate(dateKey: string, locale: Locale = "es"): string {
   const date = new Date(`${dateKey}T12:00:00`);
   return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" })
     .format(date)
@@ -1587,32 +1599,28 @@ const DECISION_OPTIONS: Array<{ value: ReviewDecision; label: string }> = [
   { value: "adjust", label: "Ajustar un hábito" },
 ];
 
-const LOCALE_LABEL: Record<Locale, string> = {
-  es: "Español",
-  "en-US": "English",
-  "zh-CN": "中文",
-};
-
-function LanguageControl({ locale }: { locale: Locale }) {
-  return (
-    <label className="language-select">
-      <span className="visually-hidden">{translate(locale, "Idioma")}</span>
-      <select
-        aria-label={translate(locale, "Idioma")}
-        onChange={(event) => {
-          const next = event.target.value;
-          if (next === "es" || next === "en-US" || next === "zh-CN") setLocale(next);
-        }}
-        value={locale}
-      >
-        {LOCALES.map((code) => (
-          <option key={code} value={code}>
-            {LOCALE_LABEL[code]}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
+function portraitLine(
+  locale: Locale,
+  item: { declared: DeclaredLevel | null; marks: number },
+  windowDays: number,
+): string {
+  if (!item.declared) return translate(locale, "Aún no hay una evaluación inicial de este hábito.");
+  const label = translate(locale, DECLARED_LABELS[item.declared]);
+  if (item.marks === 0) {
+    return translate(
+      locale,
+      "Declaraste «{label}». Todavía no hay práctica registrada: el retrato se afina cuando marques un paso.",
+    ).replace("{label}", label);
+  }
+  const unit = translate(locale, item.marks === 1 ? "vez" : "veces");
+  return translate(
+    locale,
+    "Declaraste «{label}». En {days} días lo marcaste {n} {unit}. Eso actualiza el punto de partida, sin convertirlo en una nota.",
+  )
+    .replace("{label}", label)
+    .replace("{days}", String(windowDays))
+    .replace("{n}", String(item.marks))
+    .replace("{unit}", unit);
 }
 
 function PortraitPanel({
@@ -1652,7 +1660,7 @@ function PortraitPanel({
             return (
               <li key={item.habitId}>
                 <strong>{habit ? translate(locale, habit.title) : item.habitId}</strong>
-                <p>{item.line}</p>
+                <p>{portraitLine(locale, item, refined.windowDays)}</p>
               </li>
             );
           })}

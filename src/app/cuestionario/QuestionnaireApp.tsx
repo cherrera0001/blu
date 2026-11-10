@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
-import { getLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
+import { translate, type Locale } from "@/lib/i18n";
 import Link from "next/link";
 import BluPresence from "../BluPresence";
+import { LanguageControl, useLocale } from "../LanguageControl";
 import { loadBank } from "@/lib/onboarding/bank-loader";
 import type { Question } from "@/lib/onboarding/bank";
 import {
@@ -50,6 +51,7 @@ export default function QuestionnaireApp() {
   if (bankState.error || !bankState.bank) {
     return (
       <main className="onboarding">
+        <LanguageControl locale={locale} />
         <section className="error-card" role="alert">
           <span className="eyebrow">{translate(locale, "Autodiagnóstico")}</span>
           <h1>{translate(locale, "No pude cargar el cuestionario")}</h1>
@@ -77,10 +79,6 @@ function subscribeNothing(): () => void {
   return () => {};
 }
 
-function useLocale(): Locale {
-  return useSyncExternalStore(subscribeLocale, getLocale, () => "es" as Locale);
-}
-
 function QuestionnaireFlow() {
   const locale = useLocale();
   // La puerta de monteo evita valores no deterministas (new Date) durante el prerender
@@ -89,6 +87,7 @@ function QuestionnaireFlow() {
   if (!ready) {
     return (
       <main className="onboarding">
+        <LanguageControl locale={locale} />
         <section className="onboarding-card">
           <p className="muted">{translate(locale, "Preparando tu autodiagnóstico…")}</p>
         </section>
@@ -180,6 +179,7 @@ function QuestionnaireSession() {
   if (noticeGateError) {
     return (
       <main className="onboarding">
+        <LanguageControl locale={locale} />
         <section className="error-card" role="alert">
           <span className="eyebrow">{translate(locale, "Autodiagnóstico")}</span>
           <h1>{translate(locale, "No pude leer tu aceptación del aviso")}</h1>
@@ -202,6 +202,7 @@ function QuestionnaireSession() {
   if (!noticeAcceptance) {
     return (
       <main className="onboarding">
+        <LanguageControl locale={locale} />
         <section className="onboarding-card" aria-labelledby="notice-heading">
           <span className="step-label">{translate(locale, "ANTES DE EMPEZAR")}</span>
           <h1 id="notice-heading">{translate(locale, "Antes de empezar, un aviso")}</h1>
@@ -280,6 +281,7 @@ function QuestionnaireSession() {
 
     return (
       <main className="onboarding">
+        <LanguageControl locale={locale} />
         <section className="onboarding-card" aria-labelledby="result-heading">
           <span className="step-label">{translate(locale, "RESULTADO")}</span>
           <h1 id="result-heading">{translate(locale, "Tu autodiagnóstico de hábitos")}</h1>
@@ -374,7 +376,7 @@ function QuestionnaireSession() {
                   return (
                     <li key={s.id} className="habit-option">
                       <span className="category-label">{translate(locale, s.title)}</span>
-                      <p>{translate(locale, s.explanation)}</p>
+                      <p>{suggestionCopy(locale, s)}</p>
                       {accepted ? (
                         <p className="inline-notice" role="status">
                           {translate(locale, "Guardado en tus objetivos. Puedes ajustarlo en la pantalla de hábitos.")}
@@ -384,7 +386,7 @@ function QuestionnaireSession() {
                       ) : (
                         <div className="adapt-row">
                           <button
-                            aria-label={translate(locale, "Aceptar {title}").replace("{title}", s.title)}
+                            aria-label={translate(locale, "Aceptar {title}").replace("{title}", translate(locale, s.title))}
                             className="button button-light"
                             type="button"
                             onClick={() => decideAccept(s)}
@@ -392,7 +394,7 @@ function QuestionnaireSession() {
                             {translate(locale, "Aceptar")}
                           </button>
                           <button
-                            aria-label={translate(locale, "Rechazar {title}").replace("{title}", s.title)}
+                            aria-label={translate(locale, "Rechazar {title}").replace("{title}", translate(locale, s.title))}
                             className="text-button"
                             type="button"
                             onClick={() => decideReject(s.id)}
@@ -426,6 +428,7 @@ function QuestionnaireSession() {
 
   return (
     <main className="onboarding">
+      <LanguageControl locale={locale} />
       <section className="onboarding-card" aria-labelledby="question-heading">
         <p className="selection-count" role="status" aria-live="polite">
           {progressText}
@@ -467,6 +470,31 @@ function QuestionnaireSession() {
       </section>
     </main>
   );
+}
+
+function suggestionCopy(locale: Locale, s: Suggestion): string {
+  const head = translate(locale, "En «{title}» tu autodiagnóstico señaló «{band}».")
+    .replace("{title}", translate(locale, s.title))
+    .replace("{band}", translate(locale, BAND_LABELS[s.band]));
+  let note = "";
+  if (s.ruleId === "R3-ya-minima") {
+    note = translate(locale, "Ya está en su versión más pequeña: mantenerla cuenta.");
+  } else {
+    const match = s.explanation.match(/Mencionaste: (.*?)\. /);
+    if (match) {
+      const barriers = match[1]
+        .split(", ")
+        .map((label) => translate(locale, label))
+        .join(", ");
+      note = translate(locale, "Mencionaste: {barriers}.").replace("{barriers}", barriers);
+    }
+  }
+  const start = translate(locale, "Te sugerimos partir por: «{action}».").replace(
+    "{action}",
+    translate(locale, s.action),
+  );
+  const rule = translate(locale, "(Regla aplicada: {rule})").replace("{rule}", s.ruleId);
+  return [head, note, start, rule].filter(Boolean).join(" ");
 }
 
 function principleTitle(id: string, locale: Locale): string {

@@ -1,3 +1,5 @@
+import gaps from "./i18n-gaps.json";
+
 export const LOCALES = ["es", "en-US", "zh-CN"] as const;
 export type Locale = (typeof LOCALES)[number];
 
@@ -6,9 +8,12 @@ const LOCALE_KEY = "blu.locale.v1";
 /**
  * Castellano es el texto fuente. `translate` devuelve ese texto en `es`
  * y la versión en inglés (EE. UU.) o chino mandarín simplificado en los otros.
- * Si falta una entrada, se conserva el castellano: nunca se inventa una frase.
+ * Si falta una entrada, se conserva el castellano: eso solo es aceptable
+ * para texto libre que no es de la interfaz. Las frases de pantalla viven
+ * en este diccionario o en i18n-gaps.json.
  */
 const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
+  ...(gaps as Record<string, { "en-US": string; "zh-CN": string }>),
   Idioma: { "en-US": "Language", "zh-CN": "语言" },
   "Versión de prueba": { "en-US": "Trial version", "zh-CN": "试用版" },
   "TU BIENESTAR, UN DÍA A LA VEZ": {

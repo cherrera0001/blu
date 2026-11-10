@@ -6,10 +6,21 @@ let activeSpeechStop: (() => void) | null = null;
 
 export type VoiceProfile = "warm" | "balanced";
 export type VoiceMode = "local" | "azure";
-export type SpeechLocale = "es-CL" | "en-US" | "zh-CN";
+/** `es` es el idioma de la app; la voz del dispositivo busca `es-CL`. */
+export type SpeechLocale = "es" | "es-CL" | "en-US" | "zh-CN";
 
-const SPEAK_UI: Record<SpeechLocale, { listen: string; stop: string; loading: string; listenName: string; stopName: string }> = {
-  "es-CL": {
+type UiLocale = "es" | "en-US" | "zh-CN";
+
+function uiLocale(locale: SpeechLocale): UiLocale {
+  return locale === "es-CL" ? "es" : locale;
+}
+
+function voiceTag(locale: SpeechLocale): "es-CL" | "en-US" | "zh-CN" {
+  return locale === "es" ? "es-CL" : locale;
+}
+
+const SPEAK_UI: Record<UiLocale, { listen: string; stop: string; loading: string; listenName: string; stopName: string }> = {
+  es: {
     listen: "Escuchar",
     stop: "Detener",
     loading: "Generando audio…",
@@ -32,10 +43,25 @@ const SPEAK_UI: Record<SpeechLocale, { listen: string; stop: string; loading: st
   },
 };
 
-const MISSING_VOICE: Record<SpeechLocale, string> = {
-  "es-CL": "Este dispositivo no tiene una voz local en español.",
+const MISSING_VOICE: Record<UiLocale, string> = {
+  es: "Este dispositivo no tiene una voz local en español.",
   "en-US": "This device does not have a local English voice.",
   "zh-CN": "这台设备没有本地中文语音。",
+};
+
+const SPEAK_ERROR: Record<UiLocale, { play: string; generate: string }> = {
+  es: {
+    play: "No pude reproducir el audio. Puedes volver a intentarlo o usar la voz de tu dispositivo.",
+    generate: "No pude generar la voz natural. Puedes volver a intentarlo o usar la voz de tu dispositivo.",
+  },
+  "en-US": {
+    play: "I could not play the audio. You can try again, or use your device's voice.",
+    generate: "I could not create the natural voice. You can try again, or use your device's voice.",
+  },
+  "zh-CN": {
+    play: "没法播放这段声音。你可以再试一次，或用这台设备的语音。",
+    generate: "没法生成自然语音。你可以再试一次，或用这台设备的语音。",
+  },
 };
 
 export function stopActiveSpeech(): void {
@@ -48,11 +74,12 @@ function getSynth(): SpeechSynthesis | null {
 }
 
 function getLocalVoice(synth: SpeechSynthesis, locale: SpeechLocale): SpeechSynthesisVoice | undefined {
-  const prefix = locale === "en-US" ? "en" : locale === "zh-CN" ? "zh" : "es";
+  const tag = voiceTag(locale);
+  const prefix = tag === "en-US" ? "en" : tag === "zh-CN" ? "zh" : "es";
   const voices = synth
     .getVoices()
     .filter((voice) => voice.localService && voice.lang.toLowerCase().startsWith(prefix));
-  const exact = voices.find((voice) => voice.lang.toLowerCase() === locale.toLowerCase());
+  const exact = voices.find((voice) => voice.lang.toLowerCase() === tag.toLowerCase());
   if (exact) return exact;
   if (prefix !== "es") return voices[0];
   const language = typeof navigator === "undefined" ? "" : navigator.language.toLowerCase();
@@ -172,7 +199,7 @@ export default function SpeakButton({
       const response = await fetch("/api/voice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, locale: uiLocale(locale) }),
         signal: controller.signal,
       });
       if (!response.ok) throw new Error("voice_request_failed");
@@ -187,7 +214,7 @@ export default function SpeakButton({
       audio.onended = stop;
       audio.onerror = () => {
         stop();
-        setError("No pude reproducir el audio. Puedes volver a intentarlo o usar la voz local.");
+        setError(SPEAK_ERROR[uiLocale(locale)].play);
       };
       await audio.play();
       if (!controller.signal.aborted) setSpeaking(true);
@@ -196,7 +223,7 @@ export default function SpeakButton({
       const cancelled = controller.signal.aborted;
       stop();
       if (!cancelled) {
-        setError("No pude generar la voz natural. Puedes volver a intentarlo o usar la voz local.");
+        setError(SPEAK_ERROR[uiLocale(locale)].generate);
       }
     }
   }
@@ -237,17 +264,17 @@ export default function SpeakButton({
   return (
     <div className="speak-control">
       <button
-        aria-label={speaking || loading ? SPEAK_UI[locale].stopName : SPEAK_UI[locale].listenName}
+        aria-label={speaking || loading ? SPEAK_UI[uiLocale(locale)].stopName : SPEAK_UI[uiLocale(locale)].listenName}
         aria-pressed={speaking || loading}
         className="text-button"
         disabled={unavailable}
         onClick={toggle}
         type="button"
       >
-        {loading ? SPEAK_UI[locale].loading : speaking ? `■ ${SPEAK_UI[locale].stop}` : `🔊 ${SPEAK_UI[locale].listen}`}
+        {loading ? SPEAK_UI[uiLocale(locale)].loading : speaking ? `■ ${SPEAK_UI[uiLocale(locale)].stop}` : `🔊 ${SPEAK_UI[uiLocale(locale)].listen}`}
       </button>
       {unavailable && (
-        <p className="speak-status">{MISSING_VOICE[locale]}</p>
+        <p className="speak-status">{MISSING_VOICE[uiLocale(locale)]}</p>
       )}
       {error && <p className="speak-error" role="status">{error}</p>}
     </div>

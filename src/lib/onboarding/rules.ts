@@ -85,11 +85,11 @@ export function recommend(
     } else if (lowCapacity) {
       ruleId = "R2-version-minima";
       action = smallest;
-      note = `Mencionaste: ${barriers.join(", ").toLowerCase()}. `;
+      note = `Mencionaste: ${barriers.join(", ")}. `;
     } else {
       ruleId = "R1-banda-baja";
       action = habit.action;
-      note = barriers.length > 0 ? `Mencionaste: ${barriers.join(", ").toLowerCase()}. ` : "";
+      note = barriers.length > 0 ? `Mencionaste: ${barriers.join(", ")}. ` : "";
     }
 
     const explanation =

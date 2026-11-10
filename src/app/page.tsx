@@ -1,11 +1,10 @@
 import BluApp from "./BluApp";
+import { SkipLink } from "./SkipLink";
 
 export default function Page() {
   return (
     <>
-      <a className="skip-link" href="#contenido-principal">
-        Saltar al contenido principal
-      </a>
+      <SkipLink />
       <main id="contenido-principal">
         <BluApp />
       </main>

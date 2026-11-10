@@ -261,7 +261,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
     expect(fetchMock).toHaveBeenCalledWith("/api/voice", expect.objectContaining({
       method: "POST",
-      body: JSON.stringify({ text: "Una pausa breve puede bastar." }),
+      body: JSON.stringify({ text: "Una pausa breve puede bastar.", locale: "es" }),
     }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Detener lectura" })).toBeTruthy());
     expect(audio.play).toHaveBeenCalledOnce();

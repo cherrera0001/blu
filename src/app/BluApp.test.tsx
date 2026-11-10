@@ -289,7 +289,7 @@ describe("Blu user flows", () => {
 
   it("uses Azure voice only after explicit activation and a separate listen click", async () => {
     const fetchMock = vi.fn()
-      .mockResolvedValueOnce(Response.json({ azureAvailable: true }))
+      .mockResolvedValueOnce(Response.json({ azureAvailable: false, elevenlabsAvailable: true, naturalAvailable: true }))
       .mockResolvedValueOnce({
         ok: true,
         blob: async () => new Blob(["synthetic audio"]),
@@ -322,7 +322,7 @@ describe("Blu user flows", () => {
       render(<BluApp />);
       await completeOnboarding(user);
       expect(fetchMock).not.toHaveBeenCalled();
-      expect(screen.getByText(/se enviará a Microsoft solo el texto de Blu/)).toBeTruthy();
+      expect(screen.getByText(/se enviará solo el texto de Blu que elijas escuchar a un proveedor de voz/)).toBeTruthy();
 
       await user.click(screen.getByRole("button", { name: "Activar voz natural" }));
       expect(await screen.findByText("Voz natural activada para esta sesión.")).toBeTruthy();
@@ -342,7 +342,7 @@ describe("Blu user flows", () => {
       expect(fetchMock).toHaveBeenNthCalledWith(
         2,
         "/api/voice",
-        expect.objectContaining({ body: JSON.stringify({ text: BLU_GREETING }) }),
+        expect.objectContaining({ body: JSON.stringify({ text: BLU_GREETING, locale: "es" }) }),
       );
       expect(audio.play).toHaveBeenCalledOnce();
       await user.click(screen.getByRole("button", { name: "Usar voz del dispositivo" }));
@@ -353,7 +353,9 @@ describe("Blu user flows", () => {
   });
 
   it("keeps local voice mode when Azure is not configured", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(Response.json({ azureAvailable: false }));
+    const fetchMock = vi.fn().mockResolvedValue(
+      Response.json({ azureAvailable: false, elevenlabsAvailable: false, naturalAvailable: false }),
+    );
     vi.stubGlobal("fetch", fetchMock);
     try {
       const user = userEvent.setup();

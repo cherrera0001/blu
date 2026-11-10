@@ -1,0 +1,1534 @@
+{
+  "Privacidad y datos": {
+    "en-US": "Privacy and data",
+    "zh-CN": "隐私和数据"
+  },
+  "No pude acceder a tus datos": {
+    "en-US": "I could not open your data",
+    "zh-CN": "没法打开你的数据"
+  },
+  "Si eliges reiniciar, se borrarán los datos de Blu guardados en este navegador.": {
+    "en-US": "If you choose to start over, the Blu data saved in this browser will be deleted.",
+    "zh-CN": "如果你选择重新开始，存在这个浏览器里的 Blu 数据会被删掉。"
+  },
+  "Borrar datos y reiniciar": {
+    "en-US": "Delete data and start over",
+    "zh-CN": "删除数据并重新开始"
+  },
+  "Consentimientos · aviso versión {version}": {
+    "en-US": "Consents · notice version {version}",
+    "zh-CN": "同意事项 · 说明版本 {version}"
+  },
+  "Para retirar el propósito operativo usa «Borrar mis datos».": {
+    "en-US": "To take back the operational purpose, use “Delete my data”.",
+    "zh-CN": "想收回日常使用这项同意，用「删除我的数据」。"
+  },
+  "Falta aceptar el aviso (propósito operativo) para continuar.": {
+    "en-US": "Accept the notice (operational purpose) to continue.",
+    "zh-CN": "要继续，请先接受说明（日常使用）。"
+  },
+  "No escribas información médica ni datos que te identifiquen.": {
+    "en-US": "Don't write medical information or details that could identify you.",
+    "zh-CN": "请不要写医疗信息，也不要写能认出你的内容。"
+  },
+  "Sin cuenta · Tus hábitos se guardan en este navegador": {
+    "en-US": "No account · Your habits stay in this browser",
+    "zh-CN": "没有账号 · 你的习惯存在这个浏览器里"
+  },
+  "TU ESPACIO": {
+    "en-US": "YOUR SPACE",
+    "zh-CN": "你的空间"
+  },
+  "Otras versiones": {
+    "en-US": "Other versions",
+    "zh-CN": "其他版本"
+  },
+  "¿Por qué me lo sugiere?": {
+    "en-US": "Why is this suggested to me?",
+    "zh-CN": "为什么会建议我这个？"
+  },
+  "Personaliza tu espacio": {
+    "en-US": "Make this space yours",
+    "zh-CN": "把这个空间变成你的"
+  },
+  "Opcional": {
+    "en-US": "Optional",
+    "zh-CN": "可选"
+  },
+  "Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni otros datos.": {
+    "en-US": "A nickname just for you, saved in this browser. We don't ask for email, a name, or anything else.",
+    "zh-CN": "一个只给你自己的昵称，存在这个浏览器里。我们不收集邮箱、姓名或其他资料。"
+  },
+  "Guardar": {
+    "en-US": "Save",
+    "zh-CN": "保存"
+  },
+  "DE TU AUTODIAGNÓSTICO": {
+    "en-US": "FROM YOUR SELF CHECK-IN",
+    "zh-CN": "来自你的自我了解"
+  },
+  "Objetivos que aceptaste": {
+    "en-US": "Goals you accepted",
+    "zh-CN": "你接受的目标"
+  },
+  "Ya está en tu plan": {
+    "en-US": "Already in your plan",
+    "zh-CN": "已经在你的计划里"
+  },
+  "Incluir en tus hábitos": {
+    "en-US": "Add to your habits",
+    "zh-CN": "加进你的习惯"
+  },
+  "En tu plan": {
+    "en-US": "In your plan",
+    "zh-CN": "在你的计划里"
+  },
+  "Incluir": {
+    "en-US": "Add",
+    "zh-CN": "加入"
+  },
+  "TU SEMANA": {
+    "en-US": "YOUR WEEK",
+    "zh-CN": "你的一周"
+  },
+  "Tu plan de la semana": {
+    "en-US": "Your plan for the week",
+    "zh-CN": "你这一周的安排"
+  },
+  "Sugerencias, no obligaciones: un día vacío no rompe nada. Máximo 3 por día.": {
+    "en-US": "Suggestions, not duties: an empty day breaks nothing. Up to 3 a day.",
+    "zh-CN": "这些是建议，不是必须：空一天也没关系。每天最多 3 个。"
+  },
+  "Sugerir mi semana": {
+    "en-US": "Suggest my week",
+    "zh-CN": "帮我排这一周"
+  },
+  "Sin intenciones (está bien).": {
+    "en-US": "No intentions (that's fine).",
+    "zh-CN": "没有安排（这样也很好）。"
+  },
+  "Quitar {title} del {day}": {
+    "en-US": "Remove {title} from {day}",
+    "zh-CN": "从{day}去掉 {title}"
+  },
+  "REGISTRO PERSONAL": {
+    "en-US": "PERSONAL LOG",
+    "zh-CN": "个人记录"
+  },
+  "Tu actividad": {
+    "en-US": "Your activity",
+    "zh-CN": "你的活动"
+  },
+  "acciones registradas": {
+    "en-US": "actions logged",
+    "zh-CN": "记下的行动"
+  },
+  "días con algún registro": {
+    "en-US": "days with a log",
+    "zh-CN": "有记录的日子"
+  },
+  "Ver período": {
+    "en-US": "See the period",
+    "zh-CN": "查看这段时间"
+  },
+  "{n} días": {
+    "en-US": "{n} days",
+    "zh-CN": "{n} 天"
+  },
+  "Últimos {period} días: {actions} acciones en {active} días con registro.": {
+    "en-US": "Last {period} days: {actions} actions across {active} days with a log.",
+    "zh-CN": "最近 {period} 天：{actions} 次行动，落在 {active} 个有记录的日子里。"
+  },
+  "Aún no hay pasos registrados en estos {period} días.": {
+    "en-US": "No steps logged in these {period} days yet.",
+    "zh-CN": "这 {period} 天里还没有记下步骤。"
+  },
+  "Cuando pruebes uno, podrás marcarlo aquí.": {
+    "en-US": "When you try one, you can mark it here.",
+    "zh-CN": "你试过一个之后，可以在这里标上。"
+  },
+  "Detalle de los últimos {period} días": {
+    "en-US": "Detail for the last {period} days",
+    "zh-CN": "最近 {period} 天的详情"
+  },
+  "Aún no tienes registros esta semana: también es válido empezar pequeño hoy.": {
+    "en-US": "No logs yet this week: starting small today counts too.",
+    "zh-CN": "这周还没有记录：今天从小的开始，也很好。"
+  },
+  "No pude leer tus revisiones guardadas: {detail}": {
+    "en-US": "I could not read your saved reviews: {detail}",
+    "zh-CN": "没法读到你保存的回顾：{detail}"
+  },
+  "Revisión de esta semana guardada ({date}). Puedes actualizarla cuando quieras.": {
+    "en-US": "This week's review is saved ({date}). You can update it whenever you want.",
+    "zh-CN": "本周回顾已保存（{date}）。你想改的时候可以更新。"
+  },
+  "Elegiste ajustar un hábito. En «Tu actividad», selecciona el hábito y pulsa «Probar más pequeño». Nada cambia hasta que tú lo confirmes.": {
+    "en-US": "You chose to adjust a habit. In “Your activity”, select the habit and press “Try a smaller step”. Nothing changes until you confirm.",
+    "zh-CN": "你选择调整一个习惯。在「你的活动」里选中那个习惯，再点「试更小的一步」。在你确认之前，什么都不会变。"
+  },
+  "No se pudieron borrar algunas claves: {keys}. Inténtalo desde la configuración del navegador.": {
+    "en-US": "Some keys could not be deleted: {keys}. Try again from your browser settings.",
+    "zh-CN": "有些键没能删掉：{keys}。请到浏览器设置里再试一次。"
+  },
+  "Fuente:": {
+    "en-US": "Source:",
+    "zh-CN": "来源："
+  },
+  "(sin evidencia verificada)": {
+    "en-US": "(no verified evidence)",
+    "zh-CN": "（证据还没核实）"
+  },
+  "(verificada el {date} por {reviewer})": {
+    "en-US": "(checked on {date} by {reviewer})",
+    "zh-CN": "（{reviewer} 于 {date} 核实）"
+  },
+  "Tu cuenta": {
+    "en-US": "Your account",
+    "zh-CN": "你的账号"
+  },
+  "Las cuentas aún no están activadas en esta instalación.": {
+    "en-US": "Accounts are not turned on in this installation yet.",
+    "zh-CN": "这个安装里，账号还没开启。"
+  },
+  "Cuando el equipo active la sincronización, aquí podrás crear tu cuenta con correo verificado. Tus datos locales actuales no cambian ni salen de tu dispositivo.": {
+    "en-US": "When the team turns on sync, you can create your account here with a verified email. Your current local data stays as it is and does not leave your device.",
+    "zh-CN": "等团队打开同步后，你可以在这里用已验证的邮箱创建账号。你现在的本地数据不会改变，也不会离开你的设备。"
+  },
+  "Necesitamos tu consentimiento para sincronizar tus datos.": {
+    "en-US": "We need your consent to sync your data.",
+    "zh-CN": "要同步你的数据，需要你的同意。"
+  },
+  "Revisa tu correo o tu contraseña e inténtalo de nuevo.": {
+    "en-US": "Check your email or password and try again.",
+    "zh-CN": "核对一下邮箱或密码，再试一次。"
+  },
+  "Ese correo ya tiene una cuenta. Prueba entrando.": {
+    "en-US": "That email already has an account. Try signing in.",
+    "zh-CN": "这个邮箱已经有账号了。试试直接进入。"
+  },
+  "No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.": {
+    "en-US": "We could not connect. Check your connection and try again.",
+    "zh-CN": "没能连上。看看网络，再试一次。"
+  },
+  "Tu sesión caducó. Vuelve a entrar cuando quieras.": {
+    "en-US": "Your session expired. Sign in again whenever you want.",
+    "zh-CN": "登录过期了。你想回来的时候再进入就好。"
+  },
+  "Escribe un correo válido, por ejemplo ana@correo.cl.": {
+    "en-US": "Enter a valid email, for example ana@correo.cl.",
+    "zh-CN": "请填写有效邮箱，例如 ana@correo.cl。"
+  },
+  "La contraseña necesita al menos 8 caracteres.": {
+    "en-US": "The password needs at least 8 characters.",
+    "zh-CN": "密码至少需要 8 个字符。"
+  },
+  "Entrando…": {
+    "en-US": "Signing in…",
+    "zh-CN": "正在进入…"
+  },
+  "Creando tu cuenta…": {
+    "en-US": "Creating your account…",
+    "zh-CN": "正在创建你的账号…"
+  },
+  "Sesión iniciada como {email}.": {
+    "en-US": "Signed in as {email}.",
+    "zh-CN": "已以 {email} 进入。"
+  },
+  "Sesión cerrada. Tus datos locales siguen en tu dispositivo.": {
+    "en-US": "Signed out. Your local data is still on your device.",
+    "zh-CN": "已退出。你的本地数据还在这台设备上。"
+  },
+  "Cerrar sesión": {
+    "en-US": "Sign out",
+    "zh-CN": "退出"
+  },
+  "Entrar con correo": {
+    "en-US": "Sign in with email",
+    "zh-CN": "用邮箱进入"
+  },
+  "Crear mi cuenta": {
+    "en-US": "Create my account",
+    "zh-CN": "创建我的账号"
+  },
+  "El correo es el único dato obligatorio. La sincronización entre dispositivos es opt-in y puedes borrar todo cuando quieras.": {
+    "en-US": "Email is the only detail we require. Syncing across devices is your choice, and you can delete everything whenever you want.",
+    "zh-CN": "邮箱是唯一必填的。要不要在设备之间同步，由你决定；你也可以随时删掉全部。"
+  },
+  "Modo de cuenta": {
+    "en-US": "Account mode",
+    "zh-CN": "账号方式"
+  },
+  "Entrar": {
+    "en-US": "Sign in",
+    "zh-CN": "进入"
+  },
+  "Crear cuenta": {
+    "en-US": "Create account",
+    "zh-CN": "创建账号"
+  },
+  "Correo electrónico": {
+    "en-US": "Email",
+    "zh-CN": "电子邮箱"
+  },
+  "Contraseña": {
+    "en-US": "Password",
+    "zh-CN": "密码"
+  },
+  "Acepto sincronizar mis datos de bienestar entre dispositivos (puedo retirar este consentimiento cuando quiera).": {
+    "en-US": "I agree to sync my wellbeing data across devices (I can take back this consent whenever I want).",
+    "zh-CN": "我同意在设备之间同步我的身心数据（我可以随时收回这个同意）。"
+  },
+  "No pude reproducir el audio. Puedes volver a intentarlo o usar la voz de tu dispositivo.": {
+    "en-US": "I could not play the audio. You can try again, or use your device's voice.",
+    "zh-CN": "没法播放这段声音。你可以再试一次，或用这台设备的语音。"
+  },
+  "No pude generar la voz natural. Puedes volver a intentarlo o usar la voz de tu dispositivo.": {
+    "en-US": "I could not create the natural voice. You can try again, or use your device's voice.",
+    "zh-CN": "没法生成自然语音。你可以再试一次，或用这台设备的语音。"
+  },
+  "Lunes": {
+    "en-US": "Monday",
+    "zh-CN": "周一"
+  },
+  "Martes": {
+    "en-US": "Tuesday",
+    "zh-CN": "周二"
+  },
+  "Miércoles": {
+    "en-US": "Wednesday",
+    "zh-CN": "周三"
+  },
+  "Jueves": {
+    "en-US": "Thursday",
+    "zh-CN": "周四"
+  },
+  "Viernes": {
+    "en-US": "Friday",
+    "zh-CN": "周五"
+  },
+  "Sábado": {
+    "en-US": "Saturday",
+    "zh-CN": "周六"
+  },
+  "Domingo": {
+    "en-US": "Sunday",
+    "zh-CN": "周日"
+  },
+  "Lamento que estés pasando por esto. No puedo intervenir en emergencias: si estás en peligro inmediato, contacta a los servicios de emergencia de tu zona o a una persona de confianza ahora mismo. Si quieres, cuando estés bien podemos pensar juntos en un paso pequeño.": {
+    "en-US": "I'm sorry you're going through this. I can't help in an emergency: if you are in immediate danger, contact emergency services in your area, or someone you trust, right now. If you want, when you feel safer we can think of a small step together.",
+    "zh-CN": "很抱歉你正在经历这些。我没法处理紧急情况：如果眼下有危险，请马上联系当地紧急服务，或一个你信任的人。如果你愿意，等你安定一些，我们可以一起想一个小步骤。"
+  },
+  "No puedo evaluar síntomas ni orientar tratamientos. Para una consulta de salud, habla con un profesional cualificado. Si hay peligro inmediato, contacta los servicios de emergencia locales.": {
+    "en-US": "I can't assess symptoms or guide treatment. For a health question, talk with a qualified professional. If there is immediate danger, contact local emergency services.",
+    "zh-CN": "我不能判断症状，也不能指导治疗。健康上的问题，请找有资质的专业人员。如果眼下有危险，请联系当地紧急服务。"
+  },
+  "No puedo hacer eso. Estoy aquí para acompañarte en hábitos pequeños de bienestar, dentro de mis límites. ¿Qué versión pequeña te gustaría probar hoy?": {
+    "en-US": "I can't do that. I'm here to keep you company with small wellbeing habits, within my limits. What small version would you like to try today?",
+    "zh-CN": "这个我做不了。我在这里陪你做很小的身心习惯，而且有我的界限。今天你想试哪个小小的版本？"
+  },
+  "Tuve un problema para responder, pero sigo aquí. ¿Quieres intentarlo de nuevo con otras palabras?": {
+    "en-US": "I had trouble answering, but I'm still here. Want to try again in other words?",
+    "zh-CN": "我回答时出了点问题，但我还在。想换个说法再试一次吗？"
+  },
+  "Cuéntame en una frase cómo va tu día y partimos por algo pequeño.": {
+    "en-US": "Tell me in one sentence how your day is going, and we'll start with something small.",
+    "zh-CN": "用一句话告诉我你今天怎么样，我们从一个小的开始。"
+  },
+  "El tiempo aprieta, lo entiendo. Sin asumir nada: ¿una versión de dos minutos, otro momento del día, o lo dejamos para mañana sin culpa?": {
+    "en-US": "Time is tight, I get it. No assumptions: a two-minute version, another moment in the day, or we leave it for tomorrow with no guilt?",
+    "zh-CN": "时间很紧，我懂。我不替你下结论：要两分钟的版本，换一天里的另一个时候，还是留到明天、不必自责？"
+  },
+  "Gracias por contarme. No es un fallo: es información. ¿Qué pesó más esta vez: tiempo, energía o acordarte? Puedes ajustar el plan o dejarlo igual.": {
+    "en-US": "Thanks for telling me. This isn't a failure: it's information. What weighed more this time: time, energy, or remembering? You can adjust the plan or leave it as it is.",
+    "zh-CN": "谢谢你告诉我。这不是失败，是一条信息。这次更难的是哪一件：时间、精力，还是想起来？你可以调整计划，也可以保持原样。"
+  },
+  "Gracias por compartirlo. Si quieres, elegimos juntos una versión pequeña y realista. Y si no, también está bien.": {
+    "en-US": "Thanks for sharing that. If you want, we can pick a small, realistic version together. And if not, that's fine too.",
+    "zh-CN": "谢谢你愿意说。如果你想，我们一起选一个小而做得到的版本。不想的话，也完全可以。"
+  },
+  "Pequeños momentos de movimiento que encajen en tu día.": {
+    "en-US": "Small moments of movement that fit into your day.",
+    "zh-CN": "能放进你一天里的小小活动。"
+  },
+  "Elegir una pausa breve para moverte.": {
+    "en-US": "Choose a short pause to move.",
+    "zh-CN": "选一个短暂停顿，动一动。"
+  },
+  "Hacer una pausa de dos minutos para cambiar de postura.": {
+    "en-US": "Take a two-minute pause to change your posture.",
+    "zh-CN": "停两分钟，换个姿势。"
+  },
+  "Prestar atención a una comida, sin reglas rígidas.": {
+    "en-US": "Pay attention to one meal, without rigid rules.",
+    "zh-CN": "留心一餐饭，不必守死规矩。"
+  },
+  "Hacer una pausa tranquila durante una comida.": {
+    "en-US": "Take a calm pause during a meal.",
+    "zh-CN": "吃饭时平静地停一下。"
+  },
+  "Tomar una respiración antes de empezar una comida.": {
+    "en-US": "Take a breath before you start a meal.",
+    "zh-CN": "开始吃饭前，呼吸一次。"
+  },
+  "Crear un momento amable de pausa o descanso.": {
+    "en-US": "Make a kind moment to pause or rest.",
+    "zh-CN": "给自己一段温和的停顿或休息。"
+  },
+  "Reservar un momento breve para bajar el ritmo.": {
+    "en-US": "Set aside a short moment to slow down.",
+    "zh-CN": "留一小段时间，把节奏放慢。"
+  },
+  "Tomar un minuto de pausa cuando te resulte posible.": {
+    "en-US": "Take a one-minute pause when you can.",
+    "zh-CN": "方便的时候，停一分钟。"
+  },
+  "Dedicar atención a una relación que te importe.": {
+    "en-US": "Give attention to a relationship that matters to you.",
+    "zh-CN": "把注意力给一段你在意的关系。"
+  },
+  "Compartir un momento de atención con alguien cercano.": {
+    "en-US": "Share a moment of attention with someone close.",
+    "zh-CN": "和亲近的人一起，专心地待一会儿。"
+  },
+  "Enviar un saludo breve a alguien importante para ti.": {
+    "en-US": "Send a short hello to someone important to you.",
+    "zh-CN": "给对你重要的人发一个简短的问候。"
+  },
+  "Explorar formas de sentirte parte de un grupo.": {
+    "en-US": "Explore ways to feel part of a group.",
+    "zh-CN": "找一找让自己觉得属于一个群体的方式。"
+  },
+  "Pensar en una actividad que te conecte con otras personas.": {
+    "en-US": "Think of an activity that connects you with other people.",
+    "zh-CN": "想一个能让你和其他人连上的活动。"
+  },
+  "Anotar una actividad o persona con quien te gustaría conectar.": {
+    "en-US": "Jot down an activity, or a person you'd like to connect with.",
+    "zh-CN": "记下一项活动，或一个你想联系的人。"
+  },
+  "Encontrar una forma posible de estar en contacto con tu entorno.": {
+    "en-US": "Find a possible way to be in touch with your surroundings.",
+    "zh-CN": "找一个做得到的方式，和周围接触。"
+  },
+  "Pasar un momento atento al aire libre o junto a una ventana.": {
+    "en-US": "Spend an attentive moment outdoors, or by a window.",
+    "zh-CN": "在户外或窗边，留心地待一会儿。"
+  },
+  "Observar el entorno durante un minuto.": {
+    "en-US": "Notice your surroundings for one minute.",
+    "zh-CN": "用一分钟看看周围。"
+  },
+  "Conectar una acción pequeña con algo que te importa.": {
+    "en-US": "Connect a small action with something that matters to you.",
+    "zh-CN": "把一个小行动和你在意的事连起来。"
+  },
+  "Dedicar unos minutos a una actividad significativa para ti.": {
+    "en-US": "Spend a few minutes on an activity that feels meaningful to you.",
+    "zh-CN": "花几分钟做一件对你有意义的事。"
+  },
+  "Nombrar una cosa pequeña que hoy te importa.": {
+    "en-US": "Name one small thing that matters to you today.",
+    "zh-CN": "说出今天对你重要的一件小事。"
+  },
+  "Pequeñas formas de moverte dentro de tu día real.": {
+    "en-US": "Small ways to move inside your real day.",
+    "zh-CN": "在真实的一天里，用很小的方式动一动。"
+  },
+  "¿Cuántos días a la semana caminas o haces alguna actividad física?": {
+    "en-US": "How many days a week do you walk or do some physical activity?",
+    "zh-CN": "你一周有几天走路，或做一点身体活动？"
+  },
+  "Casi ningún día": {
+    "en-US": "Almost no days",
+    "zh-CN": "几乎没有几天"
+  },
+  "1–2 días": {
+    "en-US": "1–2 days",
+    "zh-CN": "1–2 天"
+  },
+  "3–4 días": {
+    "en-US": "3–4 days",
+    "zh-CN": "3–4 天"
+  },
+  "5 o más días": {
+    "en-US": "5 or more days",
+    "zh-CN": "5 天或更多"
+  },
+  "Durante mi jornada logro levantarme y moverme de vez en cuando.": {
+    "en-US": "During my day I manage to stand up and move now and then.",
+    "zh-CN": "在一天里，我能偶尔站起来动一动。"
+  },
+  "No es así": {
+    "en-US": "Not really",
+    "zh-CN": "不太是"
+  },
+  "Totalmente cierto": {
+    "en-US": "Completely true",
+    "zh-CN": "完全是这样"
+  },
+  "¿Qué te hace difícil moverte más? Marca lo que apliqué.": {
+    "en-US": "What makes it hard to move more? Mark what applies.",
+    "zh-CN": "是什么让你更难多动一动？勾上符合的。"
+  },
+  "Me falta tiempo": {
+    "en-US": "I don't have time",
+    "zh-CN": "我没有时间"
+  },
+  "Me falta energía": {
+    "en-US": "I don't have the energy",
+    "zh-CN": "我没有精力"
+  },
+  "No sé dónde o cómo": {
+    "en-US": "I don't know where or how",
+    "zh-CN": "我不知道在哪，也不知道怎么做"
+  },
+  "Dolor o limitación física": {
+    "en-US": "Pain or a physical limit",
+    "zh-CN": "疼痛或身体上的限制"
+  },
+  "El clima o el entorno": {
+    "en-US": "The weather or my surroundings",
+    "zh-CN": "天气或周围环境"
+  },
+  "Nada, me muevo bien": {
+    "en-US": "Nothing, I move just fine",
+    "zh-CN": "没有，我动得还好"
+  },
+  "¿Tu entorno te permite caminar para hacer recados o pasear?": {
+    "en-US": "Do your surroundings let you walk for errands or a stroll?",
+    "zh-CN": "你周围方便走路办事，或出去走走吗？"
+  },
+  "Casi nunca": {
+    "en-US": "Almost never",
+    "zh-CN": "几乎从不"
+  },
+  "A veces": {
+    "en-US": "Sometimes",
+    "zh-CN": "有时"
+  },
+  "Con frecuencia": {
+    "en-US": "Often",
+    "zh-CN": "经常"
+  },
+  "Todos los días": {
+    "en-US": "Every day",
+    "zh-CN": "每天"
+  },
+  "Moverme me hace sentir bien, aunque sea poco.": {
+    "en-US": "Moving feels good to me, even a little.",
+    "zh-CN": "动一动让我感觉好，哪怕只是一点点。"
+  },
+  "Comer con atención y sin reglas rígidas.": {
+    "en-US": "Eating with attention, and without rigid rules.",
+    "zh-CN": "吃饭时留点心，不必守死规矩。"
+  },
+  "¿Con qué frecuencia incluyes verduras, frutas o legumbres en tus comidas?": {
+    "en-US": "How often do you include vegetables, fruit, or legumes in your meals?",
+    "zh-CN": "你的饭里多久会有蔬菜、水果或豆类？"
+  },
+  "1–2 veces por semana": {
+    "en-US": "1–2 times a week",
+    "zh-CN": "每周 1–2 次"
+  },
+  "3–5 veces por semana": {
+    "en-US": "3–5 times a week",
+    "zh-CN": "每周 3–5 次"
+  },
+  "Casi todos los días": {
+    "en-US": "Almost every day",
+    "zh-CN": "几乎每天"
+  },
+  "¿Con qué frecuencia consumes alimentos ultraprocesados (snacks, bebidas azucaradas, comida rápida)?": {
+    "en-US": "How often do you have ultra-processed foods (snacks, sugary drinks, fast food)?",
+    "zh-CN": "你多久吃一次超加工食品（零食、含糖饮料、快餐）？"
+  },
+  "Varias veces al día": {
+    "en-US": "Several times a day",
+    "zh-CN": "一天好几次"
+  },
+  "Casi a diario": {
+    "en-US": "Almost daily",
+    "zh-CN": "几乎天天"
+  },
+  "¿Con qué frecuencia comes con atención, sin pantallas ni prisa?": {
+    "en-US": "How often do you eat with attention, without screens or rushing?",
+    "zh-CN": "你多久能专心吃饭，不看屏幕，也不赶时间？"
+  },
+  "Casi siempre": {
+    "en-US": "Almost always",
+    "zh-CN": "几乎总是"
+  },
+  "Como con tranquilidad y sin culpa.": {
+    "en-US": "I eat calmly, and without guilt.",
+    "zh-CN": "我吃饭时很平静，也不自责。"
+  },
+  "¿Qué influye más en lo que comes? Marca lo que apliqué.": {
+    "en-US": "What shapes what you eat the most? Mark what applies.",
+    "zh-CN": "什么最影响你吃什么？勾上符合的。"
+  },
+  "Falta de tiempo": {
+    "en-US": "Not enough time",
+    "zh-CN": "时间不够"
+  },
+  "Presupuesto": {
+    "en-US": "Budget",
+    "zh-CN": "预算"
+  },
+  "Costumbres de mi entorno": {
+    "en-US": "Habits around me",
+    "zh-CN": "身边的习惯"
+  },
+  "Trabajo o estudios": {
+    "en-US": "Work or studies",
+    "zh-CN": "工作或学习"
+  },
+  "No sé qué elegir": {
+    "en-US": "I don't know what to choose",
+    "zh-CN": "我不知道选什么"
+  },
+  "Nada en particular": {
+    "en-US": "Nothing in particular",
+    "zh-CN": "没什么特别的"
+  },
+  "Sueño, pausas y formas de bajar el ritmo.": {
+    "en-US": "Sleep, pauses, and ways to slow down.",
+    "zh-CN": "睡眠、停一停，以及放慢节奏的方式。"
+  },
+  "¿Cuántas horas duermes habitualmente?": {
+    "en-US": "How many hours do you usually sleep?",
+    "zh-CN": "你通常睡几个小时？"
+  },
+  "Menos de 6": {
+    "en-US": "Under 6 hours",
+    "zh-CN": "不到 6 小时"
+  },
+  "6–7": {
+    "en-US": "6–7 hours",
+    "zh-CN": "6–7 小时"
+  },
+  "7–9": {
+    "en-US": "7–9 hours",
+    "zh-CN": "7–9 小时"
+  },
+  "Más de 9 o muy variable": {
+    "en-US": "More than 9 hours, or it varies a lot",
+    "zh-CN": "超过 9 小时，或很不固定"
+  },
+  "Me despierto sintiéndome descansado/a.": {
+    "en-US": "I wake up feeling rested.",
+    "zh-CN": "我醒来时觉得休息够了。"
+  },
+  "Tengo formas de bajar el ritmo cuando lo necesito.": {
+    "en-US": "I have ways to slow down when I need to.",
+    "zh-CN": "需要的时候，我有办法放慢节奏。"
+  },
+  "¿Con qué frecuencia haces pausas breves durante tu día?": {
+    "en-US": "How often do you take short pauses during your day?",
+    "zh-CN": "你一天里多久会短短地停一下？"
+  },
+  "1–2 veces al día": {
+    "en-US": "1–2 times a day",
+    "zh-CN": "一天 1–2 次"
+  },
+  "¿Tienes alguna rutina que te ayuda a prepararte para dormir?": {
+    "en-US": "Do you have a routine that helps you get ready for sleep?",
+    "zh-CN": "你有没有一个帮你准备睡觉的小步骤？"
+  },
+  "No tengo ninguna": {
+    "en-US": "I don't have one",
+    "zh-CN": "我没有"
+  },
+  "A veces, cuando recuerdo": {
+    "en-US": "Sometimes, when I remember",
+    "zh-CN": "有时，想起来才会"
+  },
+  "La mayoría de las noches": {
+    "en-US": "Most nights",
+    "zh-CN": "大多数晚上"
+  },
+  "Casi todas las noches": {
+    "en-US": "Almost every night",
+    "zh-CN": "几乎每个晚上"
+  },
+  "Familia y vínculos afectivos": {
+    "en-US": "Family and close bonds",
+    "zh-CN": "家人和亲近的关系"
+  },
+  "Tiempo y atención para quienes te importan.": {
+    "en-US": "Time and attention for the people who matter to you.",
+    "zh-CN": "把时间和注意力留给你在意的人。"
+  },
+  "¿Con qué frecuencia compartes tiempo significativo con personas importantes para ti?": {
+    "en-US": "How often do you share meaningful time with people who matter to you?",
+    "zh-CN": "你多久会和重要的人一起，过一段有心意的时间？"
+  },
+  "Algunas veces al mes": {
+    "en-US": "A few times a month",
+    "zh-CN": "一个月几次"
+  },
+  "Algunas veces a la semana": {
+    "en-US": "A few times a week",
+    "zh-CN": "一周几次"
+  },
+  "Cuando lo necesito, cuento con apoyo de alguien.": {
+    "en-US": "When I need it, someone is there for me.",
+    "zh-CN": "需要的时候，有人能支持我。"
+  },
+  "¿Con qué frecuencia das señales de cariño (mensajes, llamadas, gestos) a alguien cercano?": {
+    "en-US": "How often do you show care (a message, a call, a small gesture) to someone close?",
+    "zh-CN": "你多久会向亲近的人表达一下在意（消息、电话、小举动）？"
+  },
+  "¿Qué te dificulta conectar con personas importantes? Marca lo que apliqué.": {
+    "en-US": "What makes it hard to connect with people who matter? Mark what applies.",
+    "zh-CN": "是什么让你难和重要的人联系？勾上符合的。"
+  },
+  "La distancia": {
+    "en-US": "Distance",
+    "zh-CN": "距离"
+  },
+  "Falta de energía": {
+    "en-US": "Low energy",
+    "zh-CN": "精力不够"
+  },
+  "Desacuerdos o distanciamiento": {
+    "en-US": "Disagreements, or growing apart",
+    "zh-CN": "意见不合，或渐渐疏远"
+  },
+  "A veces prefiero estar solo/a": {
+    "en-US": "Sometimes I prefer to be alone",
+    "zh-CN": "有时我更想一个人待着"
+  },
+  "Mis vínculos cercanos me hacen bien.": {
+    "en-US": "My close bonds are good for me.",
+    "zh-CN": "亲近的关系对我有益。"
+  },
+  "Comunidad y pertenencia": {
+    "en-US": "Community and belonging",
+    "zh-CN": "社群与归属"
+  },
+  "Sentirte parte de algo, a tu ritmo.": {
+    "en-US": "Feeling part of something, at your own pace.",
+    "zh-CN": "按你的节奏，感觉自己属于某处。"
+  },
+  "¿Con qué frecuencia participas en actividades de grupos (clubes, talleres, reuniones, voluntariado)?": {
+    "en-US": "How often do you join group activities (clubs, workshops, gatherings, volunteering)?",
+    "zh-CN": "你多久参加一次集体活动（社团、工作坊、聚会、志愿服务）？"
+  },
+  "Algunas veces al año": {
+    "en-US": "A few times a year",
+    "zh-CN": "一年几次"
+  },
+  "Semanalmente o más": {
+    "en-US": "Weekly or more",
+    "zh-CN": "每周或更多"
+  },
+  "Siento que pertenezco a algún grupo o colectivo.": {
+    "en-US": "I feel I belong to a group.",
+    "zh-CN": "我觉得自己属于某个群体。"
+  },
+  "¿Con qué frecuencia conversas o saludas a vecinos o compañeros de trabajo/estudio?": {
+    "en-US": "How often do you talk with or greet neighbors, or people you work or study with?",
+    "zh-CN": "你多久会和邻居，或一起工作、学习的人说句话、打个招呼？"
+  },
+  "¿Qué te acercaría a participar en una comunidad? Marca lo que te tinca.": {
+    "en-US": "What would draw you toward a community? Mark what appeals to you.",
+    "zh-CN": "什么会让你愿意靠近一个社群？勾上你有感觉的。"
+  },
+  "Actividades recreativas": {
+    "en-US": "Fun activities",
+    "zh-CN": "休闲活动"
+  },
+  "Deporte o movimiento": {
+    "en-US": "Sports or movement",
+    "zh-CN": "运动或活动身体"
+  },
+  "Voluntariado": {
+    "en-US": "Volunteering",
+    "zh-CN": "志愿服务"
+  },
+  "Talleres y aprendizaje": {
+    "en-US": "Workshops and learning",
+    "zh-CN": "工作坊和学习"
+  },
+  "Espacios de creencia o espiritualidad": {
+    "en-US": "Faith or spiritual spaces",
+    "zh-CN": "信仰或心灵的空间"
+  },
+  "Por ahora nada, gracias": {
+    "en-US": "Nothing for now, thanks",
+    "zh-CN": "暂时不用，谢谢"
+  },
+  "¿Qué tan dispuesto/a estarías a probar una actividad comunitaria pequeña este mes?": {
+    "en-US": "How willing would you be to try a small community activity this month?",
+    "zh-CN": "这个月，你愿意试一次很小的社群活动吗？"
+  },
+  "Prefiero no, gracias": {
+    "en-US": "I'd rather not, thanks",
+    "zh-CN": "先不了，谢谢"
+  },
+  "Tal vez, si es algo chico": {
+    "en-US": "Maybe, if it's something small",
+    "zh-CN": "也许，如果是很小的事"
+  },
+  "Sí, me tinca": {
+    "en-US": "Yes, that appeals to me",
+    "zh-CN": "好，我有兴趣"
+  },
+  "Sí, con ganas": {
+    "en-US": "Yes, I'd like that",
+    "zh-CN": "好，我挺想的"
+  },
+  "Naturaleza y entorno": {
+    "en-US": "Nature and surroundings",
+    "zh-CN": "自然与周围"
+  },
+  "Contacto con lo verde y con tu entorno, sea ciudad o campo.": {
+    "en-US": "Time with greenery and your surroundings, whether city or countryside.",
+    "zh-CN": "和绿色、和你的周围接触，无论在城市还是乡间。"
+  },
+  "¿Con qué frecuencia visitas espacios naturales (parques, playas, cerros, plazas arboladas)?": {
+    "en-US": "How often do you visit natural places (parks, beaches, hills, squares with trees)?",
+    "zh-CN": "你多久去一次自然环境（公园、海边、山丘、有树的广场）？"
+  },
+  "Mi entorno me facilita caminar o moverme (aceras, cercanía, seguridad).": {
+    "en-US": "My surroundings make it easier to walk or move (sidewalks, things nearby, feeling safe).",
+    "zh-CN": "我周围方便走路或活动（人行道、距离近、觉得安全）。"
+  },
+  "¿Con qué frecuencia pasas un momento al aire libre o junto a una ventana durante el día?": {
+    "en-US": "How often do you spend a moment outdoors, or by a window, during the day?",
+    "zh-CN": "白天，你多久会在户外或窗边待一会儿？"
+  },
+  "¿Qué te lo dificulta? Marca lo que apliqué.": {
+    "en-US": "What makes it hard? Mark what applies.",
+    "zh-CN": "是什么让你觉得难？勾上符合的。"
+  },
+  "Clima": {
+    "en-US": "Weather",
+    "zh-CN": "天气"
+  },
+  "Movilidad reducida": {
+    "en-US": "Limited mobility",
+    "zh-CN": "行动不太方便"
+  },
+  "No hay áreas verdes cerca": {
+    "en-US": "No green areas nearby",
+    "zh-CN": "附近没有绿地"
+  },
+  "No me siento seguro/a": {
+    "en-US": "I don't feel safe",
+    "zh-CN": "我觉得不安全"
+  },
+  "Me detengo a notar mi entorno (cielo, calles, sonidos) aunque sea un instante.": {
+    "en-US": "I pause to notice my surroundings (sky, streets, sounds), even for a moment.",
+    "zh-CN": "我会停一下，留意周围（天空、街道、声音），哪怕只是一瞬间。"
+  },
+  "Propósito de vida": {
+    "en-US": "Purpose in life",
+    "zh-CN": "生活里的目标感"
+  },
+  "Conectar tus días con lo que te importa.": {
+    "en-US": "Connecting your days with what matters to you.",
+    "zh-CN": "把你的日子和你在意的事连起来。"
+  },
+  "Tengo objetivos personales que me importan de verdad.": {
+    "en-US": "I have personal goals that truly matter to me.",
+    "zh-CN": "我有真正在意的个人目标。"
+  },
+  "¿Con qué frecuencia haces algo que consideras significativo (crear, aprender, ayudar, cuidar)?": {
+    "en-US": "How often do you do something that feels meaningful to you (creating, learning, helping, caring)?",
+    "zh-CN": "你多久做一件你觉得有意义的事（创造、学习、帮忙、照料）？"
+  },
+  "Lo que hago en el día conecta con lo que valoro.": {
+    "en-US": "What I do in a day connects with what I value.",
+    "zh-CN": "我一天里做的事，和我看重的东西连得上。"
+  },
+  "¿Qué te aporta más sentido hoy? Marca lo que apliqué.": {
+    "en-US": "What gives you the most meaning today? Mark what applies.",
+    "zh-CN": "今天，什么最让你觉得有意义？勾上符合的。"
+  },
+  "Familia y personas cercanas": {
+    "en-US": "Family and people close to me",
+    "zh-CN": "家人和亲近的人"
+  },
+  "Crear o hacer cosas": {
+    "en-US": "Creating or making things",
+    "zh-CN": "创造或动手做东西"
+  },
+  "Aprender": {
+    "en-US": "Learning",
+    "zh-CN": "学习"
+  },
+  "Ayudar o cuidar": {
+    "en-US": "Helping or caring",
+    "zh-CN": "帮忙或照料"
+  },
+  "Naturaleza": {
+    "en-US": "Nature",
+    "zh-CN": "自然"
+  },
+  "Aún no lo sé, y está bien": {
+    "en-US": "I don't know yet, and that's okay",
+    "zh-CN": "我还不知道，这样也很好"
+  },
+  "¿Qué tan dispuesto/a estarías a dedicar 5 minutos hoy a algo que te importa?": {
+    "en-US": "How willing would you be to spend 5 minutes today on something that matters to you?",
+    "zh-CN": "今天，你愿意花 5 分钟在一件你在意的事上吗？"
+  },
+  "Tal vez": {
+    "en-US": "Maybe",
+    "zh-CN": "也许"
+  },
+  "Sí": {
+    "en-US": "Yes",
+    "zh-CN": "好"
+  },
+  "Sí, con entusiasmo": {
+    "en-US": "Yes, I'd love to",
+    "zh-CN": "好，我很想"
+  },
+  "Catálogo de inspiración para microhábitos. Sin evidencia verificada: no son recomendaciones clínicas.": {
+    "en-US": "A set of ideas for tiny habits. No verified evidence: these are not clinical recommendations.",
+    "zh-CN": "这些是微习惯的灵感。证据还没核实：它们不是临床建议。"
+  },
+  "Pausa postura": {
+    "en-US": "Posture pause",
+    "zh-CN": "换个姿势"
+  },
+  "Levantarte y estirar al terminar una llamada.": {
+    "en-US": "Stand up and stretch when a call ends.",
+    "zh-CN": "通话结束后，站起来伸一伸。"
+  },
+  "Cambiar de postura ahora mismo.": {
+    "en-US": "Change your posture right now.",
+    "zh-CN": "现在就换个姿势。"
+  },
+  "Escaleras": {
+    "en-US": "Stairs",
+    "zh-CN": "楼梯"
+  },
+  "Subir un piso por escaleras cuando puedas.": {
+    "en-US": "Take the stairs for one floor when you can.",
+    "zh-CN": "方便的时候，走一层楼梯。"
+  },
+  "Subir los primeros 5 escalones.": {
+    "en-US": "Climb the first 5 steps.",
+    "zh-CN": "先走上前 5 级台阶。"
+  },
+  "Caminata corta": {
+    "en-US": "A short walk",
+    "zh-CN": "短短走一走"
+  },
+  "Caminar 10 minutos al aire libre.": {
+    "en-US": "Walk outdoors for 10 minutes.",
+    "zh-CN": "到户外走 10 分钟。"
+  },
+  "Caminar hasta la esquina y volver.": {
+    "en-US": "Walk to the corner and back.",
+    "zh-CN": "走到街角，再走回来。"
+  },
+  "Movimiento en casa": {
+    "en-US": "Movement at home",
+    "zh-CN": "在家动一动"
+  },
+  "Bailar una canción mientras ordenas.": {
+    "en-US": "Dance to one song while you tidy.",
+    "zh-CN": "收拾的时候，跟着一首歌动一动。"
+  },
+  "Mover los hombros durante un anuncio.": {
+    "en-US": "Move your shoulders during a commercial.",
+    "zh-CN": "广告的时候，活动一下肩膀。"
+  },
+  "Sin pantallas": {
+    "en-US": "Screens aside",
+    "zh-CN": "先不看屏幕"
+  },
+  "Comer una comida al día sin pantallas.": {
+    "en-US": "Eat one meal a day without screens.",
+    "zh-CN": "一天有一餐不看屏幕。"
+  },
+  "Apagar la pantalla el primer minuto de la comida.": {
+    "en-US": "Turn the screen off for the first minute of a meal.",
+    "zh-CN": "吃饭的第一分钟，先把屏幕关掉。"
+  },
+  "Color al plato": {
+    "en-US": "Color on the plate",
+    "zh-CN": "盘子里多一点颜色"
+  },
+  "Sumar una verdura o fruta a una comida.": {
+    "en-US": "Add a vegetable or some fruit to a meal.",
+    "zh-CN": "一餐里加上一种蔬菜或水果。"
+  },
+  "Tomar un vaso de agua antes de comer.": {
+    "en-US": "Drink a glass of water before you eat.",
+    "zh-CN": "吃饭前喝一杯水。"
+  },
+  "Compra consciente": {
+    "en-US": "A thoughtful shop",
+    "zh-CN": "买东西时留点心"
+  },
+  "Elegir un alimento menos procesado en la próxima compra.": {
+    "en-US": "Choose a less processed food on your next shop.",
+    "zh-CN": "下次买东西时，选一样加工程度低一些的食物。"
+  },
+  "Mirar una etiqueta sin compromiso de compra.": {
+    "en-US": "Look at a label, with no need to buy.",
+    "zh-CN": "看一眼标签，不必买下来。"
+  },
+  "Desayuno atento": {
+    "en-US": "An unhurried breakfast",
+    "zh-CN": "不赶的早餐"
+  },
+  "Sentarte a desayunar sin apuro un día.": {
+    "en-US": "Sit down to breakfast without rushing, one day.",
+    "zh-CN": "有一天，坐下来，不赶时间地吃早餐。"
+  },
+  "Tres respiraciones antes del primer bocado.": {
+    "en-US": "Three breaths before the first bite.",
+    "zh-CN": "第一口之前，呼吸三次。"
+  },
+  "Pantallas fuera": {
+    "en-US": "Screens out of the room",
+    "zh-CN": "屏幕放在外面"
+  },
+  "Dejar el celular fuera del dormitorio una noche.": {
+    "en-US": "Leave your phone outside the bedroom for one night.",
+    "zh-CN": "有一晚，把手机放在卧室外面。"
+  },
+  "Activar modo no molestar 15 minutos antes de dormir.": {
+    "en-US": "Turn on do-not-disturb 15 minutes before sleep.",
+    "zh-CN": "睡前 15 分钟，打开勿扰。"
+  },
+  "Pausa de calma": {
+    "en-US": "A calm pause",
+    "zh-CN": "平静地停一下"
+  },
+  "Reservar 5 minutos de calma a mitad del día.": {
+    "en-US": "Set aside 5 calm minutes in the middle of the day.",
+    "zh-CN": "一天中间，留出 5 分钟安静一下。"
+  },
+  "Una respiración lenta ahora.": {
+    "en-US": "One slow breath, right now.",
+    "zh-CN": "现在，慢慢呼吸一次。"
+  },
+  "Ritual nocturno": {
+    "en-US": "A night ritual",
+    "zh-CN": "睡前的小仪式"
+  },
+  "Hacer la misma rutina breve 3 noches seguidas.": {
+    "en-US": "Do the same short routine for 3 nights in a row.",
+    "zh-CN": "连续 3 个晚上，做同一个简短的睡前步骤。"
+  },
+  "Elegir qué harás mañana como ritual.": {
+    "en-US": "Choose what tomorrow's ritual will be.",
+    "zh-CN": "定一下明天的小仪式是什么。"
+  },
+  "Siesta breve": {
+    "en-US": "A short rest",
+    "zh-CN": "短短躺一会儿"
+  },
+  "Recostarte 10 minutos sin pantallas.": {
+    "en-US": "Lie down for 10 minutes without screens.",
+    "zh-CN": "不看屏幕，躺 10 分钟。"
+  },
+  "Cerrar los ojos un minuto.": {
+    "en-US": "Close your eyes for one minute.",
+    "zh-CN": "闭上眼睛，一分钟。"
+  },
+  "Mensaje breve": {
+    "en-US": "A short message",
+    "zh-CN": "一条短消息"
+  },
+  "Enviar un mensaje afectuoso a alguien cercano.": {
+    "en-US": "Send a warm message to someone close.",
+    "zh-CN": "给亲近的人发一条暖心的消息。"
+  },
+  "Pensar en alguien importante y sonreír.": {
+    "en-US": "Think of someone important, and smile.",
+    "zh-CN": "想起一个重要的人，然后笑一下。"
+  },
+  "Momento presente": {
+    "en-US": "A shared moment",
+    "zh-CN": "在一起的片刻"
+  },
+  "Compartir 15 minutos sin pantallas con alguien.": {
+    "en-US": "Share 15 minutes without screens with someone.",
+    "zh-CN": "和一个人一起待 15 分钟，不看屏幕。"
+  },
+  "Preguntar cómo está una persona hoy.": {
+    "en-US": "Ask someone how they are today.",
+    "zh-CN": "问一个人，今天怎么样。"
+  },
+  "Recuerdo compartido": {
+    "en-US": "A shared memory",
+    "zh-CN": "一起说一段回忆"
+  },
+  "Contar un recuerdo grato con alguien.": {
+    "en-US": "Tell someone a happy memory.",
+    "zh-CN": "和一个人讲一段愉快的回忆。"
+  },
+  "Anotar un recuerdo grato para contar luego.": {
+    "en-US": "Jot down a happy memory to tell later.",
+    "zh-CN": "记下一段愉快的回忆，以后再讲。"
+  },
+  "Gestos en casa": {
+    "en-US": "Small gestures at home",
+    "zh-CN": "家里的小举动"
+  },
+  "Hacer una tarea doméstica pensando en quién la disfruta.": {
+    "en-US": "Do a household task while thinking of who will enjoy it.",
+    "zh-CN": "做一件家务时，想想谁会因此高兴。"
+  },
+  "Agradecer en voz alta un gesto pequeño.": {
+    "en-US": "Say thank you out loud for a small gesture.",
+    "zh-CN": "为一件小事，大声说一声谢谢。"
+  },
+  "Saludo vecinal": {
+    "en-US": "A neighborly hello",
+    "zh-CN": "跟身边的人打个招呼"
+  },
+  "Saludar a un vecino o compañero hoy.": {
+    "en-US": "Say hello to a neighbor or someone you see often, today.",
+    "zh-CN": "今天，跟邻居或身边的人打个招呼。"
+  },
+  "Sonreír a alguien desconocido con respeto.": {
+    "en-US": "Offer a respectful smile to someone you don't know.",
+    "zh-CN": "对一个陌生人，友善地笑一下。"
+  },
+  "Actividad cercana": {
+    "en-US": "Something nearby",
+    "zh-CN": "附近的一件事"
+  },
+  "Anotar una actividad de tu barrio que te tinca.": {
+    "en-US": "Jot down a neighborhood activity that appeals to you.",
+    "zh-CN": "记下一项你有兴趣的邻里活动。"
+  },
+  "Buscar en internet una actividad cercana.": {
+    "en-US": "Look up a nearby activity online.",
+    "zh-CN": "在网上找一个附近的活动。"
+  },
+  "Grupo en línea": {
+    "en-US": "An online group",
+    "zh-CN": "一个线上小组"
+  },
+  "Participar una vez en un grupo que te interese.": {
+    "en-US": "Take part once in a group that interests you.",
+    "zh-CN": "在一个你感兴趣的小组里，参与一次。"
+  },
+  "Leer una conversación del grupo sin responder.": {
+    "en-US": "Read a group conversation without replying.",
+    "zh-CN": "读一段小组里的对话，不必回复。"
+  },
+  "Ayuda pequeña": {
+    "en-US": "A small help",
+    "zh-CN": "小小的帮忙"
+  },
+  "Ofrecer ayuda concreta a alguien esta semana.": {
+    "en-US": "Offer someone a specific bit of help this week.",
+    "zh-CN": "这周，给一个人提供一次具体的帮助。"
+  },
+  "Preguntar a alguien si está bien.": {
+    "en-US": "Ask someone if they are okay.",
+    "zh-CN": "问一个人，还好吗。"
+  },
+  "Luz del día": {
+    "en-US": "Daylight",
+    "zh-CN": "白天的光"
+  },
+  "Tomar 10 minutos de luz natural por la mañana.": {
+    "en-US": "Get 10 minutes of natural light in the morning.",
+    "zh-CN": "早上，接触 10 分钟自然光。"
+  },
+  "Mirar por la ventana un minuto atentamente.": {
+    "en-US": "Look out the window with attention for one minute.",
+    "zh-CN": "认真看窗外，一分钟。"
+  },
+  "Verde cercano": {
+    "en-US": "Green nearby",
+    "zh-CN": "附近的绿色"
+  },
+  "Visitar un espacio verde esta semana.": {
+    "en-US": "Visit a green space this week.",
+    "zh-CN": "这周，去一个有绿色的地方。"
+  },
+  "Buscar en el mapa el parque más cercano.": {
+    "en-US": "Find the nearest park on a map.",
+    "zh-CN": "在地图上找最近的公园。"
+  },
+  "Planta o balcón": {
+    "en-US": "A plant or a balcony",
+    "zh-CN": "一株植物，或阳台"
+  },
+  "Regar o revisar una planta hoy.": {
+    "en-US": "Water a plant, or check on one, today.",
+    "zh-CN": "今天给一株植物浇水，或看一看它。"
+  },
+  "Mirar una planta y notar su color.": {
+    "en-US": "Look at a plant and notice its color.",
+    "zh-CN": "看一株植物，留意它的颜色。"
+  },
+  "Camino consciente": {
+    "en-US": "An attentive walk",
+    "zh-CN": "留心走一走"
+  },
+  "Caminar 5 minutos notando sonidos del entorno.": {
+    "en-US": "Walk for 5 minutes, noticing the sounds around you.",
+    "zh-CN": "走 5 分钟，留意周围的声音。"
+  },
+  "Escuchar un sonido exterior ahora.": {
+    "en-US": "Listen to an outdoor sound right now.",
+    "zh-CN": "现在，听一个外面的声音。"
+  },
+  "Cinco minutos": {
+    "en-US": "Five minutes",
+    "zh-CN": "五分钟"
+  },
+  "Dedicar 5 minutos a algo que te importa.": {
+    "en-US": "Spend 5 minutes on something that matters to you.",
+    "zh-CN": "花 5 分钟，在一件你在意的事上。"
+  },
+  "Nombrar en voz alta una cosa que te importa.": {
+    "en-US": "Say out loud one thing that matters to you.",
+    "zh-CN": "大声说出一件你在意的事。"
+  },
+  "Aprendizaje": {
+    "en-US": "Learning",
+    "zh-CN": "学一点新的"
+  },
+  "Leer o ver algo nuevo sobre un interés tuyo.": {
+    "en-US": "Read or watch something new about an interest of yours.",
+    "zh-CN": "读或看一点和你兴趣有关的新东西。"
+  },
+  "Guardar un enlace para ver después.": {
+    "en-US": "Save a link to look at later.",
+    "zh-CN": "存一个链接，以后再看。"
+  },
+  "Contribución": {
+    "en-US": "A contribution",
+    "zh-CN": "出一份力"
+  },
+  "Hacer una tarea que ayude a alguien esta semana.": {
+    "en-US": "Do a task that helps someone this week.",
+    "zh-CN": "这周做一件能帮到别人的事。"
+  },
+  "Anotar una forma en que te gustaría ayudar.": {
+    "en-US": "Jot down a way you would like to help.",
+    "zh-CN": "记下一种你想帮忙的方式。"
+  },
+  "Conexión valores": {
+    "en-US": "A link to what you value",
+    "zh-CN": "和你看重的事连上"
+  },
+  "Escribir una frase sobre lo que valoras y mirarla hoy.": {
+    "en-US": "Write one sentence about what you value, and look at it today.",
+    "zh-CN": "写下一句你看重的话，今天看一眼。"
+  },
+  "Recordar una frase que te represente.": {
+    "en-US": "Recall a phrase that feels like you.",
+    "zh-CN": "想起一句能代表你的话。"
+  },
+  "Contenido educativo general. Todo recurso está pendiente de verificación en el registro de evidencia: no afirmamos eficacia.": {
+    "en-US": "General notes to read. Every source is still waiting to be checked in the evidence log: we don't claim they work.",
+    "zh-CN": "这些是一般性的说明。每条来源都还在证据记录里等着核实：我们不说它们一定有效。"
+  },
+  "Movimiento en el día": {
+    "en-US": "Movement in the day",
+    "zh-CN": "一天里动一动"
+  },
+  "Muchas personas sienten más energía y menos tensión cuando mueven el cuerpo en momentos breves del día, aunque sea poco.": {
+    "en-US": "Many people feel more energy and less tension when they move in short moments of the day, even a little.",
+    "zh-CN": "很多人觉得，一天里哪怕只动一小会儿，也会更有精神，少一点紧绷。"
+  },
+  "Guías de actividad física para adultos (OMS)": {
+    "en-US": "Physical activity guidelines for adults (WHO)",
+    "zh-CN": "成人身体活动指南（世界卫生组织）"
+  },
+  "Menos tiempo sentado": {
+    "en-US": "Less time sitting",
+    "zh-CN": "少坐一会儿"
+  },
+  "Interrumpir períodos largos sentado con pausas breves es una práctica que algunas personas encuentran posible y agradable.": {
+    "en-US": "Breaking up long stretches of sitting with short pauses is something some people find doable and pleasant.",
+    "zh-CN": "用短短的停顿打断久坐，有些人觉得做得到，也舒服。"
+  },
+  "Recomendaciones sobre comportamiento sedentario (OMS)": {
+    "en-US": "Guidance on sitting for long periods (WHO)",
+    "zh-CN": "关于久坐的建议（世界卫生组织）"
+  },
+  "Atención al comer": {
+    "en-US": "Attention while eating",
+    "zh-CN": "吃饭时留点心"
+  },
+  "Comer con atención, sin pantallas, puede ayudar a disfrutar más la comida y notar cuándo estás satisfecho.": {
+    "en-US": "Eating with attention, and without screens, can help you enjoy the food more and notice when you feel satisfied.",
+    "zh-CN": "不看屏幕、留心吃饭，也许能让你更享受这顿饭，也更容易察觉自己吃饱了。"
+  },
+  "Guías alimentarias (FAO/OMS)": {
+    "en-US": "Food guides (FAO/WHO)",
+    "zh-CN": "膳食指南（粮农组织／世界卫生组织）"
+  },
+  "Más alimentos mínimamente procesados": {
+    "en-US": "More minimally processed foods",
+    "zh-CN": "更多少加工的食物"
+  },
+  "Sumar verduras, frutas y legumbres es una forma concreta de acercarse a una alimentación variada sin reglas rígidas.": {
+    "en-US": "Adding vegetables, fruit, and legumes is a concrete way toward varied eating, without rigid rules.",
+    "zh-CN": "加上蔬菜、水果和豆类，是靠近多样饮食的具体做法，不必守死规矩。"
+  },
+  "Clasificación NOVA y guías alimentarias": {
+    "en-US": "NOVA classification and food guides",
+    "zh-CN": "NOVA 分类和膳食指南"
+  },
+  "Rutina antes de dormir": {
+    "en-US": "A routine before sleep",
+    "zh-CN": "睡前的小步骤"
+  },
+  "Una rutina tranquila y consistente antes de dormir ayuda a muchas personas a conciliar el sueño con más facilidad.": {
+    "en-US": "A calm, steady routine before sleep helps many people fall asleep more easily.",
+    "zh-CN": "睡前有一段安静、比较固定的步骤，很多人会更容易入睡。"
+  },
+  "Higiene del sueño (literatura general)": {
+    "en-US": "Sleep habits (general literature)",
+    "zh-CN": "睡眠习惯（一般文献）"
+  },
+  "Pausas de calma": {
+    "en-US": "Calm pauses",
+    "zh-CN": "平静的停顿"
+  },
+  "Breves pausas de calma durante el día pueden bajar la sensación de agobio en momentos de alta carga.": {
+    "en-US": "Short calm pauses during the day can ease that overwhelmed feeling when a lot is going on.",
+    "zh-CN": "白天短短地平静一下，在事情很多的时候，也许能让那种压着的感觉轻一点。"
+  },
+  "Técnicas de regulación (contexto general)": {
+    "en-US": "Ways of settling (general context)",
+    "zh-CN": "让自己安定下来的做法（一般说法）"
+  },
+  "Dedicar tiempo y atención a personas importantes es una de las prácticas más asociadas al bienestar en la literatura.": {
+    "en-US": "In writing about wellbeing, giving time and attention to people who matter is one of the practices most often linked with it.",
+    "zh-CN": "在谈到身心状态的文字里，把时间和注意力给重要的人，是最常一起出现的做法之一。"
+  },
+  "Estudio Harvard de adultez (referencia pendiente de verificación)": {
+    "en-US": "Harvard Study of Adult Development (reference still to be checked)",
+    "zh-CN": "哈佛成人发展研究（出处还没核实）"
+  },
+  "Apoyo mutuo": {
+    "en-US": "Mutual support",
+    "zh-CN": "彼此支持"
+  },
+  "Pedir y ofrecer ayuda en la vida cotidiana fortalece los vínculos y la sensación de acompañamiento.": {
+    "en-US": "Asking for help and offering it in daily life strengthens bonds, and the feeling of having someone with you.",
+    "zh-CN": "在日常里请求帮助，也伸出手，会让关系更稳，也更有人陪着的感觉。"
+  },
+  "Literatura de apoyo social": {
+    "en-US": "Literature on social support",
+    "zh-CN": "关于彼此支持的文献"
+  },
+  "Sentido de pertenencia": {
+    "en-US": "A sense of belonging",
+    "zh-CN": "归属感"
+  },
+  "Sentirse parte de grupos o comunidades se asocia en estudios con mayor bienestar percibido.": {
+    "en-US": "Feeling part of a group or community is linked, in studies, with people feeling better.",
+    "zh-CN": "在研究里，觉得自己属于某个群体或社群，常和感觉更好连在一起。"
+  },
+  "Literatura de pertenencia social": {
+    "en-US": "Literature on belonging",
+    "zh-CN": "关于归属感的文献"
+  },
+  "Participación a tu ritmo": {
+    "en-US": "Joining in at your pace",
+    "zh-CN": "按你的节奏参与"
+  },
+  "La participación social no exige grandes gestos: asistir, saludar o aportar en pequeño también cuenta para muchas personas.": {
+    "en-US": "Taking part with others doesn't ask for big gestures: showing up, saying hello, or contributing a little also counts for many people.",
+    "zh-CN": "和别人在一起，不必做很大的事：到场、打个招呼，或小小贡献一点，对很多人也算数。"
+  },
+  "Diseño propio (sin evidencia externa reclamada)": {
+    "en-US": "Our own design (no outside evidence claimed)",
+    "zh-CN": "我们自己的设计（不声称有外面的证据）"
+  },
+  "Tiempo en entornos verdes": {
+    "en-US": "Time in green places",
+    "zh-CN": "在有绿色的地方待一待"
+  },
+  "Varios estudios exploran la relación entre tiempo en espacios verdes y bienestar subjetivo; la evidencia sigue en revisión.": {
+    "en-US": "Several studies look at time in green spaces and how people feel; the evidence is still being reviewed.",
+    "zh-CN": "有一些研究在看，待在有绿色的地方和人的感受有什么关系；证据还在审。"
+  },
+  "Literatura de naturaleza y salud (revisión pendiente)": {
+    "en-US": "Literature on nature and health (still being reviewed)",
+    "zh-CN": "关于自然与健康的文献（还在审）"
+  },
+  "Contacto cotidiano con el entorno": {
+    "en-US": "Everyday contact with what's around you",
+    "zh-CN": "和周围的日常接触"
+  },
+  "Luz natural, aire y sonidos del entorno pueden aportar momentos de pausa sin necesidad de salidas grandes.": {
+    "en-US": "Natural light, air, and the sounds around you can offer a pause, without a big outing.",
+    "zh-CN": "自然光、空气和周围的声音，也能带来停一停的片刻，不必专门出远门。"
+  },
+  "Propósito y bienestar": {
+    "en-US": "Purpose and wellbeing",
+    "zh-CN": "目标感与身心状态"
+  },
+  "Tener objetivos significativos se asocia en estudios con mayor satisfacción con la vida; no es una regla ni una garantía.": {
+    "en-US": "Having meaningful goals is linked, in studies, with feeling more satisfied with life; it isn't a rule, and it isn't a guarantee.",
+    "zh-CN": "在研究里，有自己在意的目标，常和生活更满意连在一起；这不是规矩，也不保证什么。"
+  },
+  "Literatura de propósito de vida (pendiente de verificación)": {
+    "en-US": "Literature on purpose in life (still to be checked)",
+    "zh-CN": "关于生活目标的文献（还没核实）"
+  },
+  "Acciones alineadas con valores": {
+    "en-US": "Actions that fit what you value",
+    "zh-CN": "和你看重的事一致的行动"
+  },
+  "Pequeñas acciones coherentes con lo que valoras pueden darle sentido a la semana, aunque no transformen todo.": {
+    "en-US": "Small actions that fit what you value can give the week some meaning, even if they don't change everything.",
+    "zh-CN": "和你看重的事一致的小行动，可以给这一周一点意义，即使不能改变一切。"
+  },
+  "Hábito a simplificar": {
+    "en-US": "Habit to make smaller",
+    "zh-CN": "要缩小的习惯"
+  },
+  "Qué lo hizo difícil": {
+    "en-US": "What made it hard",
+    "zh-CN": "是什么让它变难"
+  },
+  "Último ajuste: «{from}» → «{to}»": {
+    "en-US": "Latest change: “{from}” → “{to}”",
+    "zh-CN": "最近一次调整：「{from}」→「{to}」"
+  },
+  "Deshacer último ajuste": {
+    "en-US": "Undo the latest change",
+    "zh-CN": "撤销最近一次调整"
+  },
+  "Secciones principales": {
+    "en-US": "Main sections",
+    "zh-CN": "主要部分"
+  },
+  "Blu, inicio": {
+    "en-US": "Blu, home",
+    "zh-CN": "Blu，首页"
+  },
+  "Acciones de hoy": {
+    "en-US": "Today’s actions",
+    "zh-CN": "今天的行动"
+  },
+  "Enviar mensaje": {
+    "en-US": "Send message",
+    "zh-CN": "发送消息"
+  },
+  "Una idea para acompañarte": {
+    "en-US": "An idea to keep you company",
+    "zh-CN": "一个陪着你的想法"
+  },
+  "Acciones registradas por día, últimos 7 días": {
+    "en-US": "Actions logged per day, last 7 days",
+    "zh-CN": "按天记下的行动，最近 7 天"
+  },
+  "{date}: {n} {unit}": {
+    "en-US": "{date}: {n} {unit}",
+    "zh-CN": "{date}：{n} {unit}"
+  },
+  "Actualizamos el aviso de consentimiento (versión {version}). Tu uso sigue igual hasta que renueves.": {
+    "en-US": "We updated the consent notice (version {version}). Things stay as they are until you renew it.",
+    "zh-CN": "我们更新了同意说明（版本 {version}）。在你重新确认之前，使用方式保持不变。"
+  },
+  "Revisar y renovar": {
+    "en-US": "Review and renew",
+    "zh-CN": "查看并更新"
+  },
+  "Un apodo solo para ti, guardado en este navegador. No pedimos correo, nombre ni otros datos: la verificación de correo llegará solo cuando exista cuenta en una futura versión.": {
+    "en-US": "A nickname just for you, saved in this browser. We don’t ask for email, a name, or anything else: email verification will arrive only if accounts exist in a future version.",
+    "zh-CN": "一个只属于你的昵称，存在这个浏览器里。我们不收集邮箱、姓名或其他信息：只有将来真的有账号时，才会出现邮箱验证。"
+  },
+  "En «{title}» tu autodiagnóstico señaló «{band}».": {
+    "en-US": "In “{title}”, your check-in came out as “{band}”.",
+    "zh-CN": "在「{title}」里，你的自我了解结果是「{band}」。"
+  },
+  "Mencionaste: {barriers}.": {
+    "en-US": "You mentioned: {barriers}.",
+    "zh-CN": "你提到：{barriers}。"
+  },
+  "Te sugerimos partir por: «{action}».": {
+    "en-US": "A small place to start: “{action}”.",
+    "zh-CN": "可以从这里开始：「{action}」。"
+  },
+  "(Regla aplicada: {rule})": {
+    "en-US": "(Rule used: {rule})",
+    "zh-CN": "（所用规则：{rule}）"
+  },
+  "Ya está en su versión más pequeña: mantenerla cuenta.": {
+    "en-US": "This is already the smallest version: keeping it counts.",
+    "zh-CN": "这已经是最小的版本：继续保持也算数。"
+  },
+  "Un prototipo para explorar hábitos de bienestar. No ofrece consejo médico ni sustituye atención profesional.": {
+    "en-US": "A prototype for exploring wellbeing habits. It does not give medical advice or replace professional care.",
+    "zh-CN": "一个用来探索身心习惯的原型。它不提供医疗建议，也不能代替专业照顾。"
+  },
+  "Cuenta y sincronización opcional de Blu (V1, activación por configuración).": {
+    "en-US": "Blu account and optional sync (V1, turned on by configuration).",
+    "zh-CN": "Blu 的账号和可选同步（V1，由配置开启）。"
+  },
+  "Blu — guía de bienestar personal": {
+    "en-US": "Blu — a personal wellbeing guide",
+    "zh-CN": "Blu — 个人身心指南"
+  },
+  "Blu te acompaña a elegir y sostener pequeños hábitos de bienestar. No es una aplicación clínica ni reemplaza consejo profesional.": {
+    "en-US": "Blu helps you choose and keep small wellbeing habits. It is not a clinical app and does not replace professional advice.",
+    "zh-CN": "Blu 陪你选择并维持很小的身心习惯。它不是临床应用，也不能代替专业建议。"
+  },
+  "Desactivar recordatorio": {
+    "en-US": "Turn off the reminder",
+    "zh-CN": "关闭提醒"
+  },
+  "Activar recordatorio de la mañana": {
+    "en-US": "Turn on the morning reminder",
+    "zh-CN": "打开早晨提醒"
+  },
+  "Tu navegador no permite recordatorios.": {
+    "en-US": "This browser does not allow reminders.",
+    "zh-CN": "这个浏览器不允许提醒。"
+  },
+  "Quedaron bloqueados en el navegador; puedes permitirlos en la configuración del sitio.": {
+    "en-US": "They are blocked in the browser; you can allow them in the site settings.",
+    "zh-CN": "浏览器把提醒拦住了；你可以在网站设置里允许它们。"
+  },
+  "Máximo uno al día, solo si quedan pasos sin marcar. Funciona con Blu abierta; sin cuenta ni servidor.": {
+    "en-US": "At most one a day, and only if some steps are still open. It works while Blu is open; no account and no server.",
+    "zh-CN": "一天最多一次，而且只在还有步骤没记下时。Blu 开着才有效；不需要账号，也不经过服务器。"
+  },
+  "Aún no hay una evaluación inicial de este hábito.": {
+    "en-US": "There is no starting note for this habit yet.",
+    "zh-CN": "这个习惯还没有一开始的记录。"
+  },
+  "Declaraste «{label}». Todavía no hay práctica registrada: el retrato se afina cuando marques un paso.": {
+    "en-US": "You said “{label}”. Nothing is logged yet: the picture gets clearer when you mark a step.",
+    "zh-CN": "你说的是「{label}」。还没有记下练习：等你标出一个步骤，这幅画像会更清楚。"
+  },
+  "Declaraste «{label}». En {days} días lo marcaste {n} {unit}. Eso actualiza el punto de partida, sin convertirlo en una nota.": {
+    "en-US": "You said “{label}”. In {days} days you marked it {n} {unit}. That updates your starting point, without turning it into a score.",
+    "zh-CN": "你说的是「{label}」。这 {days} 天里你记下了 {n} {unit}。这会更新起点，但不会变成评分。"
+  },
+  "vez": {
+    "en-US": "time",
+    "zh-CN": "次"
+  },
+  "veces": {
+    "en-US": "times",
+    "zh-CN": "次"
+  },
+  "Saltar al contenido principal": {
+    "en-US": "Skip to main content",
+    "zh-CN": "跳到主要内容"
+  },
+  "Voz del dispositivo activada. La lectura no envía el texto fuera de tu dispositivo.": {
+    "en-US": "Device voice is on. Reading does not send the text off your device.",
+    "zh-CN": "已使用设备语音。朗读不会把文字送出这台设备。"
+  },
+  "Si activas la voz natural, se enviará solo el texto de Blu que elijas escuchar a un proveedor de voz para crear el audio. No compartas información personal o de salud.": {
+    "en-US": "If you turn on natural voice, only the Blu text you choose to hear is sent to a voice provider to make the audio. Do not share personal or health information.",
+    "zh-CN": "如果打开自然语音，只有你选择朗读的 Blu 文字会发给语音服务来生成声音。请不要分享个人或健康信息。"
+  }
+}

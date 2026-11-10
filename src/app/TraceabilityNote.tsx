@@ -3,6 +3,7 @@
 import { loadRegistry } from "@/lib/evidence/registry";
 import { resolveNoteTrace } from "@/lib/evidence/traceability";
 import type { EducationNote } from "@/lib/habit-education";
+import { translate, type Locale } from "@/lib/i18n";
 
 /**
  * Línea de trazabilidad de una nota educativa (BLU-1304): «Fuente: X» con el
@@ -10,19 +11,22 @@ import type { EducationNote } from "@/lib/habit-education";
  * fecha y la revisor de la revisión; en cualquier otro caso
  * «sin evidencia verificada» (deny-by-default).
  */
-export function TraceabilityNote({ note }: { note: EducationNote }) {
+export function TraceabilityNote({ note, locale = "es" }: { note: EducationNote; locale?: Locale }) {
   const registry = loadRegistry();
   const sourcesById = new Map(registry.sources.map((s) => [s.id, s]));
   const trace = resolveNoteTrace(note, sourcesById);
+  const source = translate(locale, note.sourceLabel);
   return (
     <span className="source-trace">
-      <em>Fuente: {note.sourceLabel}</em>{" "}
+      <em>{translate(locale, "Fuente:")} {source}</em>{" "}
       {trace.kind === "verificada" ? (
         <em className="source-verified">
-          (verificada el {trace.reviewedAt} por {trace.reviewer})
+          {translate(locale, "(verificada el {date} por {reviewer})")
+            .replace("{date}", trace.reviewedAt)
+            .replace("{reviewer}", trace.reviewer)}
         </em>
       ) : (
-        <em className="source-pending">(sin evidencia verificada)</em>
+        <em className="source-pending">{translate(locale, "(sin evidencia verificada)")}</em>
       )}
     </span>
   );

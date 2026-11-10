@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { LanguageControl, useLocale } from "@/app/LanguageControl";
+import { translate } from "@/lib/i18n";
 import {
   createAccountStore,
   type AccountError,
@@ -18,10 +20,6 @@ const ERROR_TEXT: Record<AccountError, string> = {
   sesion_invalida: "Tu sesión caducó. Vuelve a entrar cuando quieras.",
 };
 
-function errorText(error: AccountError): string {
-  return ERROR_TEXT[error] ?? ERROR_TEXT.red_no_disponible;
-}
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
@@ -38,6 +36,7 @@ export function CuentaApp({
   config: V1Config | null;
   store?: AccountStore;
 }) {
+  const locale = useLocale();
   const [store] = useState<AccountStore>(() => injectedStore ?? createAccountStore(config));
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -57,20 +56,24 @@ export function CuentaApp({
     };
   }, [store]);
 
+  function say(key: string): string {
+    return translate(locale, key);
+  }
+
   if (!config) {
     return (
       <main id="contenido-principal" className="cuenta-off">
-        <h1>Tu cuenta</h1>
-        <p role="status">{ERROR_TEXT.no_configurado}</p>
+        <LanguageControl locale={locale} />
+        <h1>{say("Tu cuenta")}</h1>
+        <p role="status">{say(ERROR_TEXT.no_configurado)}</p>
         <p className="muted">
-          Cuando el equipo active la sincronización, aquí podrás crear tu cuenta con correo
-          verificado. Tus datos locales actuales no cambian ni salen de tu dispositivo.
+          {say("Cuando el equipo active la sincronización, aquí podrás crear tu cuenta con correo verificado. Tus datos locales actuales no cambian ni salen de tu dispositivo.")}
         </p>
       </main>
     );
   }
 
-  async function submit(event: React.FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (busy) return;
     if (!EMAIL_RE.test(email)) {
@@ -97,15 +100,17 @@ export function CuentaApp({
       setStatus("");
       setPassword("");
     } else {
-      setStatus(errorText(r.error));
+      setStatus(ERROR_TEXT[r.error] ?? ERROR_TEXT.red_no_disponible);
     }
   }
 
   if (user) {
+    const session = say("Sesión iniciada como {email}.").split("{email}").join(user.email);
     return (
       <main id="contenido-principal" className="cuenta-on">
-        <h1>Tu cuenta</h1>
-        <p role="status">Sesión iniciada como {user.email}.</p>
+        <LanguageControl locale={locale} />
+        <h1>{say("Tu cuenta")}</h1>
+        <p role="status">{session}</p>
         <button
           type="button"
           onClick={async () => {
@@ -114,31 +119,32 @@ export function CuentaApp({
             setStatus("Sesión cerrada. Tus datos locales siguen en tu dispositivo.");
           }}
         >
-          Cerrar sesión
+          {say("Cerrar sesión")}
         </button>
+        {status && <p role="status">{say(status)}</p>}
       </main>
     );
   }
 
-  const submitLabel = mode === "signin" ? "Entrar con correo" : "Crear mi cuenta";
+  const submitLabel = mode === "signin" ? say("Entrar con correo") : say("Crear mi cuenta");
 
   return (
     <main id="contenido-principal" className="cuenta-on">
-      <h1>Tu cuenta</h1>
+      <LanguageControl locale={locale} />
+      <h1>{say("Tu cuenta")}</h1>
       <p className="muted">
-        El correo es el único dato obligatorio. La sincronización entre dispositivos es opt-in y
-        puedes borrar todo cuando quieras.
+        {say("El correo es el único dato obligatorio. La sincronización entre dispositivos es opt-in y puedes borrar todo cuando quieras.")}
       </p>
-      <div role="group" aria-label="Modo de cuenta">
+      <div role="group" aria-label={say("Modo de cuenta")}>
         <button type="button" aria-pressed={mode === "signin"} onClick={() => setMode("signin")}>
-          Entrar
+          {say("Entrar")}
         </button>
         <button type="button" aria-pressed={mode === "signup"} onClick={() => setMode("signup")}>
-          Crear cuenta
+          {say("Crear cuenta")}
         </button>
       </div>
       <form onSubmit={submit} noValidate>
-        <label htmlFor="cuenta-email">Correo electrónico</label>
+        <label htmlFor="cuenta-email">{say("Correo electrónico")}</label>
         <input
           id="cuenta-email"
           autoComplete="email"
@@ -147,7 +153,7 @@ export function CuentaApp({
           type="email"
           value={email}
         />
-        <label htmlFor="cuenta-password">Contraseña</label>
+        <label htmlFor="cuenta-password">{say("Contraseña")}</label>
         <input
           id="cuenta-password"
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
@@ -162,11 +168,10 @@ export function CuentaApp({
               onChange={(e) => setSyncConsent(e.target.checked)}
               type="checkbox"
             />
-            Acepto sincronizar mis datos de bienestar entre dispositivos (puedo retirar este
-            consentimiento cuando quiera).
+            {say("Acepto sincronizar mis datos de bienestar entre dispositivos (puedo retirar este consentimiento cuando quiera).")}
           </label>
         )}
-        <p role="status" aria-live="polite">{status}</p>
+        <p role="status" aria-live="polite">{status ? say(status) : ""}</p>
         <button disabled={busy} type="submit">
           {submitLabel}
         </button>

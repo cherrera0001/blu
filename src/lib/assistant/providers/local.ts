@@ -28,10 +28,10 @@ export class LocalRuleProvider implements AssistantProvider {
       reply = SAFE_CRISIS_RESPONSE;
     } else if (CLINICAL_RE.test(text)) {
       reply = SAFE_CLINICAL_RESPONSE;
-    } else if (/\b(ocupad\w*|trabaj\w*|tiempo|agenda|apuro)/i.test(text)) {
+    } else if (/\b(ocupad\w*|trabaj\w*|tiempo|agenda|apuro)|\b(busy|workload|schedule|in a rush)\b|\btime\b|很忙|工作太忙|没时间|赶时间/i.test(text)) {
       reply =
         "El tiempo aprieta, lo entiendo. Sin asumir nada: ¿una versión de dos minutos, otro momento del día, o lo dejamos para mañana sin culpa?";
-    } else if (/\b(cansad\w*|agotad\w*|energia|dificil|no pude|falle\w*)/i.test(text)) {
+    } else if (/\b(cansad\w*|agotad\w*|energia|dificil|no pude|falle\w*)|\b(tired|exhausted|no energy|couldn'?t|i failed)\b|好累|精疲力尽|没精力|没做到/i.test(text)) {
       reply =
         "Gracias por contarme. No es un fallo: es información. ¿Qué pesó más esta vez: tiempo, energía o acordarte? Puedes ajustar el plan o dejarlo igual.";
     } else {

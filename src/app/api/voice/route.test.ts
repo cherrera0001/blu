@@ -29,6 +29,9 @@ describe("/api/voice Azure speech", () => {
     vi.stubEnv("AZURE_SPEECH_REGION", "");
     vi.stubEnv("AZURE_SPEECH_LOCALE", "");
     vi.stubEnv("AZURE_SPEECH_VOICE", "");
+    vi.stubEnv("ELEVENLABS_API_KEY", "");
+    vi.stubEnv("ELEVENLABS_VOICE_ID", "");
+    vi.stubEnv("ELEVENLABS_MODEL_ID", "");
   });
 
   afterEach(() => {
@@ -41,7 +44,11 @@ describe("/api/voice Azure speech", () => {
 
     const response = await GET();
 
-    expect(await response.json()).toEqual({ azureAvailable: false });
+    expect(await response.json()).toEqual({
+      azureAvailable: false,
+      elevenlabsAvailable: false,
+      naturalAvailable: false,
+    });
   });
 
   it("reports availability without exposing the server key", async () => {
@@ -50,7 +57,11 @@ describe("/api/voice Azure speech", () => {
     const response = await GET();
     const raw = await response.text();
 
-    expect(raw).toBe('{"azureAvailable":true}');
+    expect(JSON.parse(raw)).toEqual({
+      azureAvailable: true,
+      elevenlabsAvailable: false,
+      naturalAvailable: true,
+    });
     expect(raw).not.toContain("synthetic-test-key");
   });
 
@@ -179,5 +190,75 @@ describe("/api/voice Azure speech", () => {
 
     expect(response.status).toBe(502);
     expect(await response.json()).toEqual({ error: "voice_provider_unavailable" });
+  });
+});
+
+describe("/api/voice ElevenLabs speech", () => {
+  beforeEach(() => {
+    vi.stubEnv("AZURE_SPEECH_ENABLED", "");
+    vi.stubEnv("AZURE_SPEECH_F0_CONFIRMED", "");
+    vi.stubEnv("AZURE_SPEECH_KEY", "");
+    vi.stubEnv("ELEVENLABS_API_KEY", "");
+    vi.stubEnv("ELEVENLABS_VOICE_ID", "");
+    vi.stubEnv("ELEVENLABS_MODEL_ID", "");
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  function enableElevenLabs(): void {
+    vi.stubEnv("ELEVENLABS_API_KEY", "synthetic-eleven-key");
+    vi.stubEnv("ELEVENLABS_VOICE_ID", "JBFqnCBsd6RMkjVDRZzb");
+    vi.stubEnv("ELEVENLABS_MODEL_ID", "eleven_v4");
+  }
+
+  it("reports ElevenLabs availability without exposing the key", async () => {
+    enableElevenLabs();
+    const response = await GET();
+    const raw = await response.text();
+    expect(JSON.parse(raw)).toEqual({
+      azureAvailable: false,
+      elevenlabsAvailable: true,
+      naturalAvailable: true,
+    });
+    expect(raw).not.toContain("synthetic-eleven-key");
+  });
+
+  it("prefers ElevenLabs over Azure and sends only text plus locale", async () => {
+    enableElevenLabs();
+    enableAzure();
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(new Uint8Array([9, 8, 7]), {
+        status: 200,
+        headers: { "Content-Type": "audio/mpeg" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await POST(request({ text: "Hola Blu", locale: "en-US" }));
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, options] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb");
+    expect(url).not.toContain("microsoft.com");
+    const headers = new Headers(options.headers);
+    expect(headers.get("xi-api-key")).toBe("synthetic-eleven-key");
+    expect(JSON.parse(String(options.body))).toEqual({
+      text: "Hola Blu",
+      model_id: "eleven_v4",
+      language_code: "en",
+      voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+    });
+    expect([...new Uint8Array(await response.arrayBuffer())]).toEqual([9, 8, 7]);
+  });
+
+  it("does not call ElevenLabs when the key is missing", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const response = await POST(request({ text: "Hola", locale: "es" }));
+    expect(response.status).toBe(503);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

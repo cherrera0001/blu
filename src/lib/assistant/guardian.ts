@@ -48,13 +48,13 @@ export function normalizeInput(text: string): string {
 }
 
 export const CRISIS_RE =
-  /\b(suicid|autolesion|hacerme dano|hacerte dano|no quiero vivir|no quiero seguir|acabar con todo|mejor sin mi|desaparecer para siempre|pensamientos de muerte)/i;
+  /\b(suicid|autolesion|hacerme dano|hacerte dano|no quiero vivir|no quiero seguir|acabar con todo|mejor sin mi|desaparecer para siempre|pensamientos de muerte)|\b(self-harm|self harm|kill myself|don'?t want to live|do not want to live|end it all|better off without me)\b|自杀|自残|不想活|活不下去|结束一切/i;
 
 export const CLINICAL_RE =
-  /\b(sin dormir|dolor|sintoma|diagnostic|enfermedad|medicacion|medicina|pastilla|remedio|dosis|receta|prescri|pildora|insomnio|depresion|ansiedad|panico|embaraz|terapia|tratamiento|fiebre|diabetes|presion alta|colesterol)/i;
+  /\b(sin dormir|dolor|sintoma|diagnostic|enfermedad|medicacion|medicina|pastilla|remedio|dosis|receta|prescri|pildora|insomnio|depresion|ansiedad|panico|embaraz|terapia|tratamiento|fiebre|diabetes|presion alta|colesterol)|\b(can'?t sleep|cannot sleep|insomnia|pain|symptom|diagnos|disease|illness|medication|medicine|pill|dose|prescription|prescrib|depression|anxiety|panic|pregnan|therapy|treatment|fever|high blood pressure|cholesterol)\b|失眠|睡不着|胸口疼|胸口痛|症状|诊断|抑郁|焦虑|恐慌|怀孕|发烧|糖尿病|高血压|胆固醇/i;
 
 const BOUNDARY_RE =
-  /\b(ignora (tus|las|mis) instrucciones|instrucciones (internas|anteriores|ocultas|secretas)|system prompt|prompt (de sistema|interno)|modo dan\b|jailbreak|revela la clave|la clave del sistema|desarrolladores|quien te (creo|programo)|sin limites|puedes todo|repite tus instrucciones|transcribe (las |tus )?instrucciones)/i;
+  /\b(ignora (tus|las|mis) instrucciones|instrucciones (internas|anteriores|ocultas|secretas)|system prompt|prompt (de sistema|interno)|modo dan\b|jailbreak|revela la clave|la clave del sistema|desarrolladores|quien te (creo|programo)|sin limites|puedes todo|repite tus instrucciones|transcribe (las |tus )?instrucciones)|\b(ignore (your|the|my) instructions|previous instructions|reveal the key|who (created|programmed) you|no limits|repeat your instructions)\b|忽略你的指令|忽略之前的指令|系统提示|越狱|重复你的指令|没有限制/i;
 
 export function classifyInput(rawText: string): Classification {
   const text = normalizeInput(rawText).slice(0, 2000);
@@ -65,7 +65,7 @@ export function classifyInput(rawText: string): Classification {
 }
 
 const PROHIBITED_OUTPUT_RE =
-  /(previene|prevenir|cura|curara|cura\s|garantiza|elimina el riesgo|vivir mas anos|an os de vida|longevidad|diagnostico|debes tomar|deberias tomar|toma \d+|dosis recomendada|recetar|prescrib)/i;
+  /(previene|prevenir|cura|curara|cura\s|garantiza|elimina el riesgo|vivir mas anos|an os de vida|longevidad|diagnostico|debes tomar|deberias tomar|toma \d+|dosis recomendada|recetar|prescrib|\bcures?\b|\bdiagnos\w*|\bprescrib\w*|\brecommended dose\b|\blongevity\b|\byears of life\b|\bguarantees?\b)|治愈|诊断为|开药|长寿/i;
 
 export function validateOutput(text: string): boolean {
   return !PROHIBITED_OUTPUT_RE.test(normalizeInput(text));
