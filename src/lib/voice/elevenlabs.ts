@@ -65,7 +65,7 @@ export async function synthesizeWithElevenLabs(
     languageCode: languageCodeForLocale(locale),
     voiceSettings: {
       stability: 0.5,
-      similarity_boost: 0.75,
+      similarityBoost: 0.75,
     },
   });
 
