@@ -62,6 +62,9 @@ export const HABITS = [
 export type HabitId = (typeof HABITS)[number]["id"];
 export type Barrier = "time" | "energy" | "remembering" | "other";
 
+/** Tope de hábitos activos que la persona puede elegir al empezar. */
+export const MAX_SELECTED_HABITS = 4;
+
 export interface Adaptation {
   habitId: HabitId;
   from: string;
@@ -116,7 +119,7 @@ export function decodeState(raw: string | null): BluState {
   if (
     (consent !== null && typeof consent !== "string") ||
     !Array.isArray(selected) ||
-    selected.length > 3 ||
+    selected.length > MAX_SELECTED_HABITS ||
     !selected.every(isHabitId) ||
     new Set(selected).size !== selected.length ||
     !isRecord(checkIns) ||

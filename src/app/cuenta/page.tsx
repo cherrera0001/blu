@@ -2,7 +2,7 @@ import { CuentaApp } from "@/app/cuenta/cuenta-app";
 import { getV1Config } from "@/lib/v1/config";
 
 export const metadata = {
-  title: "Tu cuenta — Blu",
+  title: "blu",
   description: "Cuenta y sincronización opcional de Blu (V1, activación por configuración).",
 };
 

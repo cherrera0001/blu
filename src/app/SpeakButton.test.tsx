@@ -30,9 +30,10 @@ function fakeSynth() {
 }
 
 describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () => {
-  it("no se renderiza si el navegador no soporta síntesis de voz", () => {
+  it("sigue visible y explica si el navegador no soporta síntesis de voz", () => {
     render(<SpeakButton text="Hola" />);
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByText(/no tiene una voz local/i)).toBeTruthy();
   });
 
   it("no ofrece voces remotas ni cuando son la única opción en español", () => {
@@ -42,7 +43,9 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
 
     render(<SpeakButton text="Hola" />);
 
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByText(/no tiene una voz local/i)).toBeTruthy();
+    expect(synth.speak).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 
@@ -53,7 +56,8 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
 
     render(<SpeakButton text="Hola" />);
 
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }).hasAttribute("disabled")).toBe(true);
+    expect(synth.speak).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 
@@ -64,7 +68,8 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
 
     render(<SpeakButton text="Hola" />);
 
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }).hasAttribute("disabled")).toBe(true);
+    expect(synth.speak).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 
@@ -74,13 +79,13 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     vi.stubGlobal("speechSynthesis", synth);
     render(<SpeakButton text="Hola" />);
 
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }).hasAttribute("disabled")).toBe(true);
     act(() => {
       synth.setVoices([{ lang: "es-MX", name: "Voz local", localService: true }]);
       synth.dispatchVoicesChanged();
     });
 
-    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }).hasAttribute("disabled")).toBe(false);
     vi.unstubAllGlobals();
   });
 
@@ -162,7 +167,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     vi.unstubAllGlobals();
   });
 
-  it("prefers the browser language when an exact local voice is available", async () => {
+  it("usa español de Chile cuando la app está en es-CL, aunque el navegador tenga otra voz española", async () => {
     const synth = fakeSynth();
     const voices = [
       { lang: "es-ES", name: "Spanish voice", localService: true },
@@ -186,7 +191,7 @@ describe("SpeakButton — lectura en voz alta del dispositivo (specs/014)", () =
     await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
 
     const utterance = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
-    expect(utterance.voice).toEqual(voices[0]);
+    expect(utterance.voice).toEqual(voices[1]);
     language.mockRestore();
     vi.unstubAllGlobals();
   });

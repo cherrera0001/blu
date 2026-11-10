@@ -6,6 +6,13 @@ let activeSpeechStop: (() => void) | null = null;
 
 export type VoiceProfile = "warm" | "balanced";
 export type VoiceMode = "local" | "azure";
+export type SpeechLocale = "es-CL" | "en-US" | "zh-CN";
+
+const MISSING_VOICE: Record<SpeechLocale, string> = {
+  "es-CL": "Este dispositivo no tiene una voz local en español.",
+  "en-US": "This device does not have a local English voice.",
+  "zh-CN": "这台设备没有本地中文语音。",
+};
 
 export function stopActiveSpeech(): void {
   activeSpeechStop?.();
@@ -16,10 +23,14 @@ function getSynth(): SpeechSynthesis | null {
   return window.speechSynthesis ?? null;
 }
 
-function getLocalSpanishVoice(synth: SpeechSynthesis): SpeechSynthesisVoice | undefined {
+function getLocalVoice(synth: SpeechSynthesis, locale: SpeechLocale): SpeechSynthesisVoice | undefined {
+  const prefix = locale === "en-US" ? "en" : locale === "zh-CN" ? "zh" : "es";
   const voices = synth
     .getVoices()
-    .filter((voice) => voice.localService && voice.lang.toLowerCase().startsWith("es"));
+    .filter((voice) => voice.localService && voice.lang.toLowerCase().startsWith(prefix));
+  const exact = voices.find((voice) => voice.lang.toLowerCase() === locale.toLowerCase());
+  if (exact) return exact;
+  if (prefix !== "es") return voices[0];
   const language = typeof navigator === "undefined" ? "" : navigator.language.toLowerCase();
   const preferred = voices.find((voice) => voice.lang.toLowerCase() === language);
   if (preferred) return preferred;
@@ -31,6 +42,21 @@ function getLocalSpanishVoice(synth: SpeechSynthesis): SpeechSynthesisVoice | un
   return latinAmerican ?? voices[0];
 }
 
+export function speakLocalText(text: string, locale: SpeechLocale): boolean {
+  const synth = getSynth();
+  if (!synth) return false;
+  const voice = getLocalVoice(synth, locale);
+  if (!voice) return false;
+  activeSpeechStop?.();
+  synth.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.voice = voice;
+  utterance.lang = voice.lang;
+  utterance.rate = 0.94;
+  synth.speak(utterance);
+  return true;
+}
+
 function subscribeToVoiceChanges(onStoreChange: () => void): () => void {
   const synth = getSynth();
   if (!synth) return () => {};
@@ -38,9 +64,9 @@ function subscribeToVoiceChanges(onStoreChange: () => void): () => void {
   return () => synth.removeEventListener("voiceschanged", onStoreChange);
 }
 
-function hasLocalSpanishVoice(): boolean {
+function hasLocalVoice(locale: SpeechLocale): boolean {
   const synth = getSynth();
-  return synth !== null && getLocalSpanishVoice(synth) !== undefined;
+  return synth !== null && getLocalVoice(synth, locale) !== undefined;
 }
 
 /**
@@ -52,15 +78,17 @@ export default function SpeakButton({
   profile = "warm",
   mode = "local",
   azureAvailable = false,
+  locale = "es-CL",
 }: {
   text: string;
   profile?: VoiceProfile;
   mode?: VoiceMode;
   azureAvailable?: boolean;
+  locale?: SpeechLocale;
 }) {
   const supported = useSyncExternalStore(
     subscribeToVoiceChanges,
-    hasLocalSpanishVoice,
+    () => hasLocalVoice(locale),
     () => false,
   );
   const [speaking, setSpeaking] = useState(false);
@@ -77,7 +105,8 @@ export default function SpeakButton({
     };
   }, []);
 
-  if (mode === "azure" ? !azureAvailable : !supported) return null;
+  if (mode === "azure" && !azureAvailable) return null;
+  const unavailable = mode === "local" && !supported;
 
   function clearAudio(): void {
     const audio = audioRef.current;
@@ -151,7 +180,7 @@ export default function SpeakButton({
   function speakLocally(): void {
     const synth = getSynth();
     if (!synth) return;
-    const voice = getLocalSpanishVoice(synth);
+    const voice = getLocalVoice(synth, locale);
     if (!voice) return;
     if (activeSpeechStop) activeSpeechStop();
     else synth.cancel();
@@ -187,11 +216,15 @@ export default function SpeakButton({
         aria-label={speaking || loading ? "Detener lectura" : "Escuchar respuesta en voz alta"}
         aria-pressed={speaking || loading}
         className="text-button"
+        disabled={unavailable}
         onClick={toggle}
         type="button"
       >
         {loading ? "Generando audio…" : speaking ? "■ Detener" : "🔊 Escuchar"}
       </button>
+      {unavailable && (
+        <p className="speak-status">{MISSING_VOICE[locale]}</p>
+      )}
       {error && <p className="speak-error" role="status">{error}</p>}
     </div>
   );

@@ -19,12 +19,12 @@ describe("decodeState", () => {
     expect(() => decodeState("{broken")).toThrow("no se pueden leer");
   });
 
-  it("rejects unknown habits and more than three selections", () => {
+  it("rejects unknown habits and more than four selections", () => {
     const invalidStates = [
       { consentAcceptedAt: null, selectedHabitIds: ["unknown"], checkInsByDate: {}, adaptations: [] },
       {
         consentAcceptedAt: null,
-        selectedHabitIds: ["movement", "rest", "family", "purpose"],
+        selectedHabitIds: ["movement", "rest", "family", "purpose", "nature"],
         checkInsByDate: {},
         adaptations: [],
       },

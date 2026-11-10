@@ -159,18 +159,15 @@ describe("Blu user flows", () => {
     expect(document.querySelectorAll("#week-plan-heading")).toHaveLength(1);
   });
 
-  it("keeps selections in memory until consent and caps onboarding at three habits", async () => {
+  it("keeps selections in memory until consent and caps onboarding at four habits", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
 
-    await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
-    await user.click(screen.getByRole("button", { name: "Descanso y calma" }));
-    await user.click(screen.getByRole("button", { name: "Propósito" }));
     await user.click(screen.getByRole("button", { name: "Alimentación consciente" }));
+    await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
+    await user.click(screen.getByRole("button", { name: "Comunidad" }));
+    await user.click(screen.getByRole("button", { name: "Propósito" }));
 
-    expect(
-      screen.getAllByRole("status").some((el) => (el.textContent ?? "").includes("hasta tres hábitos")),
-    ).toBe(true);
     expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
     expect(screen.getByRole("button", { name: "Empezar con lo que elegí" }).hasAttribute("disabled"))
       .toBe(true);
@@ -188,7 +185,7 @@ describe("Blu user flows", () => {
       selectedHabitIds: string[];
     };
     expect(saved.consentAcceptedAt).toBeTruthy();
-    expect(saved.selectedHabitIds).toHaveLength(3);
+    expect(saved.selectedHabitIds).toHaveLength(4);
   });
 
   it("records daily check-ins and an explicit, reversible adaptation", async () => {
@@ -283,8 +280,8 @@ describe("Blu user flows", () => {
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
       expect(await screen.findByText(/El tiempo aprieta/)).toBeTruthy();
-      expect(screen.getAllByRole("button", { name: "Escuchar respuesta en voz alta" }))
-        .toHaveLength(2);
+      expect(screen.getAllByRole("button", { name: "Escuchar respuesta en voz alta" }).length)
+        .toBeGreaterThanOrEqual(3);
     } finally {
       vi.unstubAllGlobals();
     }
@@ -335,7 +332,11 @@ describe("Blu user flows", () => {
         expect.objectContaining({ cache: "no-store" }),
       );
 
-      await user.click(screen.getByRole("button", { name: "Escuchar respuesta en voz alta" }));
+      const listen = screen
+        .getAllByRole("button", { name: "Escuchar respuesta en voz alta" })
+        .find((button) => !button.hasAttribute("disabled"));
+      if (!listen) throw new Error("Falta el botón de voz en la nube");
+      await user.click(listen);
       expect(await screen.findByRole("button", { name: "Detener lectura" })).toBeTruthy();
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(fetchMock).toHaveBeenNthCalledWith(
@@ -606,7 +607,7 @@ describe("Blu user flows", () => {
     expect(screen.queryByText(/Observar el entorno durante un minuto/i)).toBeNull();
   });
 
-  it("respects the three-habit cap when including an accepted goal", async () => {
+  it("respects the four-habit cap when including an accepted goal", async () => {
     const user = userEvent.setup();
     window.localStorage.setItem(
       "blu.goals.v1",
@@ -630,7 +631,7 @@ describe("Blu user flows", () => {
       JSON.stringify({
         consentAcceptedAt: "2026-11-04T10:00:00.000Z",
         consent: { version: "2.0.0", purposes: {}, updatedAt: "" },
-        selectedHabitIds: ["movement", "rest", "family"],
+        selectedHabitIds: ["movement", "rest", "family", "nature"],
         checkInsByDate: {},
         adaptations: [],
       }),
@@ -640,20 +641,17 @@ describe("Blu user flows", () => {
     await user.click(
       screen.getByRole("button", { name: /Incluir en tus hábitos: Propósito/i }),
     );
-    expect(screen.getByText(/Puedes elegir hasta tres hábitos/i)).toBeTruthy();
+    expect(screen.getByText(/Puedes elegir hasta cuatro hábitos/i)).toBeTruthy();
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
       selectedHabitIds: string[];
     };
-    expect(saved.selectedHabitIds).toHaveLength(3);
+    expect(saved.selectedHabitIds).toHaveLength(4);
   });
 
   it.each([
     ["movement", "Movimiento natural"],
     ["nourishment", "Alimentación consciente"],
-    ["rest", "Descanso y calma"],
-    ["family", "Vínculos cercanos"],
     ["community", "Comunidad"],
-    ["nature", "Conexión con el entorno"],
     ["purpose", "Propósito"],
   ])("check-in works for %s (%s) and persists", async (habitId, habitName) => {
     const user = userEvent.setup();

@@ -41,9 +41,13 @@ const noReducedOnServer = (): boolean => false;
 export default function BluPresence({
   state = "idle",
   size = "md",
+  pose = "newspaper",
+  mood,
 }: {
   state?: BluPresenceState;
   size?: "sm" | "md" | "lg";
+  pose?: "newspaper" | "builder";
+  mood?: "waiting" | "encouraging" | "celebrate" | "thriving" | "resting";
 }) {
   const reduced = useSyncExternalStore(
     subscribeToMotionPreference,
@@ -52,13 +56,16 @@ export default function BluPresence({
   );
   const safe = (BLU_PRESENCE_STATES as readonly string[]).includes(state) ? state : "idle";
   const classes = ["blu-presence", `blu-presence--${size}`, `blu-state--${safe}`];
+  if (mood) classes.push(`blu-mood--${mood}`);
   if (reduced) classes.push("blu-reduced");
+  const src = pose === "builder" ? "/blu-builder.png" : "/blu-newspaper.png";
 
   return (
     <span
       aria-hidden="true"
       className={classes.join(" ")}
       data-blu-state={safe}
+      data-companion-mood={mood}
       data-testid="blu-presence"
     >
       <img
@@ -66,7 +73,7 @@ export default function BluPresence({
         className="blu-face-img"
         data-testid="blu-illustration"
         draggable={false}
-        src="/blu-newspaper.png"
+        src={src}
         style={{ display: "block", height: "100%", objectFit: "contain", width: "100%" }}
       />
     </span>

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEv
 import Link from "next/link";
 import {
   HABITS,
+  MAX_SELECTED_HABITS,
   currentAction,
   getWeeklySummary,
   isBarrier,
@@ -11,6 +12,20 @@ import {
   type Barrier,
   type HabitId,
 } from "@/lib/blu";
+import { readCompanion } from "@/lib/companion";
+import { getLocale, LOCALES, setLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
+import {
+  DECLARED_LABELS,
+  DECLARED_LEVELS,
+  refinePortrait,
+  savePortrait,
+  getPortraitSnapshot,
+  getServerPortraitSnapshot,
+  subscribePortrait,
+  type DeclaredLevel,
+  type Portrait,
+  type RefinedPortrait,
+} from "@/lib/portrait";
 import { respondToMessage, type FallbackReason } from "@/lib/conversation";
 import {
   disableReminders,
@@ -30,7 +45,7 @@ import { loadCatalog, type CatalogItem } from "@/lib/habit-catalog";
 import { loadEducation } from "@/lib/habit-education";
 import { TraceabilityNote } from "./TraceabilityNote";
 import { activeTelemetry, initTelemetry } from "@/lib/observability/telemetry";
-import SpeakButton, { stopActiveSpeech, type VoiceProfile } from "./SpeakButton";
+import SpeakButton, { speakLocalText, stopActiveSpeech, type SpeechLocale, type VoiceProfile } from "./SpeakButton";
 import { BLU_GREETING } from "@/lib/conversation";
 import {
   getProfileSnapshot,
@@ -109,9 +124,13 @@ function getReminderSnapshot(version: number) {
   return reminderSnapshotCache;
 }
 
+const PILLAR_IDS: HabitId[] = ["nourishment", "movement", "community", "purpose"];
+
 export default function Home() {
   const snapshot = useSyncExternalStore(subscribeToBlu, getBluSnapshot, getServerBluSnapshot);
   const clockMinute = useSyncExternalStore(subscribeToClock, getClockSnapshot, getServerClockSnapshot);
+  const locale = useSyncExternalStore(subscribeLocale, getLocale, () => "es" as Locale);
+  const portrait = useSyncExternalStore(subscribePortrait, getPortraitSnapshot, getServerPortraitSnapshot);
   const state = snapshot.state;
   const [purposeDraft, setPurposeDraft] = useState<Record<PurposeId, boolean>>({
     operativo: false,
@@ -135,6 +154,9 @@ export default function Home() {
   const [reviewNotice, setReviewNotice] = useState("");
   const [editingSelection, setEditingSelection] = useState(false);
   const [draftSelectedHabitIds, setDraftSelectedHabitIds] = useState<HabitId[]>([]);
+  const [portraitEditing, setPortraitEditing] = useState(false);
+  const [portraitDismissed, setPortraitDismissed] = useState(false);
+  const [portraitDraft, setPortraitDraft] = useState<Partial<Record<HabitId, DeclaredLevel>>>({});
   const [chatInput, setChatInput] = useState("");
   const [assistantRemote, setAssistantRemote] = useState(false);
   const [chatPresence, setChatPresence] = useState<BluPresenceState>("welcome");
@@ -165,12 +187,46 @@ export default function Home() {
   const todayHabitsCompleted = state.selectedHabitIds.filter((habitId) =>
     state.checkInsByDate[todayKey]?.includes(habitId),
   ).length;
-  const todayProgressMessage =
+  const todayProgressMessage = translate(
+    locale,
     todayHabitsCompleted === 0
       ? "Un paso pequeño también cuenta."
       : todayHabitsCompleted === state.selectedHabitIds.length
         ? "Hoy hiciste espacio para ti."
-        : "Ya registraste un paso. Sigue a tu ritmo.";
+        : "Ya registraste un paso. Sigue a tu ritmo.",
+  );
+  const companion = readCompanion(state, today);
+  const speechLocale: SpeechLocale =
+    locale === "en-US" ? "en-US" : locale === "zh-CN" ? "zh-CN" : "es-CL";
+  const welcomeSpeech = [
+    translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes."),
+    translate(locale, "Un cambio pequeño también cuenta."),
+    translate(
+      locale,
+      "Elige algo que te gustaría explorar. No necesitas cambiarlo todo hoy ni hacerlo perfecto.",
+    ),
+  ].join(" ");
+  const todaySpeech = [
+    translate(locale, "Hoy, elige un paso a tu ritmo."),
+    translate(locale, "No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias."),
+    translate(locale, companion.line),
+    todayProgressMessage,
+  ].join(" ");
+  const screenSpeech =
+    !state.consentAcceptedAt || state.selectedHabitIds.length === 0 || editingSelection
+      ? welcomeSpeech
+      : todaySpeech;
+  const spokenLocale = useRef<Locale | null>(null);
+  useEffect(() => {
+    if (spokenLocale.current === null) {
+      spokenLocale.current = locale;
+      return;
+    }
+    if (spokenLocale.current === locale) return;
+    spokenLocale.current = locale;
+    speakLocalText(screenSpeech, speechLocale);
+  }, [locale, screenSpeech, speechLocale]);
+  const refined = refinePortrait(portrait, state, today);
   const consentReady = hasPurpose(state.consent, "operativo") && !needsReconsent(state.consent);
   const showConsentEditor = !consentReady || managingConsent;
 
@@ -198,6 +254,21 @@ export default function Home() {
     setEditingSelection(false);
     setManagingConsent(false);
     setNotice("");
+  }
+
+  function saveStartingPoint() {
+    const next: Portrait = {
+      version: 1,
+      declaredAt: new Date().toISOString(),
+      levels: portraitDraft,
+    };
+    if (!savePortrait(next)) {
+      setNotice("No pude guardar el punto de partida en este navegador.");
+      return;
+    }
+    setPortraitEditing(false);
+    setPortraitDismissed(false);
+    setNotice("Punto de partida guardado. Se irá afinando con los pasos que marques.");
   }
 
   function openConsentManager() {
@@ -331,8 +402,8 @@ export default function Home() {
   function includeGoal(goal: AcceptedGoal) {
     const habitId = goal.habitId as HabitId;
     if (state.selectedHabitIds.includes(habitId)) return;
-    if (state.selectedHabitIds.length >= 3) {
-      setNotice("Puedes elegir hasta tres hábitos. Quita uno para incluir este.");
+    if (state.selectedHabitIds.length >= MAX_SELECTED_HABITS) {
+      setNotice(translate(locale, "Puedes elegir hasta cuatro hábitos. Quita uno para incluir este."));
       return;
     }
     updateBluState((current) => ({
@@ -372,8 +443,8 @@ export default function Home() {
 
   function toggleHabit(habitId: HabitId) {
     const alreadySelected = draftSelectedHabitIds.includes(habitId);
-    if (!alreadySelected && draftSelectedHabitIds.length >= 3) {
-      setNotice("Puedes elegir hasta tres hábitos. Quita uno para elegir otro.");
+    if (!alreadySelected && draftSelectedHabitIds.length >= MAX_SELECTED_HABITS) {
+      setNotice(translate(locale, "Puedes elegir hasta cuatro hábitos. Quita uno para elegir otro."));
       return;
     }
     setNotice("");
@@ -406,6 +477,9 @@ export default function Home() {
   // arranca cuando el consentimiento se activa (nunca antes).
   const telemetryConsent = useRef(false);
   const telemetryStarted = useRef(false);
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
   useEffect(() => {
     initTelemetry({
       hasConsent: () => telemetryConsent.current,
@@ -488,7 +562,15 @@ export default function Home() {
     const text = chatInput.trim();
     if (!text) return;
     setChatPresence("responding");
-    const result = await respondToMessage(text);
+    const result = await respondToMessage(text, {
+      locale,
+      habitIds: state.selectedHabitIds,
+      todayDone: todayHabitsCompleted,
+      todayTotal: state.selectedHabitIds.length,
+      mood: companion.mood,
+      declared: portrait?.levels ?? {},
+      observedDays: refined.observedDays,
+    });
     setAssistantRemote(result.providerId === "remote");
     activeTelemetry()?.record("chat_mensaje_enviado", {
       modo: result.providerId === "remote" ? "remoto" : "local",
@@ -520,6 +602,9 @@ export default function Home() {
       setManagingConsent(false);
       setPurposeDraft({ operativo: false, mejora: false, investigacion: false });
       setDraftSelectedHabitIds([]);
+      setPortraitDraft({});
+      setPortraitEditing(false);
+      setPortraitDismissed(false);
       setChatMessages([
         {
           role: "blu",
@@ -560,41 +645,60 @@ export default function Home() {
             <BluPresence size="sm" />
             <span>blu</span>
           </a>
-          <span className="prototype-tag">Versión de prueba</span>
+          <span className="prototype-tag">{translate(locale, "Versión de prueba")}</span>
+          <LanguageControl locale={locale} />
         </header>
         <section className="welcome-panel">
           <div className="welcome-copy">
             <div className="blu-intro">
               <BluPresence size="lg" state="welcome" />
               <p className="blu-intro-line">
-                «Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.»
+                {translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
               </p>
+              <SpeakButton
+                locale={speechLocale}
+                text={translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
+              />
             </div>
-            <span className="eyebrow">TU BIENESTAR, UN DÍA A LA VEZ</span>
-            <h1>Un cambio pequeño también cuenta.</h1>
+            <span className="eyebrow">{translate(locale, "TU BIENESTAR, UN DÍA A LA VEZ")}</span>
+            <h1>{translate(locale, "Un cambio pequeño también cuenta.")}</h1>
             <p>
-              Elige algo que te gustaría explorar. No necesitas cambiarlo todo hoy ni hacerlo
-              perfecto.
+              {translate(
+                locale,
+                "Elige algo que te gustaría explorar. No necesitas cambiarlo todo hoy ni hacerlo perfecto.",
+              )}
             </p>
             <div className="disclaimer">
               <span aria-hidden="true">ⓘ</span>
               <p>
-                Blu es un prototipo de bienestar, no una herramienta clínica. No ofrece consejos
-                médicos ni promete vivir más años.
+                {translate(
+                  locale,
+                  "Blu es un prototipo de bienestar, no una herramienta clínica. No ofrece consejos médicos ni promete vivir más años.",
+                )}
               </p>
             </div>
           </div>
           <div className="onboarding-card">
             <div className="card-heading">
               <span className="step-label">
-                {editingSelection ? "AJUSTA TU SELECCIÓN" : "PRIMER PASO"}
+                {editingSelection
+                  ? translate(locale, "AJUSTA TU SELECCIÓN")
+                  : translate(locale, "PRIMER PASO")}
               </span>
               <span className="step-count">01 / 02</span>
             </div>
-            <h2>¿Qué te gustaría cuidar?</h2>
-            <p className="muted">Elige entre uno y tres temas. Tú decides el ritmo.</p>
+            <h2>{translate(locale, "¿Qué te gustaría cuidar?")}</h2>
+            <p className="muted">{translate(locale, "Elige entre uno y cuatro temas. Tú decides el ritmo.")}</p>
             <div className="habit-grid">
-              {HABITS.map((habit) => {
+              {[
+                ...PILLAR_IDS.flatMap((id) => {
+                  const habit = HABITS.find((item) => item.id === id);
+                  return habit ? [habit] : [];
+                }),
+                ...HABITS.filter(
+                  (habit) => !PILLAR_IDS.includes(habit.id) && draftSelectedHabitIds.includes(habit.id),
+                ),
+              ].map((habit) => {
                 const selected = draftSelectedHabitIds.includes(habit.id);
                 return (
                   <button
@@ -607,7 +711,7 @@ export default function Home() {
                     <span className="habit-icon" aria-hidden="true">
                       {habit.icon}
                     </span>
-                    <span>{habit.title}</span>
+                    <span>{translate(locale, habit.title)}</span>
                     <span className="selection-indicator" aria-hidden="true">
                       {selected ? "✓" : "+"}
                     </span>
@@ -615,8 +719,16 @@ export default function Home() {
                 );
               })}
             </div>
+            {draftSelectedHabitIds.some((id) => !PILLAR_IDS.includes(id)) && (
+              <p className="tiny-note">
+                {translate(
+                  locale,
+                  "Algunos temas que ya tenías no están entre los cuatro pilares. Puedes quitarlos y elegir de nuevo.",
+                )}
+              </p>
+            )}
             <p aria-live="polite" className="selection-count">
-              {draftSelectedHabitIds.length} de 3 elegidos
+              {draftSelectedHabitIds.length} {translate(locale, "de 4 elegidos")}
             </p>
             {showConsentEditor && (
               <fieldset>
@@ -636,7 +748,7 @@ export default function Home() {
                       }
                       type="checkbox"
                     />
-                    <span>{purpose.label}</span>
+                    <span>{translate(locale, purpose.label)}</span>
                   </label>
                 ))}
                 {consentReady && (
@@ -649,7 +761,7 @@ export default function Home() {
             {(draftSelectedHabitIds.length === 0 || (!consentReady && !purposeDraft.operativo)) && (
               <p className="tiny-note" role="status" aria-live="polite">
                 {draftSelectedHabitIds.length === 0
-                  ? "Elige al menos un hábito para continuar."
+                  ? translate(locale, "Elige al menos un hábito para continuar.")
                   : "Falta aceptar el aviso (propósito operativo) para continuar."}
               </p>
             )}
@@ -662,7 +774,9 @@ export default function Home() {
               onClick={continueSelection}
               type="button"
             >
-              {editingSelection ? "Guardar selección" : "Empezar con lo que elegí"}{" "}
+              {editingSelection
+                ? translate(locale, "Guardar selección")
+                : translate(locale, "Empezar con lo que elegí")}{" "}
               <span aria-hidden="true">→</span>
             </button>
             {editingSelection && (
@@ -674,19 +788,21 @@ export default function Home() {
                 }}
                 type="button"
               >
-                Cancelar
+                {translate(locale, "Cancelar")}
               </button>
             )}
             {notice && <p className="inline-notice" role="status">{notice}</p>}
             <p className="tiny-note">No escribas información médica ni datos que te identifiquen.</p>
             <p className="tiny-note">
-              ¿Prefieres partir con una autoevaluación?{" "}
-              <Link href="/cuestionario">Hacer el autodiagnóstico de hábitos (opcional, experimental)</Link>
+              {translate(locale, "¿Prefieres partir con una autoevaluación?")}{" "}
+              <Link href="/cuestionario">
+                {translate(locale, "Hacer el autodiagnóstico largo (opcional, experimental)")}
+              </Link>
             </p>
           </div>
         </section>
         <footer className="page-footer">
-          <span>Inspirado en siete dimensiones de bienestar</span>
+          <span>{translate(locale, "Cuatro pilares: alimentación, movimiento, comunidad y propósito.")}</span>
           <span>Sin cuenta · Tus hábitos se guardan en este navegador</span>
         </footer>
       </div>
@@ -702,23 +818,21 @@ export default function Home() {
             <span>blu</span>
           </a>
           <div className="topbar-right">
-            <span className="prototype-tag">Versión de prueba</span>
+            <span className="prototype-tag">{translate(locale, "Versión de prueba")}</span>
+            <LanguageControl locale={locale} />
             <button className="text-button" onClick={clearData} type="button">
               Borrar mis datos
             </button>
           </div>
         </div>
         <nav className="dashboard-nav" aria-label="Secciones principales">
-          <a
-            href="#chat-heading"
-            onClick={() => setChatPresence("pause")} /* pausa elegida explícitamente (UX-07) */
-          >
-            Pausa con Blu
+          <a href="#chat-heading" onClick={() => setChatPresence("pause")}>
+            {translate(locale, "Pausa con Blu")}
           </a>
-          <a href="#habits-heading">Hoy</a>
-          <a href="#week-plan">Tu semana</a>
-          <a href="#review-heading">Progreso</a>
-          <a href="#privacy-controls">Privacidad</a>
+          <a href="#habits-heading">{translate(locale, "Hoy")}</a>
+          <a href="#week-plan">{translate(locale, "Tu semana")}</a>
+          <a href="#review-heading">{translate(locale, "Progreso")}</a>
+          <a href="#privacy-controls">{translate(locale, "Privacidad")}</a>
         </nav>
       </header>
 
@@ -726,29 +840,39 @@ export default function Home() {
         <div className="hero-copy">
           <span className="hero-kicker">
             <span className="hero-kicker-dot" aria-hidden="true" />
-            Un día a la vez
+            {translate(locale, "Un día a la vez")}
           </span>
           <p className="hero-date">
             {today.toLocaleDateString("es-CL", { dateStyle: "long" })}
           </p>
-          <h1 id="today-heading">Hoy, elige un paso <span>a tu ritmo.</span></h1>
+          <h1 id="today-heading">
+            {locale === "es" ? (
+              <>
+                Hoy, elige un paso <span>a tu ritmo.</span>
+              </>
+            ) : (
+              translate(locale, "Hoy, elige un paso a tu ritmo.")
+            )}
+          </h1>
           <p className="hero-description">
-            No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias.
+            {translate(locale, "No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias.")}
           </p>
           <a className="hero-link" href="#habits-heading">
-            Ir a mis hábitos <span aria-hidden="true">↓</span>
+            {translate(locale, "Ir a mis hábitos")} <span aria-hidden="true">↓</span>
           </a>
         </div>
         <div className="hero-blu">
-          <BluPresence size="md" state={heroPresence} />
+          <BluPresence mood={companion.mood} pose={companion.pose} size="lg" state={heroPresence} />
+          <p className="companion-line">{translate(locale, companion.line)}</p>
+          <SpeakButton locale={speechLocale} text={todaySpeech} />
         </div>
         <div className="hero-progress">
-          <span className="progress-caption">TU PASO DE HOY</span>
+          <span className="progress-caption">{translate(locale, "TU PASO DE HOY")}</span>
           <div className="progress-count">
             <strong>{todayHabitsCompleted}</strong>
             <span>
               / {state.selectedHabitIds.length}{" "}
-              {state.selectedHabitIds.length === 1 ? "hábito" : "hábitos"}
+              {translate(locale, state.selectedHabitIds.length === 1 ? "hábito" : "hábitos")}
             </span>
           </div>
           <div
@@ -791,6 +915,27 @@ export default function Home() {
 
       {notice && <p className="toast" role="status">{notice}</p>}
 
+      <PortraitPanel
+        draft={portraitDraft}
+        habitIds={state.selectedHabitIds}
+        locale={locale}
+        onDismiss={() => {
+          setPortraitEditing(false);
+          setPortraitDismissed(true);
+        }}
+        onDraft={(habitId, level) =>
+          setPortraitDraft((current) => ({ ...current, [habitId]: level }))
+        }
+        onEdit={() => {
+          setPortraitDraft(portrait?.levels ?? {});
+          setPortraitDismissed(false);
+          setPortraitEditing(true);
+        }}
+        onSave={saveStartingPoint}
+        open={portraitEditing || (portrait === null && !portraitDismissed)}
+        refined={refined}
+      />
+
       {state.consentAcceptedAt && needsReconsent(state.consent) && (
         <p className="inline-notice" role="status">
           Actualizamos el aviso de consentimiento (versión {CONSENT_VERSION}). Tu uso sigue
@@ -806,7 +951,7 @@ export default function Home() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">TU ESPACIO</span>
-              <h2 id="habits-heading">Hábitos que elegiste</h2>
+              <h2 id="habits-heading">{translate(locale, "Hábitos que elegiste")}</h2>
             </div>
             <button
               className="text-button"
@@ -816,7 +961,7 @@ export default function Home() {
               }}
               type="button"
             >
-              Cambiar selección
+              {translate(locale, "Cambiar selección")}
             </button>
           </div>
           <div className="daily-list">
@@ -828,7 +973,7 @@ export default function Home() {
                 <article className={`daily-card${done ? " completed" : ""}`} key={habit.id}>
                   <div className="daily-icon" aria-hidden="true">{habit.icon}</div>
                   <div className="daily-copy">
-                    <span className="category-label">{habit.title}</span>
+                    <span className="category-label">{translate(locale, habit.title)}</span>
                     <p>{currentAction(state, habit.id)}</p>
                     <details>
                       <summary className="text-button">Otras versiones</summary>
@@ -865,13 +1010,13 @@ export default function Home() {
                     </details>
                   </div>
                   <button
-                    aria-label={`${done ? "Desmarcar" : "Marcar"} ${habit.title}`}
+                    aria-label={`${translate(locale, done ? "Desmarcar" : "Marcar")} ${translate(locale, habit.title)}`}
                     aria-pressed={done}
                     className="check-button"
                     onClick={() => toggleCheckIn(habit.id)}
                     type="button"
                   >
-                    {done ? "✓" : "Lo hice"}
+                    {done ? "✓" : translate(locale, "Lo hice")}
                   </button>
                 </article>
               );
@@ -1170,7 +1315,7 @@ export default function Home() {
                       onChange={() => setReviewDraft((draft) => ({ ...draft, felt: option.value }))}
                       type="radio"
                     />
-                    <span>{option.label}</span>
+                    <span>{translate(locale, option.label)}</span>
                   </label>
                 ))}
               </fieldset>
@@ -1186,7 +1331,7 @@ export default function Home() {
                       }
                       type="radio"
                     />
-                    <span>{option.label}</span>
+                    <span>{translate(locale, option.label)}</span>
                   </label>
                 ))}
               </fieldset>
@@ -1286,13 +1431,14 @@ export default function Home() {
                     <BluPresence size="sm" />
                   )}
                   <div className="chat-bubble-body">
-                    <p>{message.text}</p>
+                    <p>{message.role === "blu" ? translate(locale, message.text) : message.text}</p>
                     {message.role === "blu" && (
                       <SpeakButton
                         azureAvailable={azureVoiceEnabled}
+                        locale={speechLocale}
                         mode={azureVoiceEnabled ? "azure" : "local"}
                         profile={voiceProfile}
-                        text={message.text}
+                        text={translate(locale, message.text)}
                       />
                     )}
                   </div>
@@ -1300,22 +1446,27 @@ export default function Home() {
               ))}
             </div>
             <form className="chat-form" onSubmit={sendMessage}>
-              <label className="visually-hidden" htmlFor="chat-input">Escribe una reflexión</label>
+              <label className="visually-hidden" htmlFor="chat-input">{translate(locale, "Escribe una reflexión")}</label>
               <input
                 autoComplete="off"
                 id="chat-input"
                 maxLength={400}
                 onChange={(event) => setChatInput(event.target.value)}
-                placeholder="¿Qué tienes en mente?"
+                placeholder={translate(locale, "¿Qué tienes en mente?")}
                 value={chatInput}
               />
               <button aria-label="Enviar mensaje" disabled={!chatInput.trim()} type="submit">↑</button>
             </form>
-            <p className="chat-privacy">No incluyas datos personales ni información médica.</p>
+            <p className="chat-privacy">{translate(locale, "No incluyas datos personales ni información médica.")}</p>
             <section className="principle-card" aria-label="Una idea para acompañarte">
-              <span className="eyebrow">UNA IDEA PARA HOY</span>
-              <p>La conexión y el propósito también se construyen con gestos pequeños, elegidos por ti.</p>
-              <span className="principle-caption">Reflexión, no consejo clínico</span>
+              <span className="eyebrow">{translate(locale, "UNA IDEA PARA HOY")}</span>
+              <p>
+                {translate(
+                  locale,
+                  "La conexión y el propósito también se construyen con gestos pequeños, elegidos por ti.",
+                )}
+              </p>
+              <span className="principle-caption">{translate(locale, "Reflexión, no consejo clínico")}</span>
             </section>
           </section>
         </aside>
@@ -1324,35 +1475,46 @@ export default function Home() {
       <footer className="dashboard-footer" id="privacy-controls">
         <div className="privacy-panel">
           <div className="privacy-panel-copy">
-            <h2 className="privacy-title">Tus datos, bajo tu control</h2>
+            <h2 className="privacy-title">{translate(locale, "Tus datos, bajo tu control")}</h2>
             <p className="privacy-lead">
-              Todo lo que guardas en Blu vive en este navegador. Puedes llevártelo o borrarlo
-              cuando quieras: sin cuentas y sin nube.
+              {translate(
+                locale,
+                "Todo lo que guardas en Blu vive en este navegador. Puedes llevártelo o borrarlo cuando quieras: sin cuentas y sin nube.",
+              )}
             </p>
           </div>
           <ul className="privacy-actions" role="list">
             <li>
               <button className="privacy-action" onClick={exportData} type="button">
-                <span className="privacy-action-name">Exportar mis datos</span>
-                <span className="privacy-action-desc">Un archivo JSON con todo lo guardado aquí.</span>
+                <span className="privacy-action-name">{translate(locale, "Exportar mis datos")}</span>
+                <span className="privacy-action-desc">
+                  {translate(locale, "Un archivo JSON con todo lo guardado aquí.")}
+                </span>
               </button>
             </li>
             <li>
               <button className="privacy-action" onClick={openConsentManager} type="button">
-                <span className="privacy-action-name">Consentimientos</span>
-                <span className="privacy-action-desc">Revisa o retira lo que permitiste.</span>
+                <span className="privacy-action-name">{translate(locale, "Consentimientos")}</span>
+                <span className="privacy-action-desc">
+                  {translate(locale, "Revisa o retira lo que permitiste.")}
+                </span>
               </button>
             </li>
             <li>
               <button className="privacy-action privacy-action--danger" onClick={clearData} type="button">
-                <span className="privacy-action-name">Borrar todos los datos</span>
-                <span className="privacy-action-desc">Elimina todo y verifica el borrado.</span>
+                <span className="privacy-action-name">{translate(locale, "Borrar todos los datos")}</span>
+                <span className="privacy-action-desc">
+                  {translate(locale, "Elimina todo y verifica el borrado.")}
+                </span>
               </button>
             </li>
           </ul>
         </div>
         <p className="privacy-legal">
-          Blu es un prototipo de bienestar: acompaña hábitos, no diagnostica ni trata.
+          {translate(
+            locale,
+            "Blu es un prototipo de bienestar: acompaña hábitos, no diagnostica ni trata.",
+          )}
         </p>
       </footer>
     </div>
@@ -1407,3 +1569,124 @@ const DECISION_OPTIONS: Array<{ value: ReviewDecision; label: string }> = [
   { value: "keep", label: "Mantener como está" },
   { value: "adjust", label: "Ajustar un hábito" },
 ];
+
+const LOCALE_LABEL: Record<Locale, string> = {
+  es: "Español",
+  "en-US": "English",
+  "zh-CN": "中文",
+};
+
+function LanguageControl({ locale }: { locale: Locale }) {
+  return (
+    <label className="language-select">
+      <span className="visually-hidden">{translate(locale, "Idioma")}</span>
+      <select
+        aria-label={translate(locale, "Idioma")}
+        onChange={(event) => {
+          const next = event.target.value;
+          if (next === "es" || next === "en-US" || next === "zh-CN") setLocale(next);
+        }}
+        value={locale}
+      >
+        {LOCALES.map((code) => (
+          <option key={code} value={code}>
+            {LOCALE_LABEL[code]}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function PortraitPanel({
+  locale,
+  habitIds,
+  draft,
+  refined,
+  open,
+  onDraft,
+  onSave,
+  onDismiss,
+  onEdit,
+}: {
+  locale: Locale;
+  habitIds: HabitId[];
+  draft: Partial<Record<HabitId, DeclaredLevel>>;
+  refined: RefinedPortrait;
+  open: boolean;
+  onDraft: (habitId: HabitId, level: DeclaredLevel) => void;
+  onSave: () => void;
+  onDismiss: () => void;
+  onEdit: () => void;
+}) {
+  if (!open) {
+    const portraitHasDeclaration = refined.habits.some((item) => item.declared);
+    return (
+      <section className="portrait-card" aria-labelledby="portrait-heading">
+        <div className="section-heading">
+          <h2 id="portrait-heading">{translate(locale, "Tu punto de partida")}</h2>
+          <button className="text-button" onClick={onEdit} type="button">
+            {translate(locale, portraitHasDeclaration ? "Actualizar lo que declaré" : "Completar punto de partida")}
+          </button>
+        </div>
+        <ul className="portrait-list">
+          {refined.habits.map((item) => {
+            const habit = HABITS.find((entry) => entry.id === item.habitId);
+            return (
+              <li key={item.habitId}>
+                <strong>{habit ? translate(locale, habit.title) : item.habitId}</strong>
+                <p>{item.line}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    );
+  }
+
+  const ready = habitIds.some((id) => draft[id]);
+  return (
+    <section className="portrait-card" aria-labelledby="portrait-heading">
+      <h2 id="portrait-heading">{translate(locale, "Tu punto de partida")}</h2>
+      <p className="muted">
+        {translate(
+          locale,
+          "Esto no es un diagnóstico. Es lo que declaras hoy; la práctica de los próximos días lo va afinando.",
+        )}
+      </p>
+      {habitIds.map((habitId) => {
+        const habit = HABITS.find((entry) => entry.id === habitId);
+        if (!habit) return null;
+        const title = translate(locale, habit.title);
+        return (
+          <fieldset className="portrait-habit" key={habitId}>
+            <legend>{title}</legend>
+            <div className="portrait-choices">
+              {DECLARED_LEVELS.map((level) => {
+                const label = translate(locale, DECLARED_LABELS[level]);
+                const selected = draft[habitId] === level;
+                return (
+                  <button
+                    aria-pressed={selected}
+                    className={`habit-option${selected ? " selected" : ""}`}
+                    key={level}
+                    onClick={() => onDraft(habitId, level)}
+                    type="button"
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+        );
+      })}
+      <button className="button button-dark" disabled={!ready} onClick={onSave} type="button">
+        {translate(locale, "Guardar mi punto de partida")}
+      </button>
+      <button className="text-button cancel-edit" onClick={onDismiss} type="button">
+        {translate(locale, "Ahora no")}
+      </button>
+    </section>
+  );
+}

@@ -1,3 +1,4 @@
+import type { AssistantScene } from "./assistant/scene";
 import { BluAssistant } from "./assistant/assistant";
 import { LocalRuleProvider } from "./assistant/providers/local";
 
@@ -15,11 +16,14 @@ export const BLU_GREETING =
 
 const local = new BluAssistant(new LocalRuleProvider());
 
-async function askServer(message: string): Promise<AssistantApiReply> {
+async function askServer(message: string, scene?: AssistantScene): Promise<AssistantApiReply> {
   const response = await fetch("/api/assistant", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: [{ role: "user", text: message }] }),
+    body: JSON.stringify({
+      messages: [{ role: "user", text: message }],
+      ...(scene ? { scene } : {}),
+    }),
     signal: AbortSignal.timeout(10_000),
   });
   if (!response.ok) {
@@ -46,9 +50,9 @@ export interface RespondResult {
   fallbackReason: FallbackReason | null;
 }
 
-export async function respondToMessage(message: string): Promise<RespondResult> {
+export async function respondToMessage(message: string, scene?: AssistantScene): Promise<RespondResult> {
   try {
-    const reply = await askServer(message);
+    const reply = await askServer(message, scene);
     return {
       text: reply.text,
       usedFallback: false,

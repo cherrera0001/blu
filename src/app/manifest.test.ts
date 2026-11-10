@@ -14,16 +14,16 @@ describe("manifest instalable (BLU-1503)", () => {
 
   it("usa los tokens de diseño para colores", () => {
     expect(m.theme_color).toBe("#2f8fbf");
-    expect(m.background_color).toBe("#faf6ef");
+    expect(m.background_color).toBe("#e8f7ff");
   });
 
-  it("declara iconos vectoriales 192 y 512 desde la identidad propia de Blu", () => {
+  it("declara los iconos oficiales de Blu en PNG, 192 y 512", () => {
     const icons = m.icons ?? [];
     const sizes = icons.flatMap((i) => (i.sizes ?? "").split(" "));
     expect(sizes).toContain("192x192");
     expect(sizes).toContain("512x512");
     expect(icons.every((i) => i.src === "/blu-newspaper.png")).toBe(true);
-    expect(icons.every((i) => i.type === "image/svg+xml")).toBe(true);
+    expect(icons.every((i) => i.type === "image/png")).toBe(true);
     expect(icons.every((i) => (i.src ?? "").startsWith("/"))).toBe(true);
   });
 

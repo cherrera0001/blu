@@ -1,4 +1,5 @@
 import { BluAssistant } from "@/lib/assistant/assistant";
+import { parseAssistantScene, type AssistantScene } from "@/lib/assistant/scene";
 import { LocalRuleProvider } from "@/lib/assistant/providers/local";
 import { getRemoteLlmConfig, RemoteLlmProvider } from "@/lib/assistant/providers/remote";
 import type { AssistantProvider } from "@/lib/assistant/types";
@@ -88,9 +89,9 @@ const PROVIDER_ERROR_TEXT =
  * están configuradas (ADR-0005); si no, el proveedor local determinista actual.
  * El orquestador degrada automáticamente al local si el remoto falla.
  */
-function resolveProvider(): AssistantProvider {
+function resolveProvider(scene: AssistantScene | null): AssistantProvider {
   const config = getRemoteLlmConfig();
-  return config ? new RemoteLlmProvider(config) : new LocalRuleProvider();
+  return config ? new RemoteLlmProvider(config, fetch, 10_000, scene) : new LocalRuleProvider();
 }
 
 /**
@@ -128,7 +129,8 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "rate_limited" }, { status: 429 });
   }
 
-  const assistant = new BluAssistant(resolveProvider());
+  const scene = parseAssistantScene((body as { scene?: unknown }).scene);
+  const assistant = new BluAssistant(resolveProvider(scene));
   try {
     const reply = await assistant.ask(body.messages);
     return Response.json({

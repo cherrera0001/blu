@@ -3,7 +3,7 @@ import { RegisterSW } from "@/app/register-sw";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Blu — tu bienestar, un día a la vez",
+  title: "blu",
   description:
     "Un prototipo para explorar hábitos de bienestar. No ofrece consejo médico ni sustituye atención profesional.",
 };
