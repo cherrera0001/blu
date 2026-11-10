@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" role="img" aria-label="Blu en reposo">
+  <!-- Blu character system — geometría vectorial editable. Paleta de originales holablu. -->
+  
+  <defs>
+    <radialGradient id="bodyGrad" cx="36%" cy="26%" r="74%">
+      <stop offset="0%" stop-color="#A8D8F8"/>
+      <stop offset="42%" stop-color="#60B8F8"/>
+      <stop offset="100%" stop-color="#1878F8"/>
+    </radialGradient>
+    <linearGradient id="legGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60B8F8"/>
+      <stop offset="100%" stop-color="#1070F8"/>
+    </linearGradient>
+    <radialGradient id="cheekSoft" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="helmetGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE97A"/>
+      <stop offset="100%" stop-color="#E6B800"/>
+    </linearGradient>
+    <linearGradient id="beltGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A06A3F"/>
+      <stop offset="100%" stop-color="#7A4E2E"/>
+    </linearGradient>
+  </defs>
+
+  
+  <g id="body">
+    <path id="torso" fill="url(#bodyGrad)" d="M100 22
+      C128 22 152 46 160 84
+      C168 126 162 160 142 182
+      C128 194 114 200 100 200
+      C86 200 72 194 58 182
+      C38 160 32 126 40 84
+      C48 46 72 22 100 22Z"/>
+    <ellipse cx="70" cy="90" rx="16" ry="12" fill="url(#cheekSoft)"/>
+    <ellipse cx="130" cy="90" rx="16" ry="12" fill="url(#cheekSoft)"/>
+  </g>
+
+  <g id="legs">
+    <ellipse cx="76" cy="208" rx="24" ry="13" fill="url(#legGrad)"/>
+    <ellipse cx="124" cy="208" rx="24" ry="13" fill="url(#legGrad)"/>
+  </g>
+
+  <g id="arms">
+    <!-- brazo derecho (vista) abajo; izquierdo al pecho — fotograma 018 -->
+    <path fill="url(#bodyGrad)" d="M148 120 C166 132 170 156 158 168 C146 178 130 170 128 156 C126 142 136 126 146 120 Z"/>
+    <path fill="url(#bodyGrad)" d="M52 126 C40 118 48 96 66 92 C80 90 88 102 84 114 C80 126 66 130 56 128 Z"/>
+    <g id="hand-heart" transform="translate(78 108)">
+      <ellipse cx="0" cy="8" rx="10" ry="8" fill="#60B8F8"/>
+      <path id="finger-heart" fill="#A8D8F8" d="M-2 0 C-10 -6 -4 -14 0 -6 C4 -14 10 -6 2 0 C0 4 -1 4 -2 0Z"/>
+    </g>
+    <g id="floating-heart" transform="translate(72 78)">
+      <path fill="#4AA8FF" d="M0 6 C-6 -2 -12 2 -8 8 C-4 14 0 18 0 18 C0 18 4 14 8 8 C12 2 6 -2 0 6Z"/>
+      <path fill="none" stroke="#7EC8FF" stroke-width="1.4" stroke-linecap="round" d="M14 2 q4 -4 2 -8 M18 6 q5 -2 4 -7 M12 10 q6 0 8 -5"/>
+    </g>
+  </g>
+  <g id="face">
+    <path id="eye-l" fill="none" stroke="#1A1A1B" stroke-width="3.6" stroke-linecap="round" d="M70 96 Q80 88 90 96"/>
+    <path id="eye-r" fill="none" stroke="#1A1A1B" stroke-width="3.6" stroke-linecap="round" d="M110 96 Q120 88 130 96"/>
+    <path id="mouth" fill="none" stroke="#1A1A1B" stroke-width="3.2" stroke-linecap="round" d="M90 124 Q100 132 110 124"/>
+  </g>
+</svg>

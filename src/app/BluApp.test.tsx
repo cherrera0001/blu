@@ -60,8 +60,12 @@ describe("Blu user flows", () => {
 
     expect(screen.getByText("Versión de prueba")).toBeTruthy();
     expect(screen.queryByText("PROTOTIPO LOCAL")).toBeNull();
-    expect(document.querySelector('img[src="/blu-newspaper.png"]')).not.toBeNull();
-    expect(document.querySelector(".welcome-copy [data-testid='blu-presence'] img")).not.toBeNull();
+    const welcomeBlu = document.querySelector(".welcome-copy [data-testid='blu-presence']");
+    expect(welcomeBlu?.getAttribute("data-blu-pose")).toBe("companion");
+    expect(welcomeBlu?.getAttribute("data-blu-live")).toBe("true");
+    expect(document.querySelector(".welcome-copy [data-testid='blu-illustration']")?.tagName.toLowerCase()).toBe(
+      "svg",
+    );
   });
 
   it("offers accessible section navigation after onboarding", async () => {

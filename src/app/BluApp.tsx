@@ -525,6 +525,19 @@ export default function Home() {
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  // Gestos de presencia: vuelven solos a un estado calmado tras el acuse (UX-07).
+  useEffect(() => {
+    if (chatPresence !== "acknowledge" && chatPresence !== "unavailable") return;
+    const next: BluPresenceState = chatPresence === "unavailable" ? "pause" : "welcome";
+    const timer = window.setTimeout(() => setChatPresence(next), 2200);
+    return () => window.clearTimeout(timer);
+  }, [chatPresence]);
+  useEffect(() => {
+    if (heroPresence !== "acknowledge") return;
+    const timer = window.setTimeout(() => setHeroPresence("idle"), 1600);
+    return () => window.clearTimeout(timer);
+  }, [heroPresence]);
   useEffect(() => {
     initTelemetry({
       hasConsent: () => telemetryConsent.current,
@@ -690,7 +703,7 @@ export default function Home() {
       <div className="onboarding">
         <header className="topbar">
           <a className="brand" href="#" aria-label={translate(locale, "Blu, inicio")}>
-            <BluPresence size="sm" />
+            <BluPresence pose="companion" size="sm" state="welcome" />
             <span>blu</span>
           </a>
           <span className="prototype-tag">{translate(locale, "Versión de prueba")}</span>
@@ -699,7 +712,7 @@ export default function Home() {
         <section className="welcome-panel">
           <div className="welcome-copy">
             <div className="blu-intro">
-              <BluPresence size="lg" state="welcome" />
+              <BluPresence pose="companion" size="lg" state="welcome" />
               <p className="blu-intro-line">
                 {translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
               </p>
@@ -884,7 +897,7 @@ export default function Home() {
       <header className="app-header">
         <div className="topbar">
           <a className="brand" href="#" aria-label={translate(locale, "Blu, inicio")}>
-            <BluPresence size="sm" />
+            <BluPresence pose="companion" size="sm" state="idle" />
             <span>blu</span>
           </a>
           <div className="topbar-right">
@@ -1451,7 +1464,7 @@ export default function Home() {
         <aside className="side-column">
           <section className="chat-card" aria-labelledby="chat-heading">
             <div className="chat-heading">
-              <BluPresence size="sm" state={chatPresence} />
+              <BluPresence pose="companion" size="sm" state={chatPresence} />
               <div>
                 <span className="eyebrow">{translate(locale, "ACOMPAÑAMIENTO")}</span>
                 <h2 id="chat-heading">{translate(locale, "Una pausa con Blu")}</h2>
@@ -1515,7 +1528,11 @@ export default function Home() {
               {chatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
                   {message.role === "blu" && (
-                    <BluPresence size="sm" />
+                    <BluPresence
+                      pose="companion"
+                      size="sm"
+                      state={index === chatMessages.length - 1 ? chatPresence : "idle"}
+                    />
                   )}
                   <div className="chat-bubble-body">
                     <p>{message.role === "blu" ? translate(locale, message.text) : message.text}</p>

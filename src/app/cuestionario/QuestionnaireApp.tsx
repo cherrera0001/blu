@@ -207,7 +207,7 @@ function QuestionnaireSession() {
           <span className="step-label">{translate(locale, "ANTES DE EMPEZAR")}</span>
           <h1 id="notice-heading">{translate(locale, "Antes de empezar, un aviso")}</h1>
           <div className="blu-intro">
-            <BluPresence size="sm" />
+            <BluPresence pose="companion" size="sm" state="welcome" />
             <p className="blu-intro-line">
               {translate(locale, "«Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»")}
             </p>

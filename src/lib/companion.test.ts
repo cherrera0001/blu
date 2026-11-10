@@ -16,13 +16,13 @@ describe("readCompanion", () => {
     expect(view.line).toMatch(/sin prisa/);
   });
 
-  it("se anima con un paso y celebra cuando el día está completo", () => {
+  it("se anima con el estilo companion y celebra con builder cuando el día está completo", () => {
     const partial = readCompanion(
       state({ checkInsByDate: { "2026-11-09": ["movement"] } }),
       today,
     );
     expect(partial.mood).toBe("encouraging");
-    expect(partial.pose).toBe("newspaper");
+    expect(partial.pose).toBe("companion");
 
     const done = readCompanion(
       state({ checkInsByDate: { "2026-11-09": ["movement", "rest"] } }),

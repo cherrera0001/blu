@@ -13,7 +13,7 @@ describe("concordancia public/sw.js ↔ src/lib/pwa/sw-policy.ts", () => {
 
   it("usa el mismo nombre de caché versionado", () => {
     expect(sw).toContain(CACHE_NAME);
-    expect(CACHE_NAME).toBe("blu-shell-v5");
+    expect(CACHE_NAME).toBe("blu-shell-v6");
   });
 
   it("precachea exactamente las mismas rutas del app shell", () => {

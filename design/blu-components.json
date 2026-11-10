@@ -1,0 +1,34 @@
+{
+  "viewBox": "0 0 200 230",
+  "palette": {
+    "bodyHi": "#A8D8F8",
+    "bodyMid": "#60B8F8",
+    "bodyDeep": "#1878F8",
+    "eye": "#1A1A1B",
+    "mouthInner": "#0E5AD0",
+    "helmet": "#FFD54A",
+    "belt": "#A06A3F"
+  },
+  "groups": ["body", "legs", "arms", "face", "prop-newspaper", "prop-helmet", "prop-belt", "prop-blueprint", "hand-wave", "hand-heart", "floating-heart", "icon"],
+  "variants": {
+    "blu-master.svg": "principal saludo",
+    "blu-neutral.svg": "neutral",
+    "blu-happy.svg": "alegre",
+    "blu-surprised.svg": "sorprendido",
+    "blu-resting.svg": "reposo + finger-heart (vídeo)",
+    "blu-companion.svg": "tercer estilo avatar",
+    "blu-builder.svg": "constructor",
+    "blu-reading.svg": "leyendo",
+    "blu-icon.svg": "icono UI"
+  },
+  "appMapping": {
+    "newspaper": "/blu-newspaper.png",
+    "builder": "/blu-builder.png",
+    "companion.idle": "/blu/svg/blu-neutral.svg",
+    "companion.welcome": "/blu/svg/blu-happy.svg",
+    "companion.responding": "/blu/svg/blu-surprised.svg",
+    "companion.acknowledge": "/blu/svg/blu-happy.svg",
+    "companion.pause": "/blu/svg/blu-resting.svg",
+    "companion.unavailable": "/blu/svg/blu-resting.svg"
+  }
+}

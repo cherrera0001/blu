@@ -7,11 +7,12 @@
  * Privacidad: /api/* (asistente y voz) jamás se cachea; ninguna conversación
  * queda almacenada. Cross-origin y no-GET pasan directo a la red.
  */
-const CACHE_NAME = "blu-shell-v5";
+const CACHE_NAME = "blu-shell-v6";
 const PRECACHE_URLS = [
   "/",
   "/cuestionario",
   "/blu-newspaper.png",
+  "/icons/blu-192.png",
   "/manifest.webmanifest",
 ];
 

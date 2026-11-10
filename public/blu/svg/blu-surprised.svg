@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" role="img" aria-label="Blu sorprendido">
+  <!-- Blu character system — geometría vectorial editable. Paleta de originales holablu. -->
+  
+  <defs>
+    <radialGradient id="bodyGrad" cx="36%" cy="26%" r="74%">
+      <stop offset="0%" stop-color="#A8D8F8"/>
+      <stop offset="42%" stop-color="#60B8F8"/>
+      <stop offset="100%" stop-color="#1878F8"/>
+    </radialGradient>
+    <linearGradient id="legGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60B8F8"/>
+      <stop offset="100%" stop-color="#1070F8"/>
+    </linearGradient>
+    <radialGradient id="cheekSoft" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="helmetGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE97A"/>
+      <stop offset="100%" stop-color="#E6B800"/>
+    </linearGradient>
+    <linearGradient id="beltGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A06A3F"/>
+      <stop offset="100%" stop-color="#7A4E2E"/>
+    </linearGradient>
+  </defs>
+
+  
+  <g id="body">
+    <path id="torso" fill="url(#bodyGrad)" d="M100 22
+      C128 22 152 46 160 84
+      C168 126 162 160 142 182
+      C128 194 114 200 100 200
+      C86 200 72 194 58 182
+      C38 160 32 126 40 84
+      C48 46 72 22 100 22Z"/>
+    <ellipse cx="70" cy="90" rx="16" ry="12" fill="url(#cheekSoft)"/>
+    <ellipse cx="130" cy="90" rx="16" ry="12" fill="url(#cheekSoft)"/>
+  </g>
+
+  <g id="legs">
+    <ellipse cx="76" cy="208" rx="24" ry="13" fill="url(#legGrad)"/>
+    <ellipse cx="124" cy="208" rx="24" ry="13" fill="url(#legGrad)"/>
+  </g>
+
+  <g id="arms">
+    <path fill="url(#bodyGrad)" d="M46 118 C30 128 26 150 36 164 C46 176 64 172 70 158 C74 148 68 130 56 122 Z"/>
+    <path fill="url(#bodyGrad)" d="M154 118 C170 128 174 150 164 164 C154 176 136 172 130 158 C126 148 132 130 144 122 Z"/>
+  </g>
+  <g id="face">
+    <ellipse id="eye-l" cx="80" cy="92" rx="11.5" ry="13.5" fill="#1A1A1B"/>
+    <ellipse id="eye-r" cx="120" cy="92" rx="11.5" ry="13.5" fill="#1A1A1B"/>
+    <ellipse id="mouth" cx="100" cy="126" rx="9" ry="11" fill="#0E5AD0"/>
+  </g>
+</svg>

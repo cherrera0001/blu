@@ -1,6 +1,11 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import BluPresence, { BLU_PRESENCE_STATES, type BluPresenceState } from "./BluPresence";
+import BluPresence, {
+  BLU_PRESENCE_STATES,
+  expressionFromPresence,
+  resolveBluAsset,
+  type BluPresenceState,
+} from "./BluPresence";
 
 afterEach(cleanup);
 
@@ -27,12 +32,35 @@ describe("BluPresence — presencia expresiva decorativa (UX-07)", () => {
     expect(marker.className).toContain("blu-presence--sm");
   });
 
-  it("usa el avatar oficial de Blu (imagen holablu.com), no un dibujo propio", () => {
+  it("usa el avatar oficial de Blu (imagen holablu.com) por defecto", () => {
     render(<BluPresence />);
     const illustration = screen.getByTestId("blu-illustration");
     expect(illustration.tagName).toBe("IMG");
     expect(illustration.getAttribute("src")).toBe("/blu-newspaper.png");
     expect(illustration.getAttribute("alt")).toBe("");
+  });
+
+  it("el estilo companion usa SVG vivo según el estado de presencia", () => {
+    render(<BluPresence pose="companion" state="responding" />);
+    const marker = screen.getByTestId("blu-presence");
+    expect(marker.dataset.bluPose).toBe("companion");
+    expect(marker.dataset.bluExpression).toBe("surprised");
+    expect(marker.dataset.bluLive).toBe("true");
+    const illustration = screen.getByTestId("blu-illustration");
+    expect(illustration.tagName.toLowerCase()).toBe("svg");
+    expect(illustration.getAttribute("data-blu-expression")).toBe("surprised");
+  });
+
+  it("mapea estados a expresiones del sistema vectorial", () => {
+    expect(expressionFromPresence("welcome")).toBe("happy");
+    expect(expressionFromPresence("responding")).toBe("surprised");
+    expect(expressionFromPresence("pause")).toBe("resting");
+    expect(resolveBluAsset("companion", "acknowledge")).toEqual({
+      src: null,
+      expression: "happy",
+      live: true,
+    });
+    expect(resolveBluAsset("builder", "idle").src).toBe("/blu-builder.png");
   });
 
   it.each(BLU_PRESENCE_STATES.map((state) => [state]))("soporta el estado %s", (state) => {

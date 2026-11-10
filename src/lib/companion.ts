@@ -2,7 +2,7 @@ import { localDateKey, type BluState } from "./blu";
 
 export const COMPANION_MOODS = ["waiting", "encouraging", "celebrate", "thriving", "resting"] as const;
 export type CompanionMood = (typeof COMPANION_MOODS)[number];
-export type CompanionPose = "newspaper" | "builder";
+export type CompanionPose = "newspaper" | "builder" | "companion";
 
 export interface CompanionView {
   mood: CompanionMood;
@@ -68,6 +68,8 @@ export function readCompanion(state: BluState, today: Date): CompanionView {
     mood = "encouraging";
   }
 
-  const pose: CompanionPose = mood === "celebrate" || mood === "thriving" ? "builder" : "newspaper";
+  let pose: CompanionPose = "newspaper";
+  if (mood === "celebrate" || mood === "thriving") pose = "builder";
+  else if (mood === "encouraging") pose = "companion";
   return { mood, pose, line: LINES[mood], recentActiveDays, daysSinceLast };
 }

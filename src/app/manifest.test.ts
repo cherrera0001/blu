@@ -22,7 +22,7 @@ describe("manifest instalable (BLU-1503)", () => {
     const sizes = icons.flatMap((i) => (i.sizes ?? "").split(" "));
     expect(sizes).toContain("192x192");
     expect(sizes).toContain("512x512");
-    expect(icons.every((i) => i.src === "/blu-newspaper.png")).toBe(true);
+    expect(icons.map((i) => i.src)).toEqual(["/icons/blu-192.png", "/icons/blu-512.png"]);
     expect(icons.every((i) => i.type === "image/png")).toBe(true);
     expect(icons.every((i) => (i.src ?? "").startsWith("/"))).toBe(true);
   });

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 /**
  * Manifest instalable (convención Metadata Route de Next 16, guía PWA instalada).
- * Iconos: personaje oficial (public/blu-newspaper.png), paleta azul/celeste de Blu.
+ * Iconos: silueta canónica de Blu (gota + cara), paleta medida desde originales.
  * Colores: tokens de diseño (--teal / --pale de globals.css).
  */
 export default function manifest(): MetadataRoute.Manifest {
@@ -18,8 +18,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#e8f7ff",
     theme_color: "#2f8fbf",
     icons: [
-      { src: "/blu-newspaper.png", sizes: "192x192", type: "image/png" },
-      { src: "/blu-newspaper.png", sizes: "512x512", type: "image/png" },
+      { src: "/icons/blu-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/blu-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
     ],
   };
 }

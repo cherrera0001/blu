@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Blu">
+  <defs>
+    <radialGradient id="g" cx="38%" cy="28%" r="72%">
+      <stop offset="0%" stop-color="#A8D8F8"/>
+      <stop offset="45%" stop-color="#60B8F8"/>
+      <stop offset="100%" stop-color="#1878F8"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#g)" d="M256 48
+    C210 52 168 118 138 188
+    C102 278 96 348 112 402
+    C122 438 150 468 176 488
+    C196 504 220 500 236 478
+    C246 464 246 436 256 430
+    C268 422 274 438 278 462
+    C284 498 304 508 332 496
+    C356 486 360 456 372 424
+    C396 366 430 330 440 268
+    C458 168 420 88 346 56
+    C316 42 284 46 256 48Z"/>
+  <path fill="url(#sheen)" opacity=".42" d="M168 120 C210 70 268 66 310 96 C270 140 230 210 198 280 C186 230 176 160 168 120Z"/>
+  <ellipse cx="210" cy="220" rx="28" ry="34" fill="#1A1A1B"/>
+  <ellipse cx="310" cy="220" rx="28" ry="34" fill="#1A1A1B"/>
+  <circle cx="200" cy="206" r="7" fill="#fff"/>
+  <circle cx="300" cy="206" r="7" fill="#fff"/>
+  <path fill="#0E5AD0" d="M228 268 C240 300 280 300 292 268 C276 288 244 288 228 268Z"/>
+</svg>
