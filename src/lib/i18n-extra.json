@@ -1,0 +1,434 @@
+{
+  "Saltar al contenido principal": {
+    "en-US": "Skip to main content",
+    "zh-CN": "跳到主要内容",
+    "pt-BR": "Ir para o conteúdo principal",
+    "pt-PT": "Saltar para o conteúdo principal"
+  },
+  "Blu, inicio": {
+    "en-US": "Blu, home",
+    "zh-CN": "Blu，首页",
+    "pt-BR": "Blu, início",
+    "pt-PT": "Blu, início"
+  },
+  "Secciones principales": {
+    "en-US": "Main sections",
+    "zh-CN": "主要栏目",
+    "pt-BR": "Seções principais",
+    "pt-PT": "Secções principais"
+  },
+  "Una idea para acompañarte": {
+    "en-US": "An idea to keep you company",
+    "zh-CN": "陪你的一个想法",
+    "pt-BR": "Uma ideia para te acompanhar",
+    "pt-PT": "Uma ideia para te acompanhar"
+  },
+  "Acciones registradas por día, últimos 7 días": {
+    "en-US": "Actions recorded each day, last 7 days",
+    "zh-CN": "每天记录的行动，最近 7 天",
+    "pt-BR": "Ações registradas por dia, últimos 7 dias",
+    "pt-PT": "Ações registadas por dia, últimos 7 dias"
+  },
+  "{date}/{month}: {count} acción/es": {
+    "en-US": "{date}/{month}: {count} action(s)",
+    "zh-CN": "{date}/{month}：{count} 次行动",
+    "pt-BR": "{date}/{month}: {count} ação(ões)",
+    "pt-PT": "{date}/{month}: {count} ação(ões)"
+  },
+  "Aún no hay una evaluación inicial de este hábito.": {
+    "en-US": "There is no starting note for this habit yet.",
+    "zh-CN": "这个习惯还没有起始自述。",
+    "pt-BR": "Ainda não há uma avaliação inicial deste hábito.",
+    "pt-PT": "Ainda não há uma avaliação inicial deste hábito."
+  },
+  "Declaraste «{label}». Todavía no hay práctica registrada: el retrato se afina cuando marques un paso.": {
+    "en-US": "You said “{label}”. No practice is recorded yet: the portrait sharpens when you mark a step.",
+    "zh-CN": "你说过「{label}」。还没有记录练习：标下一步之后，画像会慢慢校准。",
+    "pt-BR": "Você declarou «{label}». Ainda não há prática registrada: o retrato se afina quando você marcar um passo.",
+    "pt-PT": "Declaraste «{label}». Ainda não há prática registada: o retrato afina-se quando marcares um passo."
+  },
+  "Declaraste «{label}». En {days} días lo marcaste {marks} {times}. Eso actualiza el punto de partida, sin convertirlo en una nota.": {
+    "en-US": "You said “{label}”. In {days} days you marked it {marks} {times}. That updates the starting point, without turning it into a score.",
+    "zh-CN": "你说过「{label}」。在 {days} 天里你标了 {marks} {times}。这会更新起点，不会变成分数。",
+    "pt-BR": "Você declarou «{label}». Em {days} dias você marcou {marks} {times}. Isso atualiza o ponto de partida, sem virar uma nota.",
+    "pt-PT": "Declaraste «{label}». Em {days} dias marcaste {marks} {times}. Isso atualiza o ponto de partida, sem o transformar numa nota."
+  },
+  "vez": {
+    "en-US": "time",
+    "zh-CN": "次",
+    "pt-BR": "vez",
+    "pt-PT": "vez"
+  },
+  "veces": {
+    "en-US": "times",
+    "zh-CN": "次",
+    "pt-BR": "vezes",
+    "pt-PT": "vezes"
+  },
+  "Pequeños momentos de movimiento que encajen en tu día.": {
+    "en-US": "Small moments of movement that fit your day.",
+    "zh-CN": "放进你这一天里的一小会儿活动。",
+    "pt-BR": "Pequenos momentos de movimento que caibam no seu dia.",
+    "pt-PT": "Pequenos momentos de movimento que caibam no teu dia."
+  },
+  "Elegir una pausa breve para moverte.": {
+    "en-US": "Choose a short pause to move.",
+    "zh-CN": "选一个短暂停下来动一动。",
+    "pt-BR": "Escolher uma pausa breve para se mexer.",
+    "pt-PT": "Escolher uma pausa breve para te mexeres."
+  },
+  "Hacer una pausa de dos minutos para cambiar de postura.": {
+    "en-US": "Take a two-minute pause to change posture.",
+    "zh-CN": "停两分钟，换个姿势。",
+    "pt-BR": "Fazer uma pausa de dois minutos para mudar de postura.",
+    "pt-PT": "Fazer uma pausa de dois minutos para mudar de postura."
+  },
+  "Prestar atención a una comida, sin reglas rígidas.": {
+    "en-US": "Pay attention to one meal, without strict rules.",
+    "zh-CN": "留意一顿饭，不必遵守死板的规矩。",
+    "pt-BR": "Prestar atenção a uma refeição, sem regras rígidas.",
+    "pt-PT": "Prestar atenção a uma refeição, sem regras rígidas."
+  },
+  "Hacer una pausa tranquila durante una comida.": {
+    "en-US": "Take a calm pause during a meal.",
+    "zh-CN": "吃饭时安静地停一下。",
+    "pt-BR": "Fazer uma pausa tranquila durante uma refeição.",
+    "pt-PT": "Fazer uma pausa tranquila durante uma refeição."
+  },
+  "Tomar una respiración antes de empezar una comida.": {
+    "en-US": "Take a breath before starting a meal.",
+    "zh-CN": "开始吃饭前，先吸一口气。",
+    "pt-BR": "Respirar fundo antes de começar uma refeição.",
+    "pt-PT": "Respirar fundo antes de começar uma refeição."
+  },
+  "Crear un momento amable de pausa o descanso.": {
+    "en-US": "Make a kind moment of pause or rest.",
+    "zh-CN": "给自己一段温和的停顿或休息。",
+    "pt-BR": "Criar um momento gentil de pausa ou descanso.",
+    "pt-PT": "Criar um momento gentil de pausa ou descanso."
+  },
+  "Reservar un momento breve para bajar el ritmo.": {
+    "en-US": "Set aside a short moment to slow down.",
+    "zh-CN": "留一小会儿，把节奏放慢。",
+    "pt-BR": "Reservar um momento breve para desacelerar.",
+    "pt-PT": "Reservar um momento breve para abrandar."
+  },
+  "Tomar un minuto de pausa cuando te resulte posible.": {
+    "en-US": "Take a one-minute pause when you can.",
+    "zh-CN": "能停的时候，停一分钟。",
+    "pt-BR": "Fazer uma pausa de um minuto quando for possível.",
+    "pt-PT": "Fazer uma pausa de um minuto quando for possível."
+  },
+  "Dedicar atención a una relación que te importe.": {
+    "en-US": "Give attention to a relationship that matters to you.",
+    "zh-CN": "把注意力给一段你在乎的关系。",
+    "pt-BR": "Dedicar atenção a uma relação que importa para você.",
+    "pt-PT": "Dedicar atenção a uma relação que te importa."
+  },
+  "Compartir un momento de atención con alguien cercano.": {
+    "en-US": "Share a moment of attention with someone close.",
+    "zh-CN": "和亲近的人分享一会儿注意力。",
+    "pt-BR": "Compartilhar um momento de atenção com alguém próximo.",
+    "pt-PT": "Partilhar um momento de atenção com alguém próximo."
+  },
+  "Enviar un saludo breve a alguien importante para ti.": {
+    "en-US": "Send a short hello to someone important to you.",
+    "zh-CN": "给对你重要的人发一句短短的问候。",
+    "pt-BR": "Enviar um oi breve para alguém importante para você.",
+    "pt-PT": "Enviar um olá breve a alguém importante para ti."
+  },
+  "Explorar formas de sentirte parte de un grupo.": {
+    "en-US": "Explore ways to feel part of a group.",
+    "zh-CN": "找一找让自己觉得属于一个群体的方式。",
+    "pt-BR": "Explorar formas de se sentir parte de um grupo.",
+    "pt-PT": "Explorar formas de te sentires parte de um grupo."
+  },
+  "Pensar en una actividad que te conecte con otras personas.": {
+    "en-US": "Think of an activity that connects you with other people.",
+    "zh-CN": "想一个能让你和其他人连在一起的活动。",
+    "pt-BR": "Pensar numa atividade que conecte você com outras pessoas.",
+    "pt-PT": "Pensar numa atividade que te ligue a outras pessoas."
+  },
+  "Anotar una actividad o persona con quien te gustaría conectar.": {
+    "en-US": "Write down an activity or person you would like to connect with.",
+    "zh-CN": "写下你想联系的一个活动或一个人。",
+    "pt-BR": "Anotar uma atividade ou pessoa com quem você gostaria de se conectar.",
+    "pt-PT": "Anotar uma atividade ou pessoa com quem gostarias de te ligar."
+  },
+  "Encontrar una forma posible de estar en contacto con tu entorno.": {
+    "en-US": "Find a possible way to be in touch with your surroundings.",
+    "zh-CN": "找一个你做得到的方式和周围环境接触。",
+    "pt-BR": "Encontrar uma forma possível de estar em contato com o seu entorno.",
+    "pt-PT": "Encontrar uma forma possível de estar em contacto com o que te rodeia."
+  },
+  "Pasar un momento atento al aire libre o junto a una ventana.": {
+    "en-US": "Spend an attentive moment outdoors or by a window.",
+    "zh-CN": "在户外或窗边留心待一会儿。",
+    "pt-BR": "Passar um momento atento ao ar livre ou junto a uma janela.",
+    "pt-PT": "Passar um momento atento ao ar livre ou junto a uma janela."
+  },
+  "Observar el entorno durante un minuto.": {
+    "en-US": "Notice your surroundings for one minute.",
+    "zh-CN": "用一分钟看看周围。",
+    "pt-BR": "Observar o entorno durante um minuto.",
+    "pt-PT": "Observar o que te rodeia durante um minuto."
+  },
+  "Conectar una acción pequeña con algo que te importa.": {
+    "en-US": "Connect a small action with something that matters to you.",
+    "zh-CN": "把一个小行动和你在乎的事连起来。",
+    "pt-BR": "Ligar uma ação pequena a algo que importa para você.",
+    "pt-PT": "Ligar uma ação pequena a algo que te importa."
+  },
+  "Dedicar unos minutos a una actividad significativa para ti.": {
+    "en-US": "Spend a few minutes on an activity that is meaningful to you.",
+    "zh-CN": "花几分钟做一件对你有意义的事。",
+    "pt-BR": "Dedicar uns minutos a uma atividade significativa para você.",
+    "pt-PT": "Dedicar uns minutos a uma atividade significativa para ti."
+  },
+  "Nombrar una cosa pequeña que hoy te importa.": {
+    "en-US": "Name one small thing that matters to you today.",
+    "zh-CN": "说出今天对你重要的一件小事。",
+    "pt-BR": "Nomear uma coisa pequena que hoje importa para você.",
+    "pt-PT": "Nomear uma coisa pequena que hoje te importa."
+  },
+  "Movimiento en el día": {
+    "en-US": "Movement during the day",
+    "zh-CN": "白天里的活动",
+    "pt-BR": "Movimento ao longo do dia",
+    "pt-PT": "Movimento ao longo do dia"
+  },
+  "Muchas personas sienten más energía y menos tensión cuando mueven el cuerpo en momentos breves del día, aunque sea poco.": {
+    "en-US": "Many people feel more energy and less tension when they move their body in short moments of the day, even if it is only a little.",
+    "zh-CN": "很多人觉得，哪怕只在一天里短短动一会儿，也会更有精神、没那么紧。",
+    "pt-BR": "Muitas pessoas sentem mais energia e menos tensão quando movem o corpo em momentos breves do dia, mesmo que seja pouco.",
+    "pt-PT": "Muitas pessoas sentem mais energia e menos tensão quando movem o corpo em momentos breves do dia, mesmo que seja pouco."
+  },
+  "Guías de actividad física para adultos (OMS)": {
+    "en-US": "Physical activity guidelines for adults (WHO)",
+    "zh-CN": "成年人身体活动指南（世卫组织）",
+    "pt-BR": "Diretrizes de atividade física para adultos (OMS)",
+    "pt-PT": "Orientações de atividade física para adultos (OMS)"
+  },
+  "Menos tiempo sentado": {
+    "en-US": "Less time sitting",
+    "zh-CN": "少坐一会儿",
+    "pt-BR": "Menos tempo sentado",
+    "pt-PT": "Menos tempo sentado"
+  },
+  "Interrumpir períodos largos sentado con pausas breves es una práctica que algunas personas encuentran posible y agradable.": {
+    "en-US": "Breaking up long periods of sitting with short pauses is a practice some people find possible and pleasant.",
+    "zh-CN": "用短暂停顿打断长时间坐着，是有些人觉得做得到、也舒服的做法。",
+    "pt-BR": "Interromper períodos longos sentado com pausas breves é uma prática que algumas pessoas acham possível e agradável.",
+    "pt-PT": "Interromper períodos longos sentado com pausas breves é uma prática que algumas pessoas acham possível e agradável."
+  },
+  "Recomendaciones sobre comportamiento sedentario (OMS)": {
+    "en-US": "Recommendations on sedentary behaviour (WHO)",
+    "zh-CN": "关于久坐行为的建议（世卫组织）",
+    "pt-BR": "Recomendações sobre comportamento sedentário (OMS)",
+    "pt-PT": "Recomendações sobre comportamento sedentário (OMS)"
+  },
+  "Atención al comer": {
+    "en-US": "Attention while eating",
+    "zh-CN": "吃饭时的留意",
+    "pt-BR": "Atenção ao comer",
+    "pt-PT": "Atenção ao comer"
+  },
+  "Comer con atención, sin pantallas, puede ayudar a disfrutar más la comida y notar cuándo estás satisfecho.": {
+    "en-US": "Eating with attention, without screens, can help you enjoy the food more and notice when you are satisfied.",
+    "zh-CN": "专心吃饭、不看屏幕，可能让你更享受食物，也更容易感到吃好了。",
+    "pt-BR": "Comer com atenção, sem telas, pode ajudar a aproveitar mais a comida e notar quando você está satisfeito.",
+    "pt-PT": "Comer com atenção, sem ecrãs, pode ajudar a desfrutar mais a comida e notar quando estás satisfeito."
+  },
+  "Guías alimentarias (FAO/OMS)": {
+    "en-US": "Food-based dietary guidelines (FAO/WHO)",
+    "zh-CN": "膳食指南（粮农组织/世卫组织）",
+    "pt-BR": "Guias alimentares (FAO/OMS)",
+    "pt-PT": "Guias alimentares (FAO/OMS)"
+  },
+  "Más alimentos mínimamente procesados": {
+    "en-US": "More minimally processed foods",
+    "zh-CN": "多一些加工程度很低的食物",
+    "pt-BR": "Mais alimentos minimamente processados",
+    "pt-PT": "Mais alimentos minimamente processados"
+  },
+  "Sumar verduras, frutas y legumbres es una forma concreta de acercarse a una alimentación variada sin reglas rígidas.": {
+    "en-US": "Adding vegetables, fruit, and legumes is a concrete way to move toward varied eating without strict rules.",
+    "zh-CN": "多加蔬菜、水果和豆类，是靠近多样饮食的具体做法，不必立死规矩。",
+    "pt-BR": "Somar verduras, frutas e leguminosas é uma forma concreta de se aproximar de uma alimentação variada sem regras rígidas.",
+    "pt-PT": "Somar legumes, fruta e leguminosas é uma forma concreta de te aproximares de uma alimentação variada sem regras rígidas."
+  },
+  "Clasificación NOVA y guías alimentarias": {
+    "en-US": "NOVA classification and dietary guidelines",
+    "zh-CN": "NOVA 分类和膳食指南",
+    "pt-BR": "Classificação NOVA e guias alimentares",
+    "pt-PT": "Classificação NOVA e guias alimentares"
+  },
+  "Rutina antes de dormir": {
+    "en-US": "Routine before sleep",
+    "zh-CN": "睡前的固定做法",
+    "pt-BR": "Rotina antes de dormir",
+    "pt-PT": "Rotina antes de dormir"
+  },
+  "Una rutina tranquila y consistente antes de dormir ayuda a muchas personas a conciliar el sueño con más facilidad.": {
+    "en-US": "A calm, steady routine before sleep helps many people fall asleep more easily.",
+    "zh-CN": "睡前一段安静、稳定的做法，能帮很多人更容易入睡。",
+    "pt-BR": "Uma rotina tranquila e consistente antes de dormir ajuda muitas pessoas a pegar no sono com mais facilidade.",
+    "pt-PT": "Uma rotina tranquila e consistente antes de dormir ajuda muitas pessoas a adormecer com mais facilidade."
+  },
+  "Higiene del sueño (literatura general)": {
+    "en-US": "Sleep hygiene (general literature)",
+    "zh-CN": "睡眠卫生（一般文献）",
+    "pt-BR": "Higiene do sono (literatura geral)",
+    "pt-PT": "Higiene do sono (literatura geral)"
+  },
+  "Pausas de calma": {
+    "en-US": "Calm pauses",
+    "zh-CN": "平静的停顿",
+    "pt-BR": "Pausas de calma",
+    "pt-PT": "Pausas de calma"
+  },
+  "Breves pausas de calma durante el día pueden bajar la sensación de agobio en momentos de alta carga.": {
+    "en-US": "Short calm pauses during the day can lower the feeling of being overwhelmed when the load is high.",
+    "zh-CN": "白天短短的平静停顿，可能在负担很重时减轻压得喘不过气的感觉。",
+    "pt-BR": "Breves pausas de calma durante o dia podem diminuir a sensação de sobrecarga em momentos de alta carga.",
+    "pt-PT": "Breves pausas de calma durante o dia podem baixar a sensação de sobrecarga em momentos de alta carga."
+  },
+  "Técnicas de regulación (contexto general)": {
+    "en-US": "Regulation techniques (general context)",
+    "zh-CN": "调节方法（一般背景）",
+    "pt-BR": "Técnicas de regulação (contexto geral)",
+    "pt-PT": "Técnicas de regulação (contexto geral)"
+  },
+  "Vínculos cercanos": {
+    "en-US": "Close bonds",
+    "zh-CN": "亲近的关系",
+    "pt-BR": "Vínculos próximos",
+    "pt-PT": "Laços próximos"
+  },
+  "Dedicar tiempo y atención a personas importantes es una de las prácticas más asociadas al bienestar en la literatura.": {
+    "en-US": "Giving time and attention to important people is one of the practices most often linked with wellbeing in the literature.",
+    "zh-CN": "把时间和注意力给重要的人，是文献里和身心安稳最常连在一起的做法之一。",
+    "pt-BR": "Dedicar tempo e atenção a pessoas importantes é uma das práticas mais associadas ao bem-estar na literatura.",
+    "pt-PT": "Dedicar tempo e atenção a pessoas importantes é uma das práticas mais associadas ao bem-estar na literatura."
+  },
+  "Estudio Harvard de adultez (referencia pendiente de verificación)": {
+    "en-US": "Harvard Study of Adult Development (reference pending verification)",
+    "zh-CN": "哈佛成人发展研究（出处尚待核实）",
+    "pt-BR": "Estudo de Harvard sobre a vida adulta (referência pendente de verificação)",
+    "pt-PT": "Estudo de Harvard sobre a vida adulta (referência pendente de verificação)"
+  },
+  "Apoyo mutuo": {
+    "en-US": "Mutual support",
+    "zh-CN": "彼此支持",
+    "pt-BR": "Apoio mútuo",
+    "pt-PT": "Apoio mútuo"
+  },
+  "Pedir y ofrecer ayuda en la vida cotidiana fortalece los vínculos y la sensación de acompañamiento.": {
+    "en-US": "Asking for and offering help in daily life strengthens bonds and the feeling of company.",
+    "zh-CN": "在日常里求助和帮忙，会让关系和被陪伴的感觉更稳。",
+    "pt-BR": "Pedir e oferecer ajuda na vida cotidiana fortalece os vínculos e a sensação de acompanhamento.",
+    "pt-PT": "Pedir e oferecer ajuda na vida quotidiana fortalece os laços e a sensação de acompanhamento."
+  },
+  "Literatura de apoyo social": {
+    "en-US": "Social support literature",
+    "zh-CN": "社会支持文献",
+    "pt-BR": "Literatura de apoio social",
+    "pt-PT": "Literatura de apoio social"
+  },
+  "Sentido de pertenencia": {
+    "en-US": "Sense of belonging",
+    "zh-CN": "归属感",
+    "pt-BR": "Senso de pertencimento",
+    "pt-PT": "Sentido de pertença"
+  },
+  "Sentirse parte de grupos o comunidades se asocia en estudios con mayor bienestar percibido.": {
+    "en-US": "Feeling part of groups or communities is linked in studies with greater perceived wellbeing.",
+    "zh-CN": "研究里，觉得自己属于某个群体或社群，和更高的主观安稳感连在一起。",
+    "pt-BR": "Sentir-se parte de grupos ou comunidades está associado, em estudos, a maior bem-estar percebido.",
+    "pt-PT": "Sentir-se parte de grupos ou comunidades está associado, em estudos, a maior bem-estar percebido."
+  },
+  "Literatura de pertenencia social": {
+    "en-US": "Social belonging literature",
+    "zh-CN": "社会归属文献",
+    "pt-BR": "Literatura de pertencimento social",
+    "pt-PT": "Literatura de pertença social"
+  },
+  "Participación a tu ritmo": {
+    "en-US": "Taking part at your pace",
+    "zh-CN": "按你的节奏参与",
+    "pt-BR": "Participação no seu ritmo",
+    "pt-PT": "Participação ao teu ritmo"
+  },
+  "La participación social no exige grandes gestos: asistir, saludar o aportar en pequeño también cuenta para muchas personas.": {
+    "en-US": "Social participation does not require grand gestures: showing up, saying hello, or contributing a little also counts for many people.",
+    "zh-CN": "参与群体不必做很大的事：到场、打招呼或帮一点小忙，对很多人也算数。",
+    "pt-BR": "A participação social não exige grandes gestos: comparecer, cumprimentar ou contribuir um pouco também conta para muitas pessoas.",
+    "pt-PT": "A participação social não exige grandes gestos: comparecer, cumprimentar ou contribuir um pouco também conta para muitas pessoas."
+  },
+  "Diseño propio (sin evidencia externa reclamada)": {
+    "en-US": "Our own design (no external evidence claimed)",
+    "zh-CN": "我们自己的设计（不声称有外部证据）",
+    "pt-BR": "Desenho próprio (sem evidência externa reivindicada)",
+    "pt-PT": "Desenho próprio (sem evidência externa reivindicada)"
+  },
+  "Tiempo en entornos verdes": {
+    "en-US": "Time in green places",
+    "zh-CN": "在绿色环境里的时间",
+    "pt-BR": "Tempo em ambientes verdes",
+    "pt-PT": "Tempo em ambientes verdes"
+  },
+  "Varios estudios exploran la relación entre tiempo en espacios verdes y bienestar subjetivo; la evidencia sigue en revisión.": {
+    "en-US": "Several studies explore the link between time in green spaces and subjective wellbeing; the evidence is still under review.",
+    "zh-CN": "多项研究在看绿色空间的时间和主观安稳感的关系；证据仍在复核。",
+    "pt-BR": "Vários estudos exploram a relação entre tempo em espaços verdes e bem-estar subjetivo; a evidência segue em revisão.",
+    "pt-PT": "Vários estudos exploram a relação entre tempo em espaços verdes e bem-estar subjetivo; a evidência continua em revisão."
+  },
+  "Literatura de naturaleza y salud (revisión pendiente)": {
+    "en-US": "Nature and health literature (review pending)",
+    "zh-CN": "自然与健康文献（尚待复核）",
+    "pt-BR": "Literatura de natureza e saúde (revisão pendente)",
+    "pt-PT": "Literatura de natureza e saúde (revisão pendente)"
+  },
+  "Contacto cotidiano con el entorno": {
+    "en-US": "Everyday contact with your surroundings",
+    "zh-CN": "和周围环境的日常接触",
+    "pt-BR": "Contato cotidiano com o entorno",
+    "pt-PT": "Contacto quotidiano com o que te rodeia"
+  },
+  "Luz natural, aire y sonidos del entorno pueden aportar momentos de pausa sin necesidad de salidas grandes.": {
+    "en-US": "Natural light, air, and the sounds around you can offer moments of pause without a big outing.",
+    "zh-CN": "自然光、空气和周围的声音，不必出远门也能带来停一停的时刻。",
+    "pt-BR": "Luz natural, ar e sons do entorno podem trazer momentos de pausa sem precisar de saídas grandes.",
+    "pt-PT": "Luz natural, ar e sons à volta podem trazer momentos de pausa sem precisares de saídas grandes."
+  },
+  "Propósito y bienestar": {
+    "en-US": "Purpose and wellbeing",
+    "zh-CN": "目的和身心安稳",
+    "pt-BR": "Propósito e bem-estar",
+    "pt-PT": "Propósito e bem-estar"
+  },
+  "Tener objetivos significativos se asocia en estudios con mayor satisfacción con la vida; no es una regla ni una garantía.": {
+    "en-US": "Having meaningful aims is linked in studies with greater life satisfaction; it is not a rule or a guarantee.",
+    "zh-CN": "研究里，有对自己有意义的目标和对生活更满意连在一起；这不是规矩，也不保证结果。",
+    "pt-BR": "Ter objetivos significativos está associado, em estudos, a maior satisfação com a vida; não é uma regra nem uma garantia.",
+    "pt-PT": "Ter objetivos significativos está associado, em estudos, a maior satisfação com a vida; não é uma regra nem uma garantia."
+  },
+  "Literatura de propósito de vida (pendiente de verificación)": {
+    "en-US": "Purpose-in-life literature (pending verification)",
+    "zh-CN": "人生目的文献（尚待核实）",
+    "pt-BR": "Literatura de propósito de vida (pendente de verificação)",
+    "pt-PT": "Literatura de propósito de vida (pendente de verificação)"
+  },
+  "Acciones alineadas con valores": {
+    "en-US": "Actions aligned with values",
+    "zh-CN": "和自己价值观一致的行动",
+    "pt-BR": "Ações alinhadas com valores",
+    "pt-PT": "Ações alinhadas com valores"
+  },
+  "Pequeñas acciones coherentes con lo que valoras pueden darle sentido a la semana, aunque no transformen todo.": {
+    "en-US": "Small actions consistent with what you value can give the week meaning, even if they do not change everything.",
+    "zh-CN": "和你看重的事一致的小行动，可以给这一周一点意义，即使不能改变一切。",
+    "pt-BR": "Pequenas ações coerentes com o que você valoriza podem dar sentido à semana, mesmo que não transformem tudo.",
+    "pt-PT": "Pequenas ações coerentes com o que valorizas podem dar sentido à semana, mesmo que não transformem tudo."
+  }
+}

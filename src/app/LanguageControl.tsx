@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { getLocale, LOCALES, setLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
+import { getLocale, isLocale, LOCALES, setLocale, subscribeLocale, translate, type Locale } from "@/lib/i18n";
 
 const LOCALE_LABEL: Record<Locale, string> = {
   es: "Español",
   "en-US": "English",
+  "pt-BR": "Português (Brasil)",
+  "pt-PT": "Português",
   "zh-CN": "中文",
 };
 
@@ -32,7 +34,7 @@ export function LanguageControl({ locale }: { locale: Locale }) {
         aria-label={translate(locale, "Idioma")}
         onChange={(event) => {
           const next = event.target.value;
-          if (next === "es" || next === "en-US" || next === "zh-CN") setLocale(next);
+          if (isLocale(next)) setLocale(next);
         }}
         value={locale}
       >

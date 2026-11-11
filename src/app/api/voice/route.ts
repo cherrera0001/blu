@@ -1,3 +1,4 @@
+import { clientIp } from "@/lib/http/client-ip";
 import {
   getElevenLabsConfig,
   isAppSpeechLocale,
@@ -51,8 +52,7 @@ function getAzureConfig(): AzureConfig | null {
 }
 
 function isRateLimited(request: Request): boolean {
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded?.split(",").at(-1)?.trim() || "unknown";
+  const ip = clientIp(request);
   const now = Date.now();
   const bucket = buckets.get(ip);
   if (!bucket || now >= bucket.resetAt) {
@@ -252,6 +252,9 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "invalid_json" }, { status: 400 });
   }
   if (!isVoiceBody(body)) return Response.json({ error: "invalid_request" }, { status: 400 });
+  if (request.headers.get("sec-fetch-site") === "cross-site") {
+    return Response.json({ error: "forbidden" }, { status: 403 });
+  }
   if (isRateLimited(request)) {
     return Response.json({ error: "rate_limited" }, { status: 429 });
   }

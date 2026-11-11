@@ -262,3 +262,50 @@ describe("POST /api/assistant — auth opcional por token (piloto cerrado)", () 
     expect(authorized.status).toBe(200);
   });
 });
+
+describe("POST /api/assistant — rate limit e IP de borde", () => {
+  it("agrupa por el último hop de X-Forwarded-For, no por el primero spoofable", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-06-15T12:00:00Z"));
+      const edge = "198.51.100.50";
+      let last = 0;
+      for (let i = 0; i < 25; i += 1) {
+        const spoofed = `203.0.113.${i}`;
+        const r = await POST(
+          new Request(URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-forwarded-for": `${spoofed}, ${edge}`,
+            },
+            body: JSON.stringify({ messages: [{ role: "user", text: `r${i}` }] }),
+          }),
+        );
+        last = r.status;
+      }
+      expect(last).toBe(429);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("rechaza Sec-Fetch-Site cross-site cuando el remoto está configurado", async () => {
+    vi.stubEnv("BLU_LLM_BASE_URL", "https://llm.test/v1");
+    vi.stubEnv("BLU_LLM_API_KEY", "k");
+    vi.stubEnv("BLU_LLM_MODEL", "m");
+    const res = await POST(
+      new Request(URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "sec-fetch-site": "cross-site",
+          "x-forwarded-for": "198.51.100.9",
+        },
+        body: JSON.stringify({ messages: [{ role: "user", text: "hola" }] }),
+      }),
+    );
+    expect(res.status).toBe(403);
+    vi.unstubAllEnvs();
+  });
+});

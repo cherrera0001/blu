@@ -8,15 +8,15 @@ export type VoiceProfile = "warm" | "balanced";
 /** `natural` pide audio a `/api/voice` (ElevenLabs). `azure` se conserva como alias. */
 export type VoiceMode = "local" | "natural" | "azure";
 /** `es` es el idioma de la app; la voz del dispositivo busca `es-CL`. */
-export type SpeechLocale = "es" | "es-CL" | "en-US" | "zh-CN";
+export type SpeechLocale = "es" | "es-CL" | "en-US" | "pt-BR" | "pt-PT" | "zh-CN";
 
-type UiLocale = "es" | "en-US" | "zh-CN";
+type UiLocale = "es" | "en-US" | "pt-BR" | "pt-PT" | "zh-CN";
 
 function uiLocale(locale: SpeechLocale): UiLocale {
   return locale === "es-CL" ? "es" : locale;
 }
 
-function voiceTag(locale: SpeechLocale): "es-CL" | "en-US" | "zh-CN" {
+function voiceTag(locale: SpeechLocale): "es-CL" | "en-US" | "pt-BR" | "pt-PT" | "zh-CN" {
   return locale === "es" ? "es-CL" : locale;
 }
 
@@ -46,12 +46,28 @@ const SPEAK_UI: Record<UiLocale, { listen: string; stop: string; loading: string
     listenName: "朗读屏幕上的文字",
     stopName: "停止朗读",
   },
+  "pt-BR": {
+    listen: "Ouvir",
+    stop: "Parar",
+    loading: "Gerando áudio…",
+    listenName: "Ouvir em voz alta",
+    stopName: "Parar a leitura",
+  },
+  "pt-PT": {
+    listen: "Ouvir",
+    stop: "Parar",
+    loading: "A gerar áudio…",
+    listenName: "Ouvir em voz alta",
+    stopName: "Parar a leitura",
+  },
 };
 
 const MISSING_VOICE: Record<UiLocale, string> = {
   es: "Este dispositivo no tiene una voz local en español.",
   "en-US": "This device does not have a local English voice.",
   "zh-CN": "这台设备没有本地中文语音。",
+  "pt-BR": "Este dispositivo não tem uma voz local em português do Brasil.",
+  "pt-PT": "Este dispositivo não tem uma voz local em português.",
 };
 
 const SPEAK_ERROR: Record<UiLocale, { play: string; generate: string }> = {
@@ -67,6 +83,14 @@ const SPEAK_ERROR: Record<UiLocale, { play: string; generate: string }> = {
     play: "没法播放这段声音。你可以再试一次，或用这台设备的语音。",
     generate: "没法生成自然语音。你可以再试一次，或用这台设备的语音。",
   },
+  "pt-BR": {
+    play: "Não consegui reproduzir o áudio. Você pode tentar de novo ou usar a voz do dispositivo.",
+    generate: "Não consegui gerar a voz natural. Você pode tentar de novo ou usar a voz do dispositivo.",
+  },
+  "pt-PT": {
+    play: "Não consegui reproduzir o áudio. Podes tentar de novo ou usar a voz do dispositivo.",
+    generate: "Não consegui gerar a voz natural. Podes tentar de novo ou usar a voz do dispositivo.",
+  },
 };
 
 export function stopActiveSpeech(): void {
@@ -78,14 +102,24 @@ function getSynth(): SpeechSynthesis | null {
   return window.speechSynthesis ?? null;
 }
 
+function voicePrefix(tag: ReturnType<typeof voiceTag>): string {
+  if (tag === "en-US") return "en";
+  if (tag === "zh-CN") return "zh";
+  if (tag === "pt-BR" || tag === "pt-PT") return "pt";
+  return "es";
+}
+
 function getLocalVoice(synth: SpeechSynthesis, locale: SpeechLocale): SpeechSynthesisVoice | undefined {
   const tag = voiceTag(locale);
-  const prefix = tag === "en-US" ? "en" : tag === "zh-CN" ? "zh" : "es";
+  const prefix = voicePrefix(tag);
   const voices = synth
     .getVoices()
     .filter((voice) => voice.localService && voice.lang.toLowerCase().startsWith(prefix));
   const exact = voices.find((voice) => voice.lang.toLowerCase() === tag.toLowerCase());
   if (exact) return exact;
+  if (prefix === "pt") {
+    return voices.find((voice) => voice.lang.toLowerCase().startsWith("pt")) ?? voices[0];
+  }
   if (prefix !== "es") return voices[0];
   const language = typeof navigator === "undefined" ? "" : navigator.language.toLowerCase();
   const preferred = voices.find((voice) => voice.lang.toLowerCase() === language);

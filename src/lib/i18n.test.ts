@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { translate } from "./i18n";
+import { LOCALES, translate } from "./i18n";
 import bank from "../data/onboarding/bank.json";
 import catalog from "../data/habits/catalog.json";
 import education from "../data/habits/education.json";
@@ -17,8 +17,15 @@ describe("translate", () => {
     expect(translate("zh-CN", "Propósito")).toBe("目标感");
   });
 
+  it("ofrece portugués de Brasil y de Portugal", () => {
+    expect(LOCALES).toEqual(["es", "en-US", "pt-BR", "pt-PT", "zh-CN"]);
+    expect(translate("pt-BR", "Un cambio pequeño también cuenta.")).toBe("Uma mudança pequena também conta.");
+    expect(translate("pt-PT", "Hoy, elige un paso a tu ritmo.")).toBe("Hoje, escolhe um passo ao teu ritmo.");
+  });
+
   it("si no hay entrada, deja el castellano en cualquier idioma", () => {
     expect(translate("en-US", "frase aún no catalogada")).toBe("frase aún no catalogada");
+    expect(translate("pt-BR", "frase aún no catalogada")).toBe("frase aún no catalogada");
     expect(translate("zh-CN", "frase aún no catalogada")).toBe("frase aún no catalogada");
   });
 

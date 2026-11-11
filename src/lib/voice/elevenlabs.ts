@@ -13,7 +13,7 @@ export interface ElevenLabsConfig {
   modelId: string;
 }
 
-export type AppSpeechLocale = "es" | "es-CL" | "en-US" | "zh-CN";
+export type AppSpeechLocale = "es" | "es-CL" | "en-US" | "pt-BR" | "pt-PT" | "zh-CN";
 
 export function getElevenLabsConfig(): ElevenLabsConfig | null {
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
@@ -25,16 +25,24 @@ export function getElevenLabsConfig(): ElevenLabsConfig | null {
   return { apiKey, voiceId, modelId };
 }
 
-export function languageCodeForLocale(locale: string | undefined): "es" | "en" | "zh" {
+export function languageCodeForLocale(locale: string | undefined): "es" | "en" | "zh" | "pt" {
   if (!locale) return "es";
   const normalized = locale.toLowerCase();
   if (normalized.startsWith("zh")) return "zh";
   if (normalized.startsWith("en")) return "en";
+  if (normalized.startsWith("pt")) return "pt";
   return "es";
 }
 
 export function isAppSpeechLocale(value: unknown): value is AppSpeechLocale {
-  return value === "es" || value === "es-CL" || value === "en-US" || value === "zh-CN";
+  return (
+    value === "es" ||
+    value === "es-CL" ||
+    value === "en-US" ||
+    value === "pt-BR" ||
+    value === "pt-PT" ||
+    value === "zh-CN"
+  );
 }
 
 async function streamToResponse(stream: ReadableStream<Uint8Array>): Promise<Response> {

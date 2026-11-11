@@ -1,0 +1,854 @@
+{
+  "Idioma": {
+    "pt-BR": "Idioma",
+    "pt-PT": "Idioma"
+  },
+  "Versión de prueba": {
+    "pt-BR": "Versão de teste",
+    "pt-PT": "Versão de teste"
+  },
+  "TU BIENESTAR, UN DÍA A LA VEZ": {
+    "pt-BR": "O SEU BEM-ESTAR, UM DIA DE CADA VEZ",
+    "pt-PT": "O TEU BEM-ESTAR, UM DIA DE CADA VEZ"
+  },
+  "Un cambio pequeño también cuenta.": {
+    "pt-BR": "Uma mudança pequena também conta.",
+    "pt-PT": "Uma mudança pequena também conta."
+  },
+  "Elige algo que te gustaría explorar. No necesitas cambiarlo todo hoy ni hacerlo perfecto.": {
+    "pt-BR": "Escolha algo que você gostaria de explorar. Não precisa mudar tudo hoje nem fazer perfeito.",
+    "pt-PT": "Escolhe algo que gostarias de explorar. Não precisas mudar tudo hoje nem fazê-lo perfeito."
+  },
+  "Blu es un prototipo de bienestar, no una herramienta clínica. No ofrece consejos médicos ni promete vivir más años.": {
+    "pt-BR": "Blu é um protótipo de bem-estar, não uma ferramenta clínica. Não dá conselhos médicos nem promete viver mais anos.",
+    "pt-PT": "Blu é um protótipo de bem-estar, não uma ferramenta clínica. Não dá conselhos médicos nem promete viver mais anos."
+  },
+  "PRIMER PASO": {
+    "pt-BR": "PRIMEIRO PASSO",
+    "pt-PT": "PRIMEIRO PASSO"
+  },
+  "AJUSTA TU SELECCIÓN": {
+    "pt-BR": "AJUSTE A SUA ESCOLHA",
+    "pt-PT": "AJUSTA A TUA ESCOLHA"
+  },
+  "¿Qué te gustaría cuidar?": {
+    "pt-BR": "O que você gostaria de cuidar?",
+    "pt-PT": "O que gostarias de cuidar?"
+  },
+  "Elige entre uno y cuatro temas. Tú decides el ritmo.": {
+    "pt-BR": "Escolha de um a quatro temas. Você decide o ritmo.",
+    "pt-PT": "Escolhe entre um e quatro temas. Tu decides o ritmo."
+  },
+  "de 4 elegidos": {
+    "pt-BR": "de 4 escolhidos",
+    "pt-PT": "de 4 escolhidos"
+  },
+  "Elige al menos un hábito para continuar.": {
+    "pt-BR": "Escolha pelo menos um hábito para continuar.",
+    "pt-PT": "Escolhe pelo menos um hábito para continuar."
+  },
+  "Empezar con lo que elegí": {
+    "pt-BR": "Começar com o que escolhi",
+    "pt-PT": "Começar com o que escolhi"
+  },
+  "Guardar selección": {
+    "pt-BR": "Salvar escolha",
+    "pt-PT": "Guardar escolha"
+  },
+  "Cancelar": {
+    "pt-BR": "Cancelar",
+    "pt-PT": "Cancelar"
+  },
+  "Puedes elegir hasta cuatro hábitos. Quita uno para elegir otro.": {
+    "pt-BR": "Você pode escolher até quatro hábitos. Tire um para escolher outro.",
+    "pt-PT": "Podes escolher até quatro hábitos. Tira um para escolher outro."
+  },
+  "Puedes elegir hasta cuatro hábitos. Quita uno para incluir este.": {
+    "pt-BR": "Você pode escolher até quatro hábitos. Tire um para incluir este.",
+    "pt-PT": "Podes escolher até quatro hábitos. Tira um para incluir este."
+  },
+  "Un día a la vez": {
+    "pt-BR": "Um dia de cada vez",
+    "pt-PT": "Um dia de cada vez"
+  },
+  "Hoy, elige un paso a tu ritmo.": {
+    "pt-BR": "Hoje, escolha um passo no seu ritmo.",
+    "pt-PT": "Hoje, escolhe um passo ao teu ritmo."
+  },
+  "a tu ritmo.": {
+    "pt-BR": "no seu ritmo.",
+    "pt-PT": "ao teu ritmo."
+  },
+  "No hay rachas que perder. Haz espacio para lo que te hace bien, sin exigencias.": {
+    "pt-BR": "Não há sequência para perder. Abra espaço para o que faz bem a você, sem exigências.",
+    "pt-PT": "Não há sequência para perder. Abre espaço para o que te faz bem, sem exigências."
+  },
+  "Ir a mis hábitos": {
+    "pt-BR": "Ir para os meus hábitos",
+    "pt-PT": "Ir para os meus hábitos"
+  },
+  "TU PASO DE HOY": {
+    "pt-BR": "O SEU PASSO DE HOJE",
+    "pt-PT": "O TEU PASSO DE HOJE"
+  },
+  "hábito": {
+    "pt-BR": "hábito",
+    "pt-PT": "hábito"
+  },
+  "hábitos": {
+    "pt-BR": "hábitos",
+    "pt-PT": "hábitos"
+  },
+  "Un paso pequeño también cuenta.": {
+    "pt-BR": "Um passo pequeno também conta.",
+    "pt-PT": "Um passo pequeno também conta."
+  },
+  "Hoy hiciste espacio para ti.": {
+    "pt-BR": "Hoje você abriu espaço para si.",
+    "pt-PT": "Hoje abriste espaço para ti."
+  },
+  "Ya registraste un paso. Sigue a tu ritmo.": {
+    "pt-BR": "Você já registrou um passo. Siga no seu ritmo.",
+    "pt-PT": "Já registaste um passo. Segue ao teu ritmo."
+  },
+  "Pausa con Blu": {
+    "pt-BR": "Pausa com Blu",
+    "pt-PT": "Pausa com Blu"
+  },
+  "Hoy": {
+    "pt-BR": "Hoje",
+    "pt-PT": "Hoje"
+  },
+  "Tu semana": {
+    "pt-BR": "A sua semana",
+    "pt-PT": "A tua semana"
+  },
+  "Progreso": {
+    "pt-BR": "Progresso",
+    "pt-PT": "Progresso"
+  },
+  "Privacidad": {
+    "pt-BR": "Privacidade",
+    "pt-PT": "Privacidade"
+  },
+  "Hábitos que elegiste": {
+    "pt-BR": "Hábitos que você escolheu",
+    "pt-PT": "Hábitos que escolheste"
+  },
+  "Cambiar selección": {
+    "pt-BR": "Mudar a escolha",
+    "pt-PT": "Mudar a escolha"
+  },
+  "Marcar": {
+    "pt-BR": "Marcar",
+    "pt-PT": "Marcar"
+  },
+  "Desmarcar": {
+    "pt-BR": "Desmarcar",
+    "pt-PT": "Desmarcar"
+  },
+  "Movimiento natural": {
+    "pt-BR": "Movimento natural",
+    "pt-PT": "Movimento natural"
+  },
+  "Alimentación consciente": {
+    "pt-BR": "Alimentação consciente",
+    "pt-PT": "Alimentação consciente"
+  },
+  "Descanso y calma": {
+    "pt-BR": "Descanso e calma",
+    "pt-PT": "Descanso e calma"
+  },
+  "Vínculos cercanos": {
+    "pt-BR": "Vínculos próximos",
+    "pt-PT": "Laços próximos"
+  },
+  "Comunidad": {
+    "pt-BR": "Comunidade",
+    "pt-PT": "Comunidade"
+  },
+  "Conexión con el entorno": {
+    "pt-BR": "Conexão com o entorno",
+    "pt-PT": "Ligação com o meio"
+  },
+  "Propósito": {
+    "pt-BR": "Propósito",
+    "pt-PT": "Propósito"
+  },
+  "Blu te espera, sin prisa.": {
+    "pt-BR": "Blu espera você, sem pressa.",
+    "pt-PT": "Blu espera-te, sem pressa."
+  },
+  "Blu se anima: ya diste un paso.": {
+    "pt-BR": "Blu se anima: você já deu um passo.",
+    "pt-PT": "Blu anima-se: já deste um passo."
+  },
+  "Blu celebra contigo. Hoy hubo espacio.": {
+    "pt-BR": "Blu celebra com você. Hoje houve espaço.",
+    "pt-PT": "Blu celebra contigo. Hoje houve espaço."
+  },
+  "Blu está contento de acompañarte estos días.": {
+    "pt-BR": "Blu está feliz de acompanhar você nestes dias.",
+    "pt-PT": "Blu está contente por te acompanhar nestes dias."
+  },
+  "Blu descansa a tu lado. Un paso basta cuando quieras.": {
+    "pt-BR": "Blu descansa ao seu lado. Um passo basta quando você quiser.",
+    "pt-PT": "Blu descansa ao teu lado. Um passo basta quando quiseres."
+  },
+  "Tu punto de partida": {
+    "pt-BR": "O seu ponto de partida",
+    "pt-PT": "O teu ponto de partida"
+  },
+  "Esto no es un diagnóstico. Es lo que declaras hoy; la práctica de los próximos días lo va afinando.": {
+    "pt-BR": "Isto não é um diagnóstico. É o que você declara hoje; a prática dos próximos dias vai afinando.",
+    "pt-PT": "Isto não é um diagnóstico. É o que declaras hoje; a prática dos próximos dias vai afinando."
+  },
+  "Me cuesta": {
+    "pt-BR": "Está difícil para mim",
+    "pt-PT": "Custa-me"
+  },
+  "Voy a medias": {
+    "pt-BR": "Vou pela metade",
+    "pt-PT": "Vou a meio"
+  },
+  "Ya lo cuido": {
+    "pt-BR": "Já cuido disso",
+    "pt-PT": "Já cuido disso"
+  },
+  "Guardar mi punto de partida": {
+    "pt-BR": "Salvar o meu ponto de partida",
+    "pt-PT": "Guardar o meu ponto de partida"
+  },
+  "Ahora no": {
+    "pt-BR": "Agora não",
+    "pt-PT": "Agora não"
+  },
+  "Completar punto de partida": {
+    "pt-BR": "Completar ponto de partida",
+    "pt-PT": "Completar ponto de partida"
+  },
+  "Actualizar lo que declaré": {
+    "pt-BR": "Atualizar o que eu declarei",
+    "pt-PT": "Atualizar o que declarei"
+  },
+  "Hacer el autodiagnóstico largo (opcional, experimental)": {
+    "pt-BR": "Fazer o autodiagnóstico longo (opcional, experimental)",
+    "pt-PT": "Fazer o autodiagnóstico longo (opcional, experimental)"
+  },
+  "¿Prefieres partir con una autoevaluación?": {
+    "pt-BR": "Prefere começar com uma autoavaliação?",
+    "pt-PT": "Preferes começar com uma autoavaliação?"
+  },
+  "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.": {
+    "pt-BR": "Olá, eu sou Blu. Acompanho você em passos pequenos, sem promessas grandes.",
+    "pt-PT": "Olá, sou Blu. Acompanho-te em passos pequenos, sem promessas grandes."
+  },
+  "Tus datos, bajo tu control": {
+    "pt-BR": "Os seus dados, sob o seu controle",
+    "pt-PT": "Os teus dados, sob o teu controlo"
+  },
+  "Todo lo que guardas en Blu vive en este navegador. Puedes llevártelo o borrarlo cuando quieras: sin cuentas y sin nube.": {
+    "pt-BR": "Tudo o que você guarda na Blu fica neste navegador. Pode levar ou apagar quando quiser: sem contas e sem nuvem.",
+    "pt-PT": "Tudo o que guardas na Blu fica neste navegador. Podes levá-lo ou apagá-lo quando quiseres: sem contas e sem nuvem."
+  },
+  "Exportar mis datos": {
+    "pt-BR": "Exportar os meus dados",
+    "pt-PT": "Exportar os meus dados"
+  },
+  "Un archivo JSON con todo lo guardado aquí.": {
+    "pt-BR": "Um arquivo JSON com tudo o que está salvo aqui.",
+    "pt-PT": "Um ficheiro JSON com tudo o que está guardado aqui."
+  },
+  "Consentimientos": {
+    "pt-BR": "Consentimentos",
+    "pt-PT": "Consentimentos"
+  },
+  "Revisa o retira lo que permitiste.": {
+    "pt-BR": "Revise ou retire o que você permitiu.",
+    "pt-PT": "Revê ou retira o que permitiste."
+  },
+  "Borrar todos los datos": {
+    "pt-BR": "Apagar todos os dados",
+    "pt-PT": "Apagar todos os dados"
+  },
+  "Elimina todo y verifica el borrado.": {
+    "pt-BR": "Apaga tudo e verifica que sumiu.",
+    "pt-PT": "Apaga tudo e verifica que desapareceu."
+  },
+  "Blu es un prototipo de bienestar: acompaña hábitos, no diagnostica ni trata.": {
+    "pt-BR": "Blu é um protótipo de bem-estar: acompanha hábitos, não diagnostica nem trata.",
+    "pt-PT": "Blu é um protótipo de bem-estar: acompanha hábitos, não diagnostica nem trata."
+  },
+  "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. (requerido)": {
+    "pt-BR": "Entendo que isto é um protótipo. Guardo meus hábitos e registros só neste navegador, sem criptografia nem sincronização, e posso apagá-los na Blu. (obrigatório)",
+    "pt-PT": "Entendo que isto é um protótipo. Guardo os meus hábitos e registos só neste navegador, sem cifragem nem sincronização, e posso apagá-los na Blu. (obrigatório)"
+  },
+  "Acepto que datos agregados y anónimos orienten la mejora del producto. (opcional)": {
+    "pt-BR": "Aceito que dados agregados e anônimos orientem a melhoria do produto. (opcional)",
+    "pt-PT": "Aceito que dados agregados e anónimos orientem a melhoria do produto. (opcional)"
+  },
+  "Acepto que datos agregados y anónimos se usen en investigación con revisión ética. (opcional)": {
+    "pt-BR": "Aceito que dados agregados e anônimos sejam usados em pesquisa com revisão ética. (opcional)",
+    "pt-PT": "Aceito que dados agregados e anónimos sejam usados em investigação com revisão ética. (opcional)"
+  },
+  "Me sentí bien": {
+    "pt-BR": "Me senti bem",
+    "pt-PT": "Senti-me bem"
+  },
+  "Más o menos igual": {
+    "pt-BR": "Mais ou menos igual",
+    "pt-PT": "Mais ou menos igual"
+  },
+  "Se me hizo difícil": {
+    "pt-BR": "Foi difícil para mim",
+    "pt-PT": "Foi difícil para mim"
+  },
+  "Mantener como está": {
+    "pt-BR": "Manter como está",
+    "pt-PT": "Manter como está"
+  },
+  "Ajustar un hábito": {
+    "pt-BR": "Ajustar um hábito",
+    "pt-PT": "Ajustar um hábito"
+  },
+  "Hola, soy Blu. Te acompaño en pasos pequeños: nada de promesas grandes. ¿Qué te está costando más hoy: el tiempo, la energía o acordarte?": {
+    "pt-BR": "Olá, eu sou Blu. Acompanho você em passos pequenos: nada de promessas grandes. O que está mais difícil hoje: o tempo, a energia ou lembrar?",
+    "pt-PT": "Olá, sou Blu. Acompanho-te em passos pequenos: nada de promessas grandes. O que te está a custar mais hoje: o tempo, a energia ou lembrares-te?"
+  },
+  "No incluyas datos personales ni información médica.": {
+    "pt-BR": "Não inclua dados pessoais nem informação médica.",
+    "pt-PT": "Não incluas dados pessoais nem informação médica."
+  },
+  "La conexión y el propósito también se construyen con gestos pequeños, elegidos por ti.": {
+    "pt-BR": "A conexão e o propósito também se constroem com gestos pequenos, escolhidos por você.",
+    "pt-PT": "A ligação e o propósito também se constroem com gestos pequenos, escolhidos por ti."
+  },
+  "Reflexión, no consejo clínico": {
+    "pt-BR": "Reflexão, não conselho clínico",
+    "pt-PT": "Reflexão, não conselho clínico"
+  },
+  "UNA IDEA PARA HOY": {
+    "pt-BR": "UMA IDEIA PARA HOJE",
+    "pt-PT": "UMA IDEIA PARA HOJE"
+  },
+  "Algunos temas que ya tenías no están entre los cuatro pilares. Puedes quitarlos y elegir de nuevo.": {
+    "pt-BR": "Alguns temas que você já tinha não estão entre os quatro pilares. Pode tirá-los e escolher de novo.",
+    "pt-PT": "Alguns temas que já tinhas não estão entre os quatro pilares. Podes tirá-los e escolher de novo."
+  },
+  "Lo hice": {
+    "pt-BR": "Eu fiz",
+    "pt-PT": "Fiz"
+  },
+  "¿Qué tienes en mente?": {
+    "pt-BR": "O que você tem em mente?",
+    "pt-PT": "O que tens em mente?"
+  },
+  "Escribe una reflexión": {
+    "pt-BR": "Escreva uma reflexão",
+    "pt-PT": "Escreve uma reflexão"
+  },
+  "Cuatro pilares: alimentación, movimiento, comunidad y propósito.": {
+    "pt-BR": "Quatro pilares: alimentação, movimento, comunidade e propósito.",
+    "pt-PT": "Quatro pilares: alimentação, movimento, comunidade e propósito."
+  },
+  "Enviar": {
+    "pt-BR": "Enviar",
+    "pt-PT": "Enviar"
+  },
+  "Apodo (opcional)": {
+    "pt-BR": "Apelido (opcional)",
+    "pt-PT": "Alcunha (opcional)"
+  },
+  "No pude guardar el punto de partida en este navegador.": {
+    "pt-BR": "Não consegui salvar o ponto de partida neste navegador.",
+    "pt-PT": "Não consegui guardar o ponto de partida neste navegador."
+  },
+  "Punto de partida guardado. Se irá afinando con los pasos que marques.": {
+    "pt-BR": "Ponto de partida salvo. Vai se afinando com os passos que você marcar.",
+    "pt-PT": "Ponto de partida guardado. Vai afinando-se com os passos que marcares."
+  },
+  "Voz del dispositivo activada. La lectura no envía texto a Microsoft.": {
+    "pt-BR": "Voz do dispositivo ativada. A leitura não envia texto à Microsoft.",
+    "pt-PT": "Voz do dispositivo ativada. A leitura não envia texto à Microsoft."
+  },
+  "La voz natural aún no está configurada. Puedes seguir usando la voz de tu dispositivo.": {
+    "pt-BR": "A voz natural ainda não está configurada. Você pode continuar com a voz do seu dispositivo.",
+    "pt-PT": "A voz natural ainda não está configurada. Podes continuar com a voz do teu dispositivo."
+  },
+  "Voz natural activada para esta sesión.": {
+    "pt-BR": "Voz natural ativada para esta sessão.",
+    "pt-PT": "Voz natural ativada para esta sessão."
+  },
+  "No pude comprobar la voz natural. Puedes seguir usando la voz de tu dispositivo.": {
+    "pt-BR": "Não consegui verificar a voz natural. Você pode continuar com a voz do seu dispositivo.",
+    "pt-PT": "Não consegui verificar a voz natural. Podes continuar com a voz do teu dispositivo."
+  },
+  "La exportación quedó incompleta: no pude leer algunas categorías. El JSON descargado incluye el detalle en «errors».": {
+    "pt-BR": "A exportação ficou incompleta: não consegui ler algumas categorias. O JSON baixado inclui o detalhe em «errors».",
+    "pt-PT": "A exportação ficou incompleta: não consegui ler algumas categorias. O JSON transferido inclui o detalhe em «errors»."
+  },
+  "Exportaste tus datos. Revisa tu carpeta de descargas.": {
+    "pt-BR": "Você exportou os seus dados. Veja a pasta de downloads.",
+    "pt-PT": "Exportaste os teus dados. Vê a pasta de transferências."
+  },
+  "No pude preparar la exportación en este navegador.": {
+    "pt-BR": "Não consegui preparar a exportação neste navegador.",
+    "pt-PT": "Não consegui preparar a exportação neste navegador."
+  },
+  "Revisión guardada. Gracias por mirar tu semana.": {
+    "pt-BR": "Revisão salva. Obrigado por olhar a sua semana.",
+    "pt-PT": "Revisão guardada. Obrigado por olhares a tua semana."
+  },
+  "No se pudo guardar tu revisión.": {
+    "pt-BR": "Não foi possível salvar a sua revisão.",
+    "pt-PT": "Não foi possível guardar a tua revisão."
+  },
+  "Quedó registrado que omitiste esta semana.": {
+    "pt-BR": "Ficou registrado que você pulou esta semana.",
+    "pt-PT": "Ficou registado que saltaste esta semana."
+  },
+  "Recordatorio desactivado. Puedes activarlo cuando quieras.": {
+    "pt-BR": "Lembrete desativado. Você pode ativá-lo quando quiser.",
+    "pt-PT": "Lembrete desativado. Podes ativá-lo quando quiseres."
+  },
+  "Recordatorio activado: máximo uno al día, solo si quedan pasos sin marcar.": {
+    "pt-BR": "Lembrete ativado: no máximo um por dia, só se restarem passos sem marcar.",
+    "pt-PT": "Lembrete ativado: no máximo um por dia, só se restarem passos por marcar."
+  },
+  "Sin permiso del navegador, no activo nada. Puedes intentarlo de nuevo desde la configuración del sitio.": {
+    "pt-BR": "Sem permissão do navegador, não ativo nada. Você pode tentar de novo nas configurações do site.",
+    "pt-PT": "Sem permissão do navegador, não ativo nada. Podes tentar outra vez nas definições do site."
+  },
+  "Este hábito ya está en su versión más pequeña.": {
+    "pt-BR": "Este hábito já está na versão menor.",
+    "pt-PT": "Este hábito já está na versão mais pequena."
+  },
+  "Listo. Dejé registrada la versión más pequeña que elegiste.": {
+    "pt-BR": "Pronto. Registrei a versão menor que você escolheu.",
+    "pt-PT": "Pronto. Registei a versão mais pequena que escolheste."
+  },
+  "Se deshizo el último ajuste. Puedes elegir otro cuando quieras.": {
+    "pt-BR": "O último ajuste foi desfeito. Você pode escolher outro quando quiser.",
+    "pt-PT": "O último ajuste foi desfeito. Podes escolher outro quando quiseres."
+  },
+  "¿Borrar de este navegador tus hábitos, registros, cuestionario, objetivos y revisiones de Blu?": {
+    "pt-BR": "Apagar deste navegador os seus hábitos, registros, questionário, objetivos e revisões da Blu?",
+    "pt-PT": "Apagar deste navegador os teus hábitos, registos, questionário, objetivos e revisões da Blu?"
+  },
+  "Se borraron todos los datos de Blu en este navegador.": {
+    "pt-BR": "Todos os dados da Blu neste navegador foram apagados.",
+    "pt-PT": "Todos os dados da Blu neste navegador foram apagados."
+  },
+  "Esa versión ya está activa para este hábito.": {
+    "pt-BR": "Essa versão já está ativa para este hábito.",
+    "pt-PT": "Essa versão já está ativa para este hábito."
+  },
+  "Listo: «{title}» quedó como tu versión actual.": {
+    "pt-BR": "Pronto: «{title}» ficou como a sua versão atual.",
+    "pt-PT": "Pronto: «{title}» ficou como a tua versão atual."
+  },
+  "Semana sugerida creada; puedes moverla como quieras.": {
+    "pt-BR": "Semana sugerida criada; você pode movê-la como quiser.",
+    "pt-PT": "Semana sugerida criada; podes movê-la como quiseres."
+  },
+  "No se pudo guardar.": {
+    "pt-BR": "Não foi possível salvar.",
+    "pt-PT": "Não foi possível guardar."
+  },
+  "Incluí «{title}» en tus hábitos.": {
+    "pt-BR": "Incluí «{title}» nos seus hábitos.",
+    "pt-PT": "Incluí «{title}» nos teus hábitos."
+  },
+  "Tu espacio quedó guardado en este navegador.": {
+    "pt-BR": "O seu espaço foi salvo neste navegador.",
+    "pt-PT": "O teu espaço ficou guardado neste navegador."
+  },
+  "Borrar mis datos": {
+    "pt-BR": "Apagar os meus dados",
+    "pt-PT": "Apagar os meus dados"
+  },
+  "Prefiero no responder": {
+    "pt-BR": "Prefiro não responder",
+    "pt-PT": "Prefiro não responder"
+  },
+  "Las ideas de este prototipo no son recomendaciones clínicas; su evidencia específica está pendiente de revisión.": {
+    "pt-BR": "As ideias deste protótipo não são recomendações clínicas; a evidência específica ainda está em revisão.",
+    "pt-PT": "As ideias deste protótipo não são recomendações clínicas; a evidência específica ainda está em revisão."
+  },
+  "ACOMPAÑAMIENTO": {
+    "pt-BR": "ACOMPANHAMENTO",
+    "pt-PT": "ACOMPANHAMENTO"
+  },
+  "Una pausa con Blu": {
+    "pt-BR": "Uma pausa com Blu",
+    "pt-PT": "Uma pausa com Blu"
+  },
+  "Ahora respondo con IA (modo remoto): tu mensaje se procesa con un proveedor externo a través del servidor de Blu. No guardamos tu historial; evita compartir datos personales o de salud.": {
+    "pt-BR": "Agora respondo com IA (modo remoto): a sua mensagem é processada por um provedor externo pelo servidor da Blu. Não guardamos o histórico; evite compartilhar dados pessoais ou de saúde.",
+    "pt-PT": "Agora respondo com IA (modo remoto): a tua mensagem é processada por um fornecedor externo através do servidor da Blu. Não guardamos o histórico; evita partilhar dados pessoais ou de saúde."
+  },
+  "Respondo con reglas sencillas, no con IA generativa. Tu mensaje llega al servidor de Blu para preparar la respuesta; no guardamos un historial de la conversación.": {
+    "pt-BR": "Respondo com regras simples, não com IA generativa. A sua mensagem chega ao servidor da Blu para preparar a resposta; não guardamos um histórico da conversa.",
+    "pt-PT": "Respondo com regras simples, não com IA generativa. A tua mensagem chega ao servidor da Blu para preparar a resposta; não guardamos um histórico da conversa."
+  },
+  "El servidor pidió esperar. Usé reglas sencillas en tu dispositivo para responder.": {
+    "pt-BR": "O servidor pediu para esperar. Usei regras simples no seu dispositivo para responder.",
+    "pt-PT": "O servidor pediu para esperar. Usei regras simples no teu dispositivo para responder."
+  },
+  "El servidor no pudo responder. Usé reglas sencillas en tu dispositivo.": {
+    "pt-BR": "O servidor não conseguiu responder. Usei regras simples no seu dispositivo.",
+    "pt-PT": "O servidor não conseguiu responder. Usei regras simples no teu dispositivo."
+  },
+  "Tu mensaje se envió al servidor para intentar responder; evita compartir datos personales o de salud.": {
+    "pt-BR": "A sua mensagem foi enviada ao servidor para tentar responder; evite compartilhar dados pessoais ou de saúde.",
+    "pt-PT": "A tua mensagem foi enviada ao servidor para tentar responder; evita partilhar dados pessoais ou de saúde."
+  },
+  "Blu está pensando…": {
+    "pt-BR": "Blu está pensando…",
+    "pt-PT": "Blu está a pensar…"
+  },
+  "Estilo de voz": {
+    "pt-BR": "Estilo de voz",
+    "pt-PT": "Estilo de voz"
+  },
+  "Cálida": {
+    "pt-BR": "Calorosa",
+    "pt-PT": "Calorosa"
+  },
+  "Equilibrada": {
+    "pt-BR": "Equilibrada",
+    "pt-PT": "Equilibrada"
+  },
+  "La voz disponible depende de las opciones de tu dispositivo.": {
+    "pt-BR": "A voz disponível depende das opções do seu dispositivo.",
+    "pt-PT": "A voz disponível depende das opções do teu dispositivo."
+  },
+  "Si activas Azure, se enviará a Microsoft solo el texto de Blu que elijas escuchar para crear el audio. No compartas información personal o de salud.": {
+    "pt-BR": "Se você ativar o Azure, só o texto da Blu que escolher ouvir será enviado à Microsoft para criar o áudio. Não compartilhe informação pessoal ou de saúde.",
+    "pt-PT": "Se ativares o Azure, só o texto da Blu que escolheres ouvir será enviado à Microsoft para criar o áudio. Não partilhes informação pessoal ou de saúde."
+  },
+  "Comprobando…": {
+    "pt-BR": "Verificando…",
+    "pt-PT": "A verificar…"
+  },
+  "Usar voz del dispositivo": {
+    "pt-BR": "Usar a voz do dispositivo",
+    "pt-PT": "Usar a voz do dispositivo"
+  },
+  "Activar voz natural": {
+    "pt-BR": "Ativar voz natural",
+    "pt-PT": "Ativar voz natural"
+  },
+  "Métricas de uso del producto (descriptivas): no miden salud ni eficacia (BLU-1204).": {
+    "pt-BR": "Métricas de uso do produto (descritivas): não medem saúde nem eficácia (BLU-1204).",
+    "pt-PT": "Métricas de utilização do produto (descritivas): não medem saúde nem eficácia (BLU-1204)."
+  },
+  "Es un registro personal, no una medida de salud. ¿Quieres probar una versión más pequeña?": {
+    "pt-BR": "É um registro pessoal, não uma medida de saúde. Quer experimentar uma versão menor?",
+    "pt-PT": "É um registo pessoal, não uma medida de saúde. Queres experimentar uma versão mais pequena?"
+  },
+  "Elige un hábito": {
+    "pt-BR": "Escolha um hábito",
+    "pt-PT": "Escolhe um hábito"
+  },
+  "Me faltó tiempo": {
+    "pt-BR": "Faltou tempo",
+    "pt-PT": "Faltou-me tempo"
+  },
+  "Tenía poca energía": {
+    "pt-BR": "Eu tinha pouca energia",
+    "pt-PT": "Tinha pouca energia"
+  },
+  "Se me olvidó": {
+    "pt-BR": "Eu esqueci",
+    "pt-PT": "Esqueci-me"
+  },
+  "Otra razón": {
+    "pt-BR": "Outro motivo",
+    "pt-PT": "Outro motivo"
+  },
+  "Probar más pequeño": {
+    "pt-BR": "Experimentar menor",
+    "pt-PT": "Experimentar mais pequeno"
+  },
+  "MIRADA SEMANAL": {
+    "pt-BR": "OLHAR SEMANAL",
+    "pt-PT": "OLHAR SEMANAL"
+  },
+  "Revisión de tu semana": {
+    "pt-BR": "Revisão da sua semana",
+    "pt-PT": "Revisão da tua semana"
+  },
+  "Últimos 7 días · es un registro personal, no una medida de salud.": {
+    "pt-BR": "Últimos 7 dias · é um registro pessoal, não uma medida de saúde.",
+    "pt-PT": "Últimos 7 dias · é um registo pessoal, não uma medida de saúde."
+  },
+  "Si quieres, cuéntame cómo te fue y qué prefieres para la próxima semana.": {
+    "pt-BR": "Se quiser, conte como foi e o que prefere para a próxima semana.",
+    "pt-PT": "Se quiseres, conta como correu e o que preferes para a próxima semana."
+  },
+  "Responder cómo me sentí": {
+    "pt-BR": "Dizer como me senti",
+    "pt-PT": "Dizer como me senti"
+  },
+  "Actualizar mi respuesta": {
+    "pt-BR": "Atualizar a minha resposta",
+    "pt-PT": "Atualizar a minha resposta"
+  },
+  "¿Cómo te sentiste con tus hábitos?": {
+    "pt-BR": "Como você se sentiu com os seus hábitos?",
+    "pt-PT": "Como te sentiste com os teus hábitos?"
+  },
+  "¿Qué quieres hacer la próxima semana?": {
+    "pt-BR": "O que você quer fazer na próxima semana?",
+    "pt-PT": "O que queres fazer na próxima semana?"
+  },
+  "Guardar revisión": {
+    "pt-BR": "Salvar revisão",
+    "pt-PT": "Guardar revisão"
+  },
+  "Sin pasos": {
+    "pt-BR": "Sem passos",
+    "pt-PT": "Sem passos"
+  },
+  "paso": {
+    "pt-BR": "passo",
+    "pt-PT": "passo"
+  },
+  "pasos": {
+    "pt-BR": "passos",
+    "pt-PT": "passos"
+  },
+  "Autodiagnóstico": {
+    "pt-BR": "Autodiagnóstico",
+    "pt-PT": "Autodiagnóstico"
+  },
+  "No pude cargar el cuestionario": {
+    "pt-BR": "Não consegui carregar o questionário",
+    "pt-PT": "Não consegui carregar o questionário"
+  },
+  "El cuestionario no se pudo cargar.": {
+    "pt-BR": "O questionário não pôde ser carregado.",
+    "pt-PT": "O questionário não pôde ser carregado."
+  },
+  "Borrar datos del cuestionario y reintentar": {
+    "pt-BR": "Apagar dados do questionário e tentar de novo",
+    "pt-PT": "Apagar dados do questionário e tentar outra vez"
+  },
+  "Preparando tu autodiagnóstico…": {
+    "pt-BR": "Preparando o seu autodiagnóstico…",
+    "pt-PT": "A preparar o teu autodiagnóstico…"
+  },
+  "No se pudo guardar tu avance.": {
+    "pt-BR": "Não foi possível salvar o seu avanço.",
+    "pt-PT": "Não foi possível guardar o teu progresso."
+  },
+  "No se pudo registrar tu aceptación en este navegador.": {
+    "pt-BR": "Não foi possível registrar a sua aceitação neste navegador.",
+    "pt-PT": "Não foi possível registar a tua aceitação neste navegador."
+  },
+  "No pude leer tu aceptación del aviso": {
+    "pt-BR": "Não consegui ler a sua aceitação do aviso",
+    "pt-PT": "Não consegui ler a tua aceitação do aviso"
+  },
+  "Borrar el aviso y reintentar": {
+    "pt-BR": "Apagar o aviso e tentar de novo",
+    "pt-PT": "Apagar o aviso e tentar outra vez"
+  },
+  "ANTES DE EMPEZAR": {
+    "pt-BR": "ANTES DE COMEÇAR",
+    "pt-PT": "ANTES DE COMEÇAR"
+  },
+  "Antes de empezar, un aviso": {
+    "pt-BR": "Antes de começar, um aviso",
+    "pt-PT": "Antes de começar, um aviso"
+  },
+  "«Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»": {
+    "pt-BR": "«Vamos conhecer você um pouco. As suas respostas ficam neste navegador.»",
+    "pt-PT": "«Vamos conhecer-te um pouco. As tuas respostas ficam neste navegador.»"
+  },
+  "Este almacenamiento no está cifrado: evita datos médicos o que te identifiquen. Puedes borrar todo con «Borrar datos del cuestionario» o «Borrar mis datos».": {
+    "pt-BR": "Este armazenamento não é criptografado: evite dados médicos ou que identifiquem você. Pode apagar tudo com «Apagar dados do questionário» ou «Apagar os meus dados».",
+    "pt-PT": "Este armazenamento não está cifrado: evita dados médicos ou que te identifiquem. Podes apagar tudo com «Apagar dados do questionário» ou «Apagar os meus dados»."
+  },
+  "Actualizamos el aviso del cuestionario desde tu última aceptación. Márcalo de nuevo para continuar.": {
+    "pt-BR": "Atualizamos o aviso do questionário desde a sua última aceitação. Marque de novo para continuar.",
+    "pt-PT": "Atualizámos o aviso do questionário desde a tua última aceitação. Marca outra vez para continuar."
+  },
+  "Entiendo dónde se guardan mis respuestas y cómo borrarlas.": {
+    "pt-BR": "Entendo onde as minhas respostas são guardadas e como apagá-las.",
+    "pt-PT": "Entendo onde as minhas respostas são guardadas e como apagá-las."
+  },
+  "Comenzar": {
+    "pt-BR": "Começar",
+    "pt-PT": "Começar"
+  },
+  "Volver sin guardar nada": {
+    "pt-BR": "Voltar sem salvar nada",
+    "pt-PT": "Voltar sem guardar nada"
+  },
+  "No se pudo guardar tu decisión en este navegador.": {
+    "pt-BR": "Não foi possível salvar a sua decisão neste navegador.",
+    "pt-PT": "Não foi possível guardar a tua decisão neste navegador."
+  },
+  "RESULTADO": {
+    "pt-BR": "RESULTADO",
+    "pt-PT": "RESULTADO"
+  },
+  "Tu autodiagnóstico de hábitos": {
+    "pt-BR": "O seu autodiagnóstico de hábitos",
+    "pt-PT": "O teu autodiagnóstico de hábitos"
+  },
+  "Esta autoevaluación es experimental y orientativa: no es un diagnóstico ni una medida de salud.": {
+    "pt-BR": "Esta autoavaliação é experimental e orientativa: não é um diagnóstico nem uma medida de saúde.",
+    "pt-PT": "Esta autoavaliação é experimental e orientativa: não é um diagnóstico nem uma medida de saúde."
+  },
+  "El cuestionario se actualizó desde que empezaste; este resultado usa la versión que respondiste ({version}).": {
+    "pt-BR": "O questionário foi atualizado depois que você começou; este resultado usa a versão que você respondeu ({version}).",
+    "pt-PT": "O questionário foi atualizado depois de começares; este resultado usa a versão que respondeste ({version})."
+  },
+  "TU LÍNEA BASE": {
+    "pt-BR": "A SUA LINHA DE BASE",
+    "pt-PT": "A TUA LINHA DE BASE"
+  },
+  "Punto de partida": {
+    "pt-BR": "Ponto de partida",
+    "pt-PT": "Ponto de partida"
+  },
+  "Aún no hay base suficiente: respondiste {coverage} de {total} dimensiones y se necesitan al menos {minimum}. Revisa tus respuestas y vuelve: se recalcula al instante.": {
+    "pt-BR": "Ainda não há base suficiente: você respondeu {coverage} de {total} dimensões e são necessárias pelo menos {minimum}. Revise as respostas e volte: recalcula na hora.",
+    "pt-PT": "Ainda não há base suficiente: respondeste {coverage} de {total} dimensões e são necessárias pelo menos {minimum}. Revê as respostas e volta: recalcula na hora."
+  },
+  "de 100 · basado en {coverage} de {total} dimensiones ({answered} de {questions} respuestas puntuables)": {
+    "pt-BR": "de 100 · com base em {coverage} de {total} dimensões ({answered} de {questions} respostas pontuáveis)",
+    "pt-PT": "de 100 · com base em {coverage} de {total} dimensões ({answered} de {questions} respostas pontuáveis)"
+  },
+  "Medida descriptiva y experimental para tu reflexión personal: no es un diagnóstico, no compara con otras personas y no predice resultados de salud.": {
+    "pt-BR": "Medida descritiva e experimental para a sua reflexão pessoal: não é um diagnóstico, não compara com outras pessoas e não prevê resultados de saúde.",
+    "pt-PT": "Medida descritiva e experimental para a tua reflexão pessoal: não é um diagnóstico, não compara com outras pessoas e não prevê resultados de saúde."
+  },
+  "¿Cómo se calcula?": {
+    "pt-BR": "Como se calcula?",
+    "pt-PT": "Como se calcula?"
+  },
+  "Promedio de las dimensiones respondidas (cada una va de 0 a 100 según tus respuestas). Las preguntas omitidas no bajan el puntaje: solo reducen la cobertura.": {
+    "pt-BR": "Média das dimensões respondidas (cada uma vai de 0 a 100 conforme as suas respostas). As perguntas puladas não baixam a pontuação: só reduzem a cobertura.",
+    "pt-PT": "Média das dimensões respondidas (cada uma vai de 0 a 100 conforme as tuas respostas). As perguntas omitidas não baixam a pontuação: só reduzem a cobertura."
+  },
+  "Revisar mis respuestas": {
+    "pt-BR": "Rever as minhas respostas",
+    "pt-PT": "Rever as minhas respostas"
+  },
+  "Corregir recalcula tu línea base al momento.": {
+    "pt-BR": "Corrigir recalcula a sua linha de base na hora.",
+    "pt-PT": "Corrigir recalcula a tua linha de base na hora."
+  },
+  "Cuando repitas la autoevaluación, la nueva línea base reemplaza a esta: por ahora no guardamos historial.": {
+    "pt-BR": "Quando você repetir a autoavaliação, a nova linha de base substitui esta: por agora não guardamos histórico.",
+    "pt-PT": "Quando repetires a autoavaliação, a nova linha de base substitui esta: por agora não guardamos histórico."
+  },
+  "Sin nivel aún": {
+    "pt-BR": "Sem nível ainda",
+    "pt-PT": "Sem nível ainda"
+  },
+  "Espacio para cuidarte": {
+    "pt-BR": "Espaço para cuidar de você",
+    "pt-PT": "Espaço para cuidares de ti"
+  },
+  "En desarrollo": {
+    "pt-BR": "Em desenvolvimento",
+    "pt-PT": "Em desenvolvimento"
+  },
+  "Fortaleza": {
+    "pt-BR": "Fortaleza",
+    "pt-PT": "Fortaleza"
+  },
+  "Menor confianza (omitiste algunas preguntas).": {
+    "pt-BR": "Menor confiança (você pulou algumas perguntas).",
+    "pt-PT": "Menor confiança (omitiste algumas perguntas)."
+  },
+  "Sugerencias para partir": {
+    "pt-BR": "Sugestões para começar",
+    "pt-PT": "Sugestões para começar"
+  },
+  "Este cuestionario propone hasta tres ideas. En Blu puedes cuidar hasta cuatro.": {
+    "pt-BR": "Este questionário propõe até três ideias. Na Blu você pode cuidar de até quatro.",
+    "pt-PT": "Este questionário propõe até três ideias. Na Blu podes cuidar de até quatro."
+  },
+  "Sin sugerencias por ahora. Tú decides siempre.": {
+    "pt-BR": "Sem sugestões por agora. Você sempre decide.",
+    "pt-PT": "Sem sugestões por agora. Tu decides sempre."
+  },
+  "Elegir tus hábitos manualmente": {
+    "pt-BR": "Escolher os seus hábitos manualmente",
+    "pt-PT": "Escolher os teus hábitos manualmente"
+  },
+  "Guardado en tus objetivos. Puedes ajustarlo en la pantalla de hábitos.": {
+    "pt-BR": "Salvo nos seus objetivos. Você pode ajustar na tela de hábitos.",
+    "pt-PT": "Guardado nos teus objetivos. Podes ajustar no ecrã de hábitos."
+  },
+  "Rechazada; no se guardó nada.": {
+    "pt-BR": "Recusada; nada foi salvo.",
+    "pt-PT": "Recusada; nada foi guardado."
+  },
+  "Aceptar": {
+    "pt-BR": "Aceitar",
+    "pt-PT": "Aceitar"
+  },
+  "Rechazar": {
+    "pt-BR": "Recusar",
+    "pt-PT": "Recusar"
+  },
+  "Aceptar {title}": {
+    "pt-BR": "Aceitar {title}",
+    "pt-PT": "Aceitar {title}"
+  },
+  "Rechazar {title}": {
+    "pt-BR": "Recusar {title}",
+    "pt-PT": "Recusar {title}"
+  },
+  "Puedes usar esto para elegir hábitos, o ignorarlo por completo: tú decides.": {
+    "pt-BR": "Você pode usar isto para escolher hábitos, ou ignorar por completo: você decide.",
+    "pt-PT": "Podes usar isto para escolher hábitos, ou ignorar por completo: tu decides."
+  },
+  "Repetir evaluación": {
+    "pt-BR": "Repetir a avaliação",
+    "pt-PT": "Repetir a avaliação"
+  },
+  "Volver a Blu": {
+    "pt-BR": "Voltar à Blu",
+    "pt-PT": "Voltar à Blu"
+  },
+  "Cuestionario completado": {
+    "pt-BR": "Questionário concluído",
+    "pt-PT": "Questionário concluído"
+  },
+  "Pregunta {n} de {total}": {
+    "pt-BR": "Pergunta {n} de {total}",
+    "pt-PT": "Pergunta {n} de {total}"
+  },
+  "El cuestionario cambió de versión desde tu última sesión; conservamos tu avance.": {
+    "pt-BR": "O questionário mudou de versão desde a sua última sessão; conservamos o seu avanço.",
+    "pt-PT": "O questionário mudou de versão desde a tua última sessão; conservamos o teu progresso."
+  },
+  "Volver a mi resultado": {
+    "pt-BR": "Voltar ao meu resultado",
+    "pt-PT": "Voltar ao meu resultado"
+  },
+  "Anterior": {
+    "pt-BR": "Anterior",
+    "pt-PT": "Anterior"
+  },
+  "Siguiente": {
+    "pt-BR": "Seguinte",
+    "pt-PT": "Seguinte"
+  },
+  "Ver mi resultado": {
+    "pt-BR": "Ver o meu resultado",
+    "pt-PT": "Ver o meu resultado"
+  },
+  "Autoevaluación orientativa de hábitos. No es un diagnóstico médico ni una escala psicométrica validada.": {
+    "pt-BR": "Autoavaliação orientativa de hábitos. Não é um diagnóstico médico nem uma escala psicométrica validada.",
+    "pt-PT": "Autoavaliação orientativa de hábitos. Não é um diagnóstico médico nem uma escala psicométrica validada."
+  }
+}

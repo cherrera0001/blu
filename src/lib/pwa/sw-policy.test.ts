@@ -33,6 +33,6 @@ describe("política de caché del service worker (BLU-1503)", () => {
   });
 
   it("la versión del caché está centralizada (una sola fuente)", () => {
-    expect(CACHE_NAME).toBe("blu-shell-v6");
+    expect(CACHE_NAME).toBe("blu-shell-v7");
   });
 });

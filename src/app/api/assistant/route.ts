@@ -3,6 +3,7 @@ import { parseAssistantScene, type AssistantScene } from "@/lib/assistant/scene"
 import { LocalRuleProvider } from "@/lib/assistant/providers/local";
 import { getRemoteLlmConfig, RemoteLlmProvider } from "@/lib/assistant/providers/remote";
 import type { AssistantProvider } from "@/lib/assistant/types";
+import { clientIp } from "@/lib/http/client-ip";
 
 // Next 16 (Cache Components): los Route Handlers corren a request time por defecto;
 // no se usa `export const dynamic` (incompatible con cacheComponents, docs instaladas).
@@ -57,11 +58,6 @@ function rateLimit(ip: string): boolean {
   bucket.count += 1;
   bucket.dayCount += 1;
   return bucket.count <= RATE_MAX && bucket.dayCount <= DAILY_MAX;
-}
-
-function clientIp(request: Request): string {
-  const fwd = request.headers.get("x-forwarded-for");
-  return fwd ? fwd.split(",")[0].trim() : "local";
 }
 
 function isValidBody(body: unknown): body is { messages: ChatMessage[] } {
@@ -124,6 +120,9 @@ export async function POST(request: Request): Promise<Response> {
   }
   if (!isValidBody(body)) {
     return Response.json({ error: "invalid_request" }, { status: 400 });
+  }
+  if (getRemoteLlmConfig() && request.headers.get("sec-fetch-site") === "cross-site") {
+    return Response.json({ error: "forbidden" }, { status: 403 });
   }
   if (!rateLimit(clientIp(request))) {
     return Response.json({ error: "rate_limited" }, { status: 429 });

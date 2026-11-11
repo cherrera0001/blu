@@ -1,20 +1,22 @@
+import extra from "./i18n-extra.json";
 import gaps from "./i18n-gaps.json";
+import portuguese from "./i18n-pt.json";
 
-export const LOCALES = ["es", "en-US", "zh-CN"] as const;
+export const LOCALES = ["es", "en-US", "pt-BR", "pt-PT", "zh-CN"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 const LOCALE_KEY = "blu.locale.v1";
 
 /**
  * Castellano es el texto fuente. `translate` devuelve ese texto en `es`
- * y la versión en inglés (EE. UU.) o chino mandarín simplificado en los otros.
- * Si falta una entrada, se conserva el castellano: eso solo es aceptable
- * para texto libre que no es de la interfaz. Las frases de pantalla viven
- * en este diccionario o en i18n-gaps.json.
+ * y la versión en inglés (EE. UU.), portugués de Brasil, portugués (Portugal y otros)
+ * o chino mandarín simplificado. Si falta una entrada, se conserva el castellano.
+ * Las frases de pantalla viven en este diccionario, i18n-gaps.json, i18n-extra.json
+ * o i18n-pt.json.
  */
-const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
-  ...(gaps as Record<string, { "en-US": string; "zh-CN": string }>),
-  Idioma: { "en-US": "Language", "zh-CN": "语言" },
+const DICTIONARY: Record<string, Partial<Record<Exclude<Locale, "es">, string>>> = {
+  ...(gaps as Record<string, Partial<Record<Exclude<Locale, "es">, string>>>),
+  Idioma: { "en-US": "Language", "zh-CN": "语言", "pt-BR": "Idioma", "pt-PT": "Idioma" },
   "Versión de prueba": { "en-US": "Trial version", "zh-CN": "试用版" },
   "TU BIENESTAR, UN DÍA A LA VEZ": {
     "en-US": "YOUR WELLBEING, ONE DAY AT A TIME",
@@ -655,9 +657,21 @@ export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && (LOCALES as readonly string[]).includes(value);
 }
 
+type PortugueseRow = { "pt-BR"?: string; "pt-PT"?: string };
+type ExtraRow = Partial<Record<Exclude<Locale, "es">, string>>;
+
 export function translate(locale: Locale, source: string): string {
   if (locale === "es") return source;
-  return DICTIONARY[source]?.[locale] ?? source;
+  const direct = DICTIONARY[source]?.[locale];
+  if (direct) return direct;
+  const added = (extra as Record<string, ExtraRow>)[source]?.[locale];
+  if (added) return added;
+  if (locale === "pt-BR" || locale === "pt-PT") {
+    const row = (portuguese as Record<string, PortugueseRow>)[source];
+    const value = row?.[locale];
+    if (value) return value;
+  }
+  return source;
 }
 
 const listeners = new Set<() => void>();
