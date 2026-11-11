@@ -125,8 +125,6 @@ function getReminderSnapshot(version: number) {
   return reminderSnapshotCache;
 }
 
-const PILLAR_IDS: HabitId[] = ["nourishment", "movement", "community", "purpose"];
-
 export default function Home() {
   const snapshot = useSyncExternalStore(subscribeToBlu, getBluSnapshot, getServerBluSnapshot);
   const clockMinute = useSyncExternalStore(subscribeToClock, getClockSnapshot, getServerClockSnapshot);
@@ -714,67 +712,79 @@ export default function Home() {
             <div className="blu-intro">
               <BluPresence pose="companion" size="lg" state="welcome" />
               <p className="blu-intro-line">
-                {translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
+                {translate(
+                  locale,
+                  "Hola, soy Blu. Te ayudo a cuidar hábitos pequeños, a tu ritmo. No soy un médico ni un diagnóstico.",
+                )}
               </p>
               <SpeakButton
                 locale={locale}
                 mode={azureVoiceEnabled ? "natural" : "local"}
                 naturalAvailable={azureVoiceEnabled}
-                text={translate(locale, "Hola, soy Blu. Te acompaño en pasos pequeños, sin promesas grandes.")}
+                text={translate(
+                  locale,
+                  "Hola, soy Blu. Te ayudo a cuidar hábitos pequeños, a tu ritmo. No soy un médico ni un diagnóstico.",
+                )}
               />
             </div>
-            <span className="eyebrow">{translate(locale, "TU BIENESTAR, UN DÍA A LA VEZ")}</span>
-            <h1>{translate(locale, "Un cambio pequeño también cuenta.")}</h1>
+            <h1>{translate(locale, "Empezamos con una elección sencilla")}</h1>
             <p>
               {translate(
                 locale,
-                "Elige algo que te gustaría explorar. No necesitas cambiarlo todo hoy ni hacerlo perfecto.",
+                "Verás siete temas. Elige entre 1 y 4. Después podrás marcar cada día lo que hiciste y, si quieres, conversar conmigo sobre eso.",
               )}
             </p>
-            <div className="disclaimer">
-              <span aria-hidden="true">ⓘ</span>
+          </div>
+          <div className="onboarding-card">
+            <p className="flow-step" aria-hidden="true">
+              {translate(locale, "Paso 1 de 1")}
+            </p>
+            <h2>{translate(locale, "¿Qué te gustaría cuidar?")}</h2>
+            <p className="lead-help">
+              {translate(
+                locale,
+                "Toca un tema para marcarlo. Puedes elegir hasta cuatro. Si te equivocas, tócalo otra vez para quitarlo.",
+              )}
+            </p>
+
+            <details className="help-path">
+              <summary>
+                {translate(locale, "¿No sabes por dónde empezar? (opcional)")}
+              </summary>
               <p>
                 {translate(
                   locale,
-                  "Blu es un prototipo de bienestar, no una herramienta clínica. No ofrece consejos médicos ni promete vivir más años.",
+                  "Hay un cuestionario corto. Sirve para orientarte con los siete temas. No diagnostica ni guarda datos médicos. Luego vuelves aquí a elegir.",
                 )}
               </p>
-            </div>
-          </div>
-          <div className="onboarding-card">
-            <div className="card-heading">
-              <span className="step-label">
-                {editingSelection
-                  ? translate(locale, "AJUSTA TU SELECCIÓN")
-                  : translate(locale, "PRIMER PASO")}
-              </span>
-              <span className="step-count">01 / 02</span>
-            </div>
-            <h2>{translate(locale, "¿Qué te gustaría cuidar?")}</h2>
-            <p className="muted">{translate(locale, "Elige entre uno y cuatro temas. Tú decides el ritmo.")}</p>
-            <div className="habit-grid">
-              {[
-                ...PILLAR_IDS.flatMap((id) => {
-                  const habit = HABITS.find((item) => item.id === id);
-                  return habit ? [habit] : [];
-                }),
-                ...HABITS.filter(
-                  (habit) => !PILLAR_IDS.includes(habit.id) && draftSelectedHabitIds.includes(habit.id),
-                ),
-              ].map((habit) => {
+              <Link className="button button-light full-width" href="/cuestionario">
+                {translate(locale, "Abrir el cuestionario orientativo")}
+              </Link>
+            </details>
+
+            <p className="topics-count" data-testid="topics-available-count">
+              {translate(locale, "Hay {n} temas · elige hasta 4")
+                .replace("{n}", String(HABITS.length))}
+            </p>
+            <div className="habit-grid habit-grid--plain" data-testid="habit-options-grid">
+              {HABITS.map((habit) => {
                 const selected = draftSelectedHabitIds.includes(habit.id);
                 return (
                   <button
+                    aria-label={translate(locale, habit.title)}
                     aria-pressed={selected}
-                    className={`habit-option${selected ? " selected" : ""}`}
+                    className={`habit-option habit-option--plain${selected ? " selected" : ""}`}
+                    data-habit-id={habit.id}
                     key={habit.id}
                     onClick={() => toggleHabit(habit.id)}
                     type="button"
                   >
-                    <span className="habit-icon" aria-hidden="true">
-                      {habit.icon}
+                    <span className="habit-option-copy">
+                      <span className="habit-option-title">{translate(locale, habit.title)}</span>
+                      <span aria-hidden="true" className="habit-option-desc">
+                        {translate(locale, habit.description)}
+                      </span>
                     </span>
-                    <span>{translate(locale, habit.title)}</span>
                     <span className="selection-indicator" aria-hidden="true">
                       {selected ? "✓" : "+"}
                     </span>
@@ -782,24 +792,14 @@ export default function Home() {
                 );
               })}
             </div>
-            {draftSelectedHabitIds.some((id) => !PILLAR_IDS.includes(id)) && (
-              <p className="tiny-note">
-                {translate(
-                  locale,
-                  "Algunos temas que ya tenías no están entre los cuatro pilares. Puedes quitarlos y elegir de nuevo.",
-                )}
-              </p>
-            )}
-            <p aria-live="polite" className="selection-count">
-              {draftSelectedHabitIds.length} {translate(locale, "de 4 elegidos")}
+            <p aria-live="polite" className="selection-count selection-count--plain">
+              {translate(locale, "Elegidos")}: {draftSelectedHabitIds.length} {translate(locale, "de 4")}
             </p>
             {showConsentEditor && (
-              <fieldset>
-                <legend className="tiny-note">
-                  {phrase("Consentimientos · aviso versión {version}", { version: CONSENT_VERSION })}
-                </legend>
+              <fieldset className="consent-plain">
+                <legend>{translate(locale, "Antes de continuar")}</legend>
                 {PURPOSES.filter((purpose) => purpose.id === "operativo").map((purpose) => (
-                  <label key={purpose.id} className="consent-row">
+                  <label key={purpose.id} className="consent-row consent-row--plain">
                     <input
                       checked={purposeDraft[purpose.id]}
                       disabled={purpose.id === "operativo" && consentReady}
@@ -815,11 +815,11 @@ export default function Home() {
                   </label>
                 ))}
                 <details className="consent-optional">
-                  <summary className="tiny-note">
-                    {translate(locale, "Opciones opcionales de mejora e investigación")}
+                  <summary>
+                    {translate(locale, "Opciones opcionales (no necesarias para empezar)")}
                   </summary>
                   {PURPOSES.filter((purpose) => purpose.id !== "operativo").map((purpose) => (
-                    <label key={purpose.id} className="consent-row">
+                    <label key={purpose.id} className="consent-row consent-row--plain">
                       <input
                         checked={purposeDraft[purpose.id]}
                         onChange={(event) =>
@@ -835,17 +835,17 @@ export default function Home() {
                   ))}
                 </details>
                 {consentReady && (
-                  <p className="tiny-note">
-                    {translate(locale, "Para retirar el propósito operativo usa «Borrar mis datos».")}
+                  <p className="help-note">
+                    {translate(locale, "Si más adelante quieres borrar todo, usa «Borrar mis datos».")}
                   </p>
                 )}
               </fieldset>
             )}
             {(draftSelectedHabitIds.length === 0 || (!consentReady && !purposeDraft.operativo)) && (
-              <p className="tiny-note" role="status" aria-live="polite">
+              <p className="help-note" role="status" aria-live="polite">
                 {draftSelectedHabitIds.length === 0
-                  ? translate(locale, "Elige al menos un hábito para continuar.")
-                  : translate(locale, "Falta aceptar el aviso (propósito operativo) para continuar.")}
+                  ? translate(locale, "Elige al menos un tema para continuar.")
+                  : translate(locale, "Marca el aviso de abajo para poder continuar.")}
               </p>
             )}
             <button
@@ -859,8 +859,7 @@ export default function Home() {
             >
               {editingSelection
                 ? translate(locale, "Guardar selección")
-                : translate(locale, "Empezar con lo que elegí")}{" "}
-              <span aria-hidden="true">→</span>
+                : translate(locale, "Continuar con lo que elegí")}
             </button>
             {editingSelection && (
               <button
@@ -875,18 +874,16 @@ export default function Home() {
               </button>
             )}
             {notice && <p className="inline-notice" role="status">{notice}</p>}
-            <p className="tiny-note">{translate(locale, "No escribas información médica ni datos que te identifiquen.")}</p>
-            <p className="tiny-note">
-              {translate(locale, "¿Prefieres partir con una autoevaluación?")}{" "}
-              <Link href="/cuestionario">
-                {translate(locale, "Hacer el autodiagnóstico largo (opcional, experimental)")}
-              </Link>
+            <p className="help-note">
+              {translate(
+                locale,
+                "Blu no es una consulta médica. Tus elecciones se guardan solo en este navegador, sin crear una cuenta.",
+              )}
             </p>
           </div>
         </section>
         <footer className="page-footer">
-          <span>{translate(locale, "Cuatro pilares: alimentación, movimiento, comunidad y propósito.")}</span>
-          <span>{translate(locale, "Sin cuenta · Tus hábitos se guardan en este navegador")}</span>
+          <span>{translate(locale, "Sin cuenta · Se guarda en este navegador")}</span>
         </footer>
       </div>
     );
@@ -1472,8 +1469,14 @@ export default function Home() {
             </div>
             <p aria-live="polite" className="chat-disclosure">
               {assistantRemote
-                ? translate(locale, "Estoy aquí para una pausa breve, con ayuda a través de Blu. No guardamos tu historial; evita compartir datos personales o de salud.")
-                : translate(locale, "Estoy aquí para una pausa breve. Tu mensaje pasa por Blu para preparar la respuesta; no guardamos el historial de la conversación.")}
+                ? translate(
+                    locale,
+                    "Pausa breve con contexto de tus hábitos de hoy. No guardamos el historial; evita datos personales o de salud.",
+                  )
+                : translate(
+                    locale,
+                    "Pausa breve con contexto de tus hábitos de hoy. Tu mensaje pasa por Blu para preparar la respuesta; no guardamos el historial.",
+                  )}
             </p>
             {localModeReason && (
               <p className="tiny-note" role="status">

@@ -68,6 +68,35 @@ describe("Blu user flows", () => {
     );
   });
 
+  it("en el primer paso muestra los 7 principios y permite elegir como máximo 4", async () => {
+    const user = userEvent.setup();
+    render(<BluApp />);
+
+    for (const title of [
+      "Movimiento natural",
+      "Alimentación consciente",
+      "Descanso y calma",
+      "Vínculos cercanos",
+      "Comunidad",
+      "Conexión con el entorno",
+      "Propósito",
+    ]) {
+      expect(screen.getByRole("button", { name: title })).toBeTruthy();
+    }
+    expect(document.querySelectorAll("[data-testid='habit-options-grid'] .habit-option")).toHaveLength(7);
+    expect(screen.getByTestId("topics-available-count").textContent).toMatch(/Hay 7 temas/);
+    expect(screen.getByText(/Toca un tema para marcarlo/i)).toBeTruthy();
+    expect(screen.getByText(/¿No sabes por dónde empezar\?/i)).toBeTruthy();
+
+    await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
+    await user.click(screen.getByRole("button", { name: "Alimentación consciente" }));
+    await user.click(screen.getByRole("button", { name: "Descanso y calma" }));
+    await user.click(screen.getByRole("button", { name: "Vínculos cercanos" }));
+    await user.click(screen.getByRole("button", { name: "Comunidad" }));
+    expect(screen.getByText(/Puedes elegir hasta cuatro hábitos/i)).toBeTruthy();
+    expect(screen.getByText(/Elegidos:\s*4 de 4/i)).toBeTruthy();
+  });
+
   it("offers accessible section navigation after onboarding", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
@@ -172,7 +201,7 @@ describe("Blu user flows", () => {
     await user.click(screen.getByRole("button", { name: "Propósito" }));
 
     expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
-    expect(screen.getByRole("button", { name: "Empezar con lo que elegí" }).hasAttribute("disabled"))
+    expect(screen.getByRole("button", { name: "Continuar con lo que elegí" }).hasAttribute("disabled"))
       .toBe(true);
 
     await user.click(
@@ -180,7 +209,7 @@ describe("Blu user flows", () => {
         name: /Entiendo que esto es un prototipo/,
       }),
     );
-    await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+    await user.click(screen.getByRole("button", { name: "Continuar con lo que elegí" }));
 
     expect(await screen.findByRole("region", { name: "Hábitos que elegiste" })).toBeTruthy();
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
@@ -262,7 +291,7 @@ describe("Blu user flows", () => {
     ]) {
       expect(window.localStorage.getItem(key)).toBeNull();
     }
-    expect(await screen.findByRole("heading", { name: "Un cambio pequeño también cuenta." }))
+    expect(await screen.findByRole("heading", { name: "Empezamos con una elección sencilla" }))
       .toBeTruthy();
   });
 
@@ -389,11 +418,11 @@ describe("Blu user flows", () => {
     await user.click(
       screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
     );
-    await user.click(screen.getByText(/Opciones opcionales de mejora e investigación/i));
+    await user.click(screen.getByText(/Opciones opcionales \(no necesarias para empezar\)/i));
     await user.click(
       screen.getByRole("checkbox", { name: /investigación con revisión ética/i }),
     );
-    await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+    await user.click(screen.getByRole("button", { name: "Continuar con lo que elegí" }));
     await screen.findByRole("region", { name: "Hábitos que elegiste" });
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
       consent: { version: string; purposes: Record<string, { acceptedAt: string }> };
@@ -407,20 +436,20 @@ describe("Blu user flows", () => {
   it("explains why continue is disabled (habits and/or consent missing)", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
-    expect(screen.getByText(/Elige al menos un hábito/i)).toBeTruthy();
+    expect(screen.getByText(/Elige al menos un tema para continuar/i)).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
-    expect(screen.getByText(/aceptar el aviso/i)).toBeTruthy();
+    expect(screen.getByText(/Marca el aviso de abajo para poder continuar/i)).toBeTruthy();
     await user.click(
       screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
     );
-    expect(screen.queryByText(/Elige al menos un hábito|acepta el aviso/i)).toBeNull();
+    expect(screen.queryByText(/Elige al menos un tema|Marca el aviso/i)).toBeNull();
   });
 
   it("blocks saving until the required operativo purpose is accepted", async () => {
     const user = userEvent.setup();
     render(<BluApp />);
     await user.click(screen.getByRole("button", { name: "Movimiento natural" }));
-    const continueButton = screen.getByRole("button", { name: "Empezar con lo que elegí" });
+    const continueButton = screen.getByRole("button", { name: "Continuar con lo que elegí" });
     expect(continueButton.hasAttribute("disabled")).toBe(true);
     expect(window.localStorage.getItem("blu.local.v1")).toBeNull();
   });
@@ -675,7 +704,7 @@ describe("Blu user flows", () => {
     await user.click(
       screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
     );
-    await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+    await user.click(screen.getByRole("button", { name: "Continuar con lo que elegí" }));
     await screen.findByRole("region", { name: "Hábitos que elegiste" });
     await user.click(screen.getByRole("button", { name: `Marcar ${habitName}` }));
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
@@ -790,12 +819,12 @@ async function completeOnboarding(
     }),
   );
   if (opts.mejora) {
-    await user.click(screen.getByText(/Opciones opcionales de mejora e investigación/i));
+    await user.click(screen.getByText(/Opciones opcionales \(no necesarias para empezar\)/i));
     await user.click(
       screen.getByRole("checkbox", { name: /mejora del producto/ }),
     );
   }
-  await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+  await user.click(screen.getByRole("button", { name: "Continuar con lo que elegí" }));
   await screen.findByRole("region", { name: "Hábitos que elegiste" });
 }
 
@@ -814,7 +843,7 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
       const user = userEvent.setup();
       render(<BluApp />);
       await completeOnboarding(user);
-      expect(screen.getByText(/Estoy aquí para una pausa breve\. Tu mensaje pasa por Blu/i)).toBeTruthy();
+      expect(screen.getByText(/Pausa breve con contexto de tus hábitos de hoy\. Tu mensaje pasa por Blu/i)).toBeTruthy();
 
       await user.type(
         screen.getByRole("textbox", { name: "Escribe una reflexión" }),
@@ -822,8 +851,7 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
       );
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
-      expect(await screen.findByText(/con ayuda a través de Blu/i)).toBeTruthy();
-      expect(screen.getByText(/evita compartir datos personales o de salud/i)).toBeTruthy();
+      expect(await screen.findByText(/No guardamos el historial; evita datos personales o de salud/i)).toBeTruthy();
       expect(screen.queryByText(/Tu mensaje pasa por Blu para preparar la respuesta/i)).toBeNull();
       expect(fetchMock).toHaveBeenCalledWith(
         "/api/assistant",
@@ -854,8 +882,8 @@ describe("chat: disclosure honesto del modo de respuesta", () => {
       await user.click(screen.getByRole("button", { name: "Enviar mensaje" }));
 
       expect(await screen.findByText(/El tiempo aprieta/)).toBeTruthy();
-      expect(screen.getByText(/Estoy aquí para una pausa breve\. Tu mensaje pasa por Blu/i)).toBeTruthy();
-      expect(screen.queryByText(/con ayuda a través de Blu/i)).toBeNull();
+      expect(screen.getByText(/Pausa breve con contexto de tus hábitos de hoy\. Tu mensaje pasa por Blu/i)).toBeTruthy();
+      expect(screen.queryByText(/evita datos personales o de salud/i)).toBeNull();
     } finally {
       vi.unstubAllGlobals();
     }

@@ -39,12 +39,68 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
     "en-US": "Choose one to four themes. You set the pace.",
     "zh-CN": "选一到四个主题。节奏由你决定。",
   },
+  "Aquí ves los siete principios. Eliges hasta cuatro para practicar; Blu te acompaña con lo que marcas, no solo con una charla suelta.": {
+    "en-US": "Here you see all seven principles. Choose up to four to practice; Blu walks with what you mark, not just a loose chat.",
+    "zh-CN": "这里能看到全部七个原则。最多选四个来练习；Blu 跟着你记下的步伐，而不是空聊。",
+  },
+  "Mapa completo: siete principios visibles desde el primer paso.": {
+    "en-US": "Full map: seven principles visible from the first step.",
+    "zh-CN": "完整地图：第一步就看到七个原则。",
+  },
+  "Práctica acotada: hasta cuatro hábitos activos, con registro en este navegador.": {
+    "en-US": "Focused practice: up to four active habits, logged in this browser.",
+    "zh-CN": "专注练习：最多四个活跃习惯，记在这个浏览器里。",
+  },
+  "Declaración opcional: el cuestionario orienta sin diagnosticar.": {
+    "en-US": "Optional declaration: the questionnaire guides without diagnosing.",
+    "zh-CN": "可选自述：问卷可指引，不做诊断。",
+  },
+  "Conversación con contexto: Blu responde según tus hábitos y tu día, no en el vacío.": {
+    "en-US": "Contextual conversation: Blu answers from your habits and day, not in a vacuum.",
+    "zh-CN": "有上下文的对话：Blu 根据你的习惯和今天作答，不是空谈。",
+  },
+  "Estos son los siete principios. Elige entre uno y cuatro para empezar; el resto sigue visible para cuando quieras cambiar.": {
+    "en-US": "These are the seven principles. Choose one to four to start; the rest stay visible when you want to change.",
+    "zh-CN": "这是七个原则。先选一到四个开始；其余仍可见，方便你之后更换。",
+  },
+  "Si quieres partir de una declaración sobre los siete principios, el cuestionario te orienta (no diagnostica) y sugiere ideas para elegir aquí.": {
+    "en-US": "If you want to start from a declaration across the seven principles, the questionnaire orients you (it does not diagnose) and suggests ideas to choose here.",
+    "zh-CN": "若想先就七个原则做一次自述，问卷会给你指引（不做诊断），并建议可在这里选择的想法。",
+  },
+  "Hacer el cuestionario de declaración (opcional)": {
+    "en-US": "Take the declaration questionnaire (optional)",
+    "zh-CN": "做自述问卷（可选）",
+  },
+  "Siete principios · hasta cuatro activos: movimiento, alimentación, descanso, vínculos, comunidad, entorno y propósito.": {
+    "en-US": "Seven principles · up to four active: movement, nourishment, rest, bonds, community, surroundings, and purpose.",
+    "zh-CN": "七个原则 · 最多四个活跃：活动、饮食、休息、亲密关系、社区、环境与目标感。",
+  },
+  "Pausa breve con contexto de tus hábitos de hoy. No guardamos el historial; evita datos personales o de salud.": {
+    "en-US": "A short pause with today’s habits as context. We do not keep the history; avoid personal or health data.",
+    "zh-CN": "结合今天习惯的短暂暂停。我们不保存对话记录；请避免个人或健康信息。",
+  },
+  "Pausa breve con contexto de tus hábitos de hoy. Tu mensaje pasa por Blu para preparar la respuesta; no guardamos el historial.": {
+    "en-US": "A short pause with today’s habits as context. Your message goes through Blu to prepare the reply; we do not keep the history.",
+    "zh-CN": "结合今天习惯的短暂暂停。你的消息会经 Blu 准备回复；我们不保存对话记录。",
+  },
+  "«Vamos a recorrer los siete principios. Declaras cómo te ves hoy; Blu sugiere ideas, tú eliges qué practicar.»": {
+    "en-US": "“We’ll walk the seven principles. You declare how you see yourself today; Blu suggests ideas, you choose what to practice.”",
+    "zh-CN": "“我们会走过七个原则。你自述今天的状态；Blu 给建议，由你决定练什么。”",
+  },
+  "Sirve para orientarte antes de elegir hasta cuatro hábitos en la app. No reemplaza una conversación con Blu: le da contexto a tu práctica.": {
+    "en-US": "It helps orient you before choosing up to four habits in the app. It does not replace a conversation with Blu: it gives your practice context.",
+    "zh-CN": "在应用里最多选四个习惯之前，它帮你定向。它不能替代与 Blu 的对话：是给练习提供上下文。",
+  },
+  "Hola, soy Blu. Aquí no charlamos en el vacío: parto de los hábitos que elegiste y de lo que marques hoy. ¿Qué te está costando más ahora: el tiempo, la energía o acordarte?": {
+    "en-US": "Hi, I'm Blu. We don't chat in a vacuum: I start from the habits you chose and what you mark today. What's hardest right now: time, energy, or remembering?",
+    "zh-CN": "你好，我是 Blu。我们不是空聊：我从你选的习惯和今天记下的事出发。现在最难的是什么：时间、精力，还是记得做？",
+  },
   "de 4 elegidos": { "en-US": "of 4 selected", "zh-CN": "已选，共 4 个" },
-  "Elige al menos un hábito para continuar.": {
+  "Elige al menos un tema para continuar.": {
     "en-US": "Choose at least one habit to continue.",
     "zh-CN": "至少选一个习惯才能继续。",
   },
-  "Empezar con lo que elegí": { "en-US": "Start with what I chose", "zh-CN": "用我选的开始" },
+  "Continuar con lo que elegí": { "en-US": "Start with what I chose", "zh-CN": "用我选的开始" },
   "Guardar selección": { "en-US": "Save selection", "zh-CN": "保存选择" },
   Cancelar: { "en-US": "Cancel", "zh-CN": "取消" },
   "Puedes elegir hasta cuatro hábitos. Quita uno para elegir otro.": {
@@ -129,6 +185,99 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
     "en-US": "Hi, I'm Blu. I walk with you in small steps, without big promises.",
     "zh-CN": "你好，我是 Blu。我陪你走一小步，不做大承诺。",
   },
+  "Hola, soy Blu. Te ayudo a cuidar hábitos pequeños, a tu ritmo. No soy un médico ni un diagnóstico.": {
+    "en-US": "Hi, I'm Blu. I help you care for small habits, at your pace. I am not a doctor or a diagnosis.",
+    "zh-CN": "你好，我是 Blu。我帮你按自己的节奏照顾小习惯。我不是医生，也不做诊断。",
+  },
+  "Empezamos con una elección sencilla": {
+    "en-US": "We start with a simple choice",
+    "zh-CN": "我们从简单的选择开始",
+  },
+  "Hay {n} temas · elige hasta 4": {
+    "en-US": "There are {n} themes · choose up to 4",
+    "zh-CN": "共有 {n} 个主题 · 最多选 4 个",
+  },
+
+  "Verás siete temas. Elige entre 1 y 4. Después podrás marcar cada día lo que hiciste y, si quieres, conversar conmigo sobre eso.": {
+    "en-US": "You will see seven themes. Choose 1 to 4. Later you can mark what you did each day and, if you want, talk with me about it.",
+    "zh-CN": "你会看到七个主题。选 1 到 4 个。之后你可以每天记下做了什么，如果愿意也可以和我聊聊。",
+  },
+  "Paso 1 de 1": { "en-US": "Step 1 of 1", "zh-CN": "第 1 步，共 1 步" },
+  "Toca un tema para marcarlo. Puedes elegir hasta cuatro. Si te equivocas, tócalo otra vez para quitarlo.": {
+    "en-US": "Tap a theme to select it. You can choose up to four. If you change your mind, tap it again to remove it.",
+    "zh-CN": "点一下主题即可选中。最多选四个。如果选错了，再点一次就能取消。",
+  },
+  "¿No sabes por dónde empezar? (opcional)": {
+    "en-US": "Not sure where to start? (optional)",
+    "zh-CN": "不知道从哪开始？（可选）",
+  },
+  "Hay un cuestionario corto. Sirve para orientarte con los siete temas. No diagnostica ni guarda datos médicos. Luego vuelves aquí a elegir.": {
+    "en-US": "There is a short questionnaire. It helps orient you across the seven themes. It does not diagnose or store medical data. Then you come back here to choose.",
+    "zh-CN": "有一份短问卷。它帮你在七个主题里定向。不做诊断，也不保存医疗数据。然后回到这里选择。",
+  },
+  "Abrir el cuestionario orientativo": {
+    "en-US": "Open the orienting questionnaire",
+    "zh-CN": "打开指引问卷",
+  },
+  Elegidos: { "en-US": "Selected", "zh-CN": "已选" },
+  "de 4": { "en-US": "of 4", "zh-CN": "/ 4" },
+  "Antes de continuar": { "en-US": "Before continuing", "zh-CN": "继续之前" },
+  "Opciones opcionales (no necesarias para empezar)": {
+    "en-US": "Optional choices (not needed to start)",
+    "zh-CN": "可选项目（开始不必填）",
+  },
+  "Si más adelante quieres borrar todo, usa «Borrar mis datos».": {
+    "en-US": "If later you want to erase everything, use “Erase my data”.",
+    "zh-CN": "如果以后想全部删除，请使用“删除我的数据”。",
+  },
+  "Elige al menos un tema para continuar.": {
+    "en-US": "Choose at least one theme to continue.",
+    "zh-CN": "至少选一个主题才能继续。",
+  },
+  "Marca el aviso de abajo para poder continuar.": {
+    "en-US": "Check the notice below to continue.",
+    "zh-CN": "勾选下方提示后才能继续。",
+  },
+  "Continuar con lo que elegí": {
+    "en-US": "Continue with what I chose",
+    "zh-CN": "用我选的继续",
+  },
+  "Blu no es una consulta médica. Tus elecciones se guardan solo en este navegador, sin crear una cuenta.": {
+    "en-US": "Blu is not a medical consult. Your choices stay only in this browser, without creating an account.",
+    "zh-CN": "Blu 不是医疗问诊。你的选择只保存在这个浏览器里，无需注册账号。",
+  },
+  "Sin cuenta · Se guarda en este navegador": {
+    "en-US": "No account · Saved in this browser",
+    "zh-CN": "无需账号 · 保存在此浏览器",
+  },
+  "Pequeños momentos de movimiento que encajen en tu día.": {
+    "en-US": "Small moments of movement that fit your day.",
+    "zh-CN": "适合你一天节奏的小活动。",
+  },
+  "Prestar atención a una comida, sin reglas rígidas.": {
+    "en-US": "Pay attention to a meal, without rigid rules.",
+    "zh-CN": "留意一顿饭，不必死守规则。",
+  },
+  "Crear un momento amable de pausa o descanso.": {
+    "en-US": "Make a kind moment of pause or rest.",
+    "zh-CN": "给自己一个温和的停顿或休息。",
+  },
+  "Dedicar atención a una relación que te importe.": {
+    "en-US": "Give attention to a relationship that matters to you.",
+    "zh-CN": "把注意力给一段对你重要的关系。",
+  },
+  "Explorar formas de sentirte parte de un grupo.": {
+    "en-US": "Explore ways to feel part of a group.",
+    "zh-CN": "探索让自己感到属于某个群体的方式。",
+  },
+  "Encontrar una forma posible de estar en contacto con tu entorno.": {
+    "en-US": "Find a possible way to stay in touch with your surroundings.",
+    "zh-CN": "找到一种可行的方式和周围环境保持连接。",
+  },
+  "Conectar una acción pequeña con algo que te importa.": {
+    "en-US": "Connect a small action with something that matters to you.",
+    "zh-CN": "把一个小行动和你在乎的事连起来。",
+  },
   "Tus datos, bajo tu control": {
     "en-US": "Your data, under your control",
     "zh-CN": "你的数据，由你做主",
@@ -200,6 +349,10 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
   "Cuatro pilares: alimentación, movimiento, comunidad y propósito.": {
     "en-US": "Four pillars: food, movement, community, and purpose.",
     "zh-CN": "四个支柱：饮食、活动、社区和目标感。",
+  },
+  "Esta autoevaluación es una declaración tuya sobre los siete principios: orientativa y experimental, no un diagnóstico ni una medida de salud.": {
+    "en-US": "This self-check is your declaration across the seven principles: orienting and experimental, not a diagnosis or a health measure.",
+    "zh-CN": "这次自我评估是你对七个原则的自述：指引性、实验性，不是诊断，也不是健康测量。",
   },
   "Enviar": { "en-US": "Send", "zh-CN": "发送" },
   "Apodo (opcional)": { "en-US": "Nickname (optional)", "zh-CN": "昵称（可选）" },

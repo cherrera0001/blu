@@ -36,7 +36,7 @@ import {
 } from "@/lib/onboarding/notice";
 
 const EXPERIMENTAL_NOTICE =
-  "Esta autoevaluación es experimental y orientativa: no es un diagnóstico ni una medida de salud.";
+  "Esta autoevaluación es una declaración tuya sobre los siete principios: orientativa y experimental, no un diagnóstico ni una medida de salud.";
 
 export default function QuestionnaireApp() {
   const locale = useLocale();
@@ -209,9 +209,18 @@ function QuestionnaireSession() {
           <div className="blu-intro">
             <BluPresence pose="companion" size="sm" state="welcome" />
             <p className="blu-intro-line">
-              {translate(locale, "«Vamos a conocerte un poco. Tus respuestas se quedan en este navegador.»")}
+              {translate(
+                locale,
+                "«Vamos a recorrer los siete principios. Declaras cómo te ves hoy; Blu sugiere ideas, tú eliges qué practicar.»",
+              )}
             </p>
           </div>
+          <p>
+            {translate(
+              locale,
+              "Sirve para orientarte antes de elegir hasta cuatro hábitos en la app. No reemplaza una conversación con Blu: le da contexto a tu práctica.",
+            )}
+          </p>
           <p>
             {translate(locale, "Este almacenamiento no está cifrado: evita datos médicos o que te identifiquen. Puedes borrar todo con «Borrar datos del cuestionario» o «Borrar mis datos».")}
           </p>

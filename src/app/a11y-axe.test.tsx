@@ -40,7 +40,7 @@ describe("auditoría WCAG con axe-core (BLU-1501)", () => {
     await user.click(
       screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
     );
-    await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+    await user.click(screen.getByRole("button", { name: "Continuar con lo que elegí" }));
     await screen.findByRole("region", { name: "Hábitos que elegiste" });
     await expectNoA11yViolations(container, "dashboard");
   });

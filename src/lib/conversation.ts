@@ -11,8 +11,8 @@ export interface AssistantApiReply {
 }
 
 export const BLU_GREETING =
-  "Hola, soy Blu. Te acompaño en pasos pequeños: nada de promesas grandes. " +
-  "¿Qué te está costando más hoy: el tiempo, la energía o acordarte?";
+  "Hola, soy Blu. Aquí no charlamos en el vacío: parto de los hábitos que elegiste y de lo que marques hoy. " +
+  "¿Qué te está costando más ahora: el tiempo, la energía o acordarte?";
 
 const local = new BluAssistant(new LocalRuleProvider());
 

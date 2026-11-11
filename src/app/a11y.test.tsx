@@ -44,7 +44,7 @@ async function completeOnboarding(user: ReturnType<typeof userEvent.setup>) {
   await user.click(
     screen.getByRole("checkbox", { name: /Entiendo que esto es un prototipo/ }),
   );
-  await user.click(screen.getByRole("button", { name: "Empezar con lo que elegí" }));
+  await user.click(screen.getByRole("button", { name: "Continuar con lo que elegí" }));
   await screen.findByRole("region", { name: "Hábitos que elegiste" });
   return view;
 }
