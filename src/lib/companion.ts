@@ -68,8 +68,9 @@ export function readCompanion(state: BluState, today: Date): CompanionView {
     mood = "encouraging";
   }
 
-  let pose: CompanionPose = "newspaper";
+  // El avatar vivo (SVG) acompaña el día a día; el builder raster queda para el
+  // momento de celebración / rachas visibles, cuando el 3D oficial aporta peso.
+  let pose: CompanionPose = "companion";
   if (mood === "celebrate" || mood === "thriving") pose = "builder";
-  else if (mood === "encouraging") pose = "companion";
   return { mood, pose, line: LINES[mood], recentActiveDays, daysSinceLast };
 }

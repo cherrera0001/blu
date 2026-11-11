@@ -725,25 +725,36 @@ html, body { overflow-x: clip; }
 .blu-presence--md { width: 56px; height: 56px; }
 .blu-presence--lg { width: 96px; height: 96px; }
 .blu-live-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.blu-live-root { transform-origin: 50% 78%; transform-box: fill-box; }
 .blu-live-body { transform-origin: 50% 82%; transform-box: fill-box; }
-.blu-live-eye { transform-box: fill-box; transform-origin: center; transition: transform 280ms ease; }
+.blu-live-eye { transform-box: fill-box; transform-origin: center; }
 .blu-live-mouth { transform-box: fill-box; transform-origin: center; transition: transform 280ms ease; }
-.blu-live-arm-wave { transform-origin: 70px 110px; transform-box: fill-box; }
+.blu-live-arm-wave { transform-origin: 24px 36px; transform-box: fill-box; }
 .blu-live-heart { transform-origin: center; transform-box: fill-box; }
 .blu-live-dots circle { fill: #60B8F8; }
 
+/* Respiración idle siempre que el companion esté vivo (Duolingo/Tamagotchi suave). */
+.blu-pose--companion:not(.blu-reduced) .blu-live-root {
+  animation: blu-idle-breathe 3.4s ease-in-out infinite;
+}
+.blu-pose--companion:not(.blu-reduced) .blu-live-eye {
+  animation: blu-blink 5.2s ease-in-out infinite;
+}
+
 /* Avatar vivo (companion) + raster holablu: gestos ligados a eventos reales */
-.blu-state--welcome .blu-live-body,
-.blu-state--acknowledge .blu-live-body,
+.blu-state--welcome.blu-pose--companion:not(.blu-reduced) .blu-live-root,
+.blu-state--acknowledge.blu-pose--companion:not(.blu-reduced) .blu-live-root {
+  animation: blu-companion-bob 780ms ease, blu-idle-breathe 3.4s ease-in-out 780ms infinite;
+}
 .blu-state--welcome .blu-face-img,
 .blu-state--acknowledge .blu-face-img {
   animation: blu-companion-bob 700ms ease;
 }
-.blu-state--welcome .blu-live-arm-wave,
-.blu-state--acknowledge .blu-live-arm-wave {
-  animation: blu-wave-arm 700ms ease;
+.blu-state--welcome:not(.blu-reduced) .blu-live-arm-wave,
+.blu-state--acknowledge:not(.blu-reduced) .blu-live-arm-wave {
+  animation: blu-wave-arm 900ms ease;
 }
-.blu-state--responding .blu-live-body,
+.blu-state--responding.blu-pose--companion:not(.blu-reduced) .blu-live-root,
 .blu-state--responding .blu-face-img {
   animation: blu-companion-pulse 1.2s ease-in-out infinite;
 }
@@ -751,28 +762,40 @@ html, body { overflow-x: clip; }
 .blu-state--responding .blu-live-dots circle { animation: blu-dot 1.1s ease-in-out infinite; }
 .blu-state--responding .blu-live-dots circle:nth-child(2) { animation-delay: 180ms; }
 .blu-state--responding .blu-live-dots circle:nth-child(3) { animation-delay: 360ms; }
-.blu-state--acknowledge .blu-live-eye { transform: scaleY(0.18); }
-.blu-state--pause .blu-live-body,
-.blu-state--unavailable .blu-live-body {
+.blu-state--acknowledge .blu-live-eye { animation: none; transform: scaleY(0.18); }
+.blu-state--pause .blu-live-root,
+.blu-state--unavailable .blu-live-root {
+  animation: none;
   transform: scale(0.97);
 }
-.blu-state--unavailable .blu-live-body { transform: rotate(3deg) scale(0.97); }
+.blu-state--unavailable .blu-live-root { transform: rotate(3deg) scale(0.97); }
 .blu-state--pause .blu-live-heart,
 .blu-state--unavailable .blu-live-heart {
   animation: blu-heart-pop 900ms ease;
 }
+@keyframes blu-idle-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2.2%) scale(1.018); }
+}
+@keyframes blu-blink {
+  0%, 44%, 52%, 100% { transform: scaleY(1); }
+  48% { transform: scaleY(0.12); }
+}
 @keyframes blu-companion-bob {
   0% { transform: translateY(0) rotate(0); }
-  40% { transform: translateY(-4%) rotate(-4deg); }
+  35% { transform: translateY(-5%) rotate(-5deg); }
+  70% { transform: translateY(-1%) rotate(2deg); }
   100% { transform: translateY(0) rotate(0); }
 }
 @keyframes blu-companion-pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+  50% { transform: scale(1.045); }
 }
 @keyframes blu-wave-arm {
   0% { transform: rotate(0); }
-  35% { transform: rotate(-18deg); }
+  25% { transform: rotate(-22deg); }
+  50% { transform: rotate(8deg); }
+  75% { transform: rotate(-16deg); }
   100% { transform: rotate(0); }
 }
 @keyframes blu-heart-pop {

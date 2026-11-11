@@ -17,6 +17,8 @@ const HABIT_IDS = new Set<string>(HABITS.map((habit) => habit.id));
 const LOCALE_NAMES: Record<Locale, string> = {
   es: "español",
   "en-US": "inglés de Estados Unidos",
+  "pt-BR": "portugués de Brasil",
+  "pt-PT": "portugués",
   "zh-CN": "chino mandarín simplificado",
 };
 

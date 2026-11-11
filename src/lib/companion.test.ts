@@ -9,10 +9,10 @@ function state(partial: Partial<BluState>): BluState {
 }
 
 describe("readCompanion", () => {
-  it("espera con el periódico cuando el día aún no tiene pasos", () => {
+  it("espera con el avatar vivo cuando el día aún no tiene pasos", () => {
     const view = readCompanion(state({}), today);
     expect(view.mood).toBe("waiting");
-    expect(view.pose).toBe("newspaper");
+    expect(view.pose).toBe("companion");
     expect(view.line).toMatch(/sin prisa/);
   });
 
@@ -51,7 +51,7 @@ describe("readCompanion", () => {
   it("descansa sin culpa si hace días que no hay un paso", () => {
     const view = readCompanion(state({ checkInsByDate: { "2026-11-05": ["movement"] } }), today);
     expect(view.mood).toBe("resting");
-    expect(view.pose).toBe("newspaper");
+    expect(view.pose).toBe("companion");
     expect(view.line).not.toMatch(/fall|culpa|racha/i);
   });
 });
