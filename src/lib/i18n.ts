@@ -96,11 +96,6 @@ const DICTIONARY: Record<string, Record<Exclude<Locale, "es">, string>> = {
     "zh-CN": "你好，我是 Blu。我们不是空聊：我从你选的习惯和今天记下的事出发。现在最难的是什么：时间、精力，还是记得做？",
   },
   "de 4 elegidos": { "en-US": "of 4 selected", "zh-CN": "已选，共 4 个" },
-  "Elige al menos un tema para continuar.": {
-    "en-US": "Choose at least one habit to continue.",
-    "zh-CN": "至少选一个习惯才能继续。",
-  },
-  "Continuar con lo que elegí": { "en-US": "Start with what I chose", "zh-CN": "用我选的开始" },
   "Guardar selección": { "en-US": "Save selection", "zh-CN": "保存选择" },
   Cancelar: { "en-US": "Cancel", "zh-CN": "取消" },
   "Puedes elegir hasta cuatro hábitos. Quita uno para elegir otro.": {
