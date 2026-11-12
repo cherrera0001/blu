@@ -642,5 +642,71 @@
     "pt-BR": "Suas escolhas ficam salvas só neste celular. Se você usar o chat ou a voz natural, esse texto passa pelo servidor da Blu e não é guardado; o chat também envia seu idioma e quais temas você escolheu. A Blu não é um serviço médico.",
     "pt-PT": "As tuas escolhas ficam guardadas só neste telemóvel. Se usares o chat ou a voz natural, esse texto passa pelo servidor da Blu e não é guardado; o chat também envia o teu idioma e os temas que escolheste. A Blu não é um serviço médico.",
     "zh-CN": "你的选择只保存在这部手机上。如果你使用聊天或自然语音，这段文字会经过 Blu 的服务器，但不会被保存；聊天还会发送你的语言和你选的主题。Blu 不是医疗服务。"
+  },
+  "Blu está por aquí si quieres dar un paso pequeño hoy.": {
+    "en-US": "Blu is here if you'd like to take a small step today.",
+    "pt-BR": "A Blu está por aqui se você quiser dar um passo pequeno hoje.",
+    "pt-PT": "A Blu está por aqui se quiseres dar um passo pequeno hoje.",
+    "zh-CN": "如果你今天想迈出一小步，Blu 就在这里。"
+  },
+  "Como máximo uno al día. Se programa en este teléfono; nada sale de él.": {
+    "en-US": "At most one a day. It's scheduled on this phone; nothing leaves it.",
+    "pt-BR": "No máximo um por dia. É programado neste celular; nada sai dele.",
+    "pt-PT": "No máximo um por dia. É programado neste telemóvel; nada sai dele.",
+    "zh-CN": "每天最多一次。只在这部手机上设置，任何内容都不会离开手机。"
+  },
+  "Un recordatorio amable": {
+    "en-US": "A gentle reminder",
+    "pt-BR": "Um lembrete gentil",
+    "pt-PT": "Um lembrete simpático",
+    "zh-CN": "一个温和的提醒"
+  },
+  "El teléfono no dio permiso para avisos. Puedes activarlo en los ajustes del sistema.": {
+    "en-US": "The phone didn't allow notifications. You can turn them on in the system settings.",
+    "pt-BR": "O celular não permitiu notificações. Você pode ativar nas configurações do sistema.",
+    "pt-PT": "O telemóvel não permitiu notificações. Podes ativá-las nas definições do sistema.",
+    "zh-CN": "手机没有允许通知。你可以在系统设置中开启。"
+  },
+  "Recordatorio: activado a las {hour}:00": {
+    "en-US": "Reminder: on at {hour}:00",
+    "pt-BR": "Lembrete: ativado às {hour}:00",
+    "pt-PT": "Lembrete: ativado às {hour}:00",
+    "zh-CN": "提醒：已开启，时间 {hour}:00"
+  },
+  "Recordatorio: apagado": {
+    "en-US": "Reminder: off",
+    "pt-BR": "Lembrete: desativado",
+    "pt-PT": "Lembrete: desativado",
+    "zh-CN": "提醒：已关闭"
+  },
+  "Recordatorio amable": {
+    "en-US": "Gentle reminder",
+    "pt-BR": "Lembrete gentil",
+    "pt-PT": "Lembrete simpático",
+    "zh-CN": "温和的提醒"
+  },
+  "¿Te sigue sirviendo el recordatorio?": {
+    "en-US": "Is the reminder still helpful?",
+    "pt-BR": "O lembrete ainda ajuda você?",
+    "pt-PT": "O lembrete ainda te ajuda?",
+    "zh-CN": "这个提醒对你还有帮助吗？"
+  },
+  "Solo pregunto esta vez. Si lo apagas, Blu sigue aquí igual.": {
+    "en-US": "I'm only asking this once. If you turn it off, Blu is still here.",
+    "pt-BR": "Só pergunto desta vez. Se desativar, a Blu continua aqui.",
+    "pt-PT": "Só pergunto desta vez. Se o desativares, a Blu continua aqui.",
+    "zh-CN": "我只问这一次。即使关掉提醒，Blu 也一直在这里。"
+  },
+  "Sí, mantenerlo": {
+    "en-US": "Yes, keep it",
+    "pt-BR": "Sim, manter",
+    "pt-PT": "Sim, manter",
+    "zh-CN": "好的，保留"
+  },
+  "Apagarlo": {
+    "en-US": "Turn it off",
+    "pt-BR": "Desativar",
+    "pt-PT": "Desativar",
+    "zh-CN": "关掉"
   }
 }

@@ -50,6 +50,9 @@ export function storedSummary(state: BluState, t: Translate = esT): string[] {
     state.voicePreference === "device"
       ? t("Voz: solo la del teléfono")
       : t("Voz: natural (servidor de Blu)"),
+    state.reminder?.enabled
+      ? t("Recordatorio: activado a las {hour}:00", { hour: state.reminder.hour })
+      : t("Recordatorio: apagado"),
     t("Las conversaciones con Blu no se guardan."),
   ];
 }

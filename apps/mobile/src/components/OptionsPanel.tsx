@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LOCALES, LOCALE_NATIVE_NAMES, type Locale } from "blu-core/i18n";
+import { DEFAULT_REMINDER_HOUR, REMINDER_HOURS, type ReminderPreference } from "blu-core/reminder";
 import { ActionButton } from "./ActionButton";
 import { useI18n } from "../i18n";
 import { colors, fonts, space, type as typeScale } from "../theme";
@@ -16,6 +17,9 @@ export interface OptionsPanelProps {
   onExport: () => void;
   locale: Locale;
   onChangeLocale: (locale: Locale) => void;
+  /** Recordatorio local opt-in (ADR-0010); false si el teléfono negó el permiso. */
+  reminder: ReminderPreference | undefined;
+  onReminderChange: (enabled: boolean, hour?: number) => Promise<boolean>;
 }
 
 /**
@@ -30,9 +34,19 @@ export function OptionsPanel({
   onExport,
   locale,
   onChangeLocale,
+  reminder,
+  onReminderChange,
 }: OptionsPanelProps) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
+  const [reminderDenied, setReminderDenied] = useState(false);
+  const reminderOn = reminder?.enabled === true;
+  const reminderHour = reminder?.hour ?? DEFAULT_REMINDER_HOUR;
+
+  async function toggleReminder() {
+    const ok = await onReminderChange(!reminderOn, reminderHour);
+    setReminderDenied(!ok);
+  }
 
   return (
     <View style={styles.wrap} testID="options-panel">
@@ -94,6 +108,52 @@ export function OptionsPanel({
               <View style={[styles.switchThumb, deviceVoiceOnly && styles.switchThumbOn]} />
             </View>
           </Pressable>
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityState={{ checked: reminderOn }}
+            accessibilityHint={t("Como máximo uno al día. Se programa en este teléfono; nada sale de él.")}
+            onPress={toggleReminder}
+            style={({ pressed }) => [styles.switchRow, pressed && styles.togglePressed]}
+            testID="reminder-toggle"
+          >
+            <View style={styles.switchText}>
+              <Text style={styles.switchLabel}>{t("Un recordatorio amable")}</Text>
+              <Text style={styles.hint}>
+                {t("Como máximo uno al día. Se programa en este teléfono; nada sale de él.")}
+              </Text>
+            </View>
+            <View style={[styles.switchTrack, reminderOn && styles.switchTrackOn]}>
+              <View style={[styles.switchThumb, reminderOn && styles.switchThumbOn]} />
+            </View>
+          </Pressable>
+          {reminderDenied ? (
+            <Text style={styles.hint} testID="reminder-denied">
+              {t("El teléfono no dio permiso para avisos. Puedes activarlo en los ajustes del sistema.")}
+            </Text>
+          ) : null}
+          {reminderOn ? (
+            <View accessibilityRole="radiogroup" style={styles.hours} testID="reminder-hours">
+              {REMINDER_HOURS.map((hour) => {
+                const selected = hour === reminderHour;
+                return (
+                  <Pressable
+                    key={hour}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: selected }}
+                    onPress={() => void onReminderChange(true, hour)}
+                    style={({ pressed }) => [
+                      styles.hourChip,
+                      selected && styles.langRowOn,
+                      pressed && styles.togglePressed,
+                    ]}
+                    testID={`reminder-hour-${hour}`}
+                  >
+                    <Text style={styles.switchLabel}>{`${hour}:00`}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : null}
           <View style={styles.data} testID="my-data">
             <Text style={styles.dataTitle}>{t("Mis datos")}</Text>
             <Text style={styles.hint}>{t("Esto es lo que Blu guarda en este teléfono:")}</Text>
@@ -182,6 +242,21 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     color: colors.inkSoft,
     lineHeight: 24,
+  },
+  hours: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  hourChip: {
+    minHeight: 48,
+    minWidth: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: colors.softBorder,
   },
   langRow: {
     minHeight: 52,

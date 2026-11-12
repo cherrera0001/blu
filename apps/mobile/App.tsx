@@ -18,6 +18,8 @@ import { createInitialState, type BluState } from "blu-core/blu";
 import { ErrorBoundary } from "./src/ErrorBoundary";
 import { BLU_HERMES_HARDENED } from "./src/polyfill";
 import { pickLocale } from "blu-core/i18n";
+import { disableReminder, enableReminder } from "blu-core/reminder";
+import { cancelReminders, requestReminderPermission, syncReminder } from "./src/reminder/notify";
 import { deviceLocaleTag, makeT } from "./src/i18n-core";
 import { I18nProvider } from "./src/i18n";
 import { ChatScreen } from "./src/screens/ChatScreen";
@@ -34,6 +36,10 @@ import { colors } from "./src/theme";
 void BLU_HERMES_HARDENED;
 
 type Screen = "loading" | "onboarding" | "today" | "chat";
+
+function localeT(state: BluState) {
+  return makeT(state.locale ?? pickLocale(deviceLocaleTag()));
+}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -59,6 +65,12 @@ export default function App() {
     (async () => {
       const snapshot = await loadBluSnapshot();
       if (cancelled) return;
+      // Reprograma el único recordatorio local (ADR-0010) al abrir la app.
+      if (snapshot.state.reminder?.enabled) {
+        const synced = await syncReminder(snapshot.state, localeT(snapshot.state));
+        if (synced !== snapshot.state) await saveBluState(synced);
+        snapshot.state = synced;
+      }
       setState(snapshot.state);
       setError(snapshot.error);
       const ready =
@@ -72,7 +84,9 @@ export default function App() {
   }, []);
 
   const persist = useCallback(async (next: BluState) => {
-    const snapshot = await saveBluState(next);
+    // Cualquier cambio (marcas, hora, apagado) reprograma o cancela el recordatorio.
+    const withReminder = next.reminder ? await syncReminder(next, localeT(next)) : next;
+    const snapshot = await saveBluState(withReminder);
     setState(snapshot.state);
     setError(snapshot.error);
     return snapshot;
@@ -129,6 +143,7 @@ export default function App() {
               await persist(next);
             }}
             onClear={async () => {
+              await cancelReminders();
               const snapshot = await clearBluState();
               setState(snapshot.state);
               setError(snapshot.error);
@@ -139,6 +154,16 @@ export default function App() {
             onOpenChat={() => setScreen("chat")}
             onChangeLocale={async (next) => {
               await persist({ ...state, locale: next });
+            }}
+            onReminderChange={async (enabled, hour) => {
+              if (!enabled) {
+                await persist(disableReminder(state));
+                return true;
+              }
+              // El permiso del sistema se pide solo aquí, al activar (ADR-0010 regla 1).
+              if (!(await requestReminderPermission())) return false;
+              await persist(enableReminder(state, hour ?? state.reminder?.hour));
+              return true;
             }}
           />
         )}

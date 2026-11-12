@@ -1,5 +1,6 @@
 import { emptyConsent, isConsentState, migrateLegacy, type ConsentState } from "./consent";
 import { isLocale, type Locale } from "./i18n";
+import { decodeReminder, type ReminderPreference } from "./reminder";
 import { decodeReview, MAX_REVIEWS, type WeeklyReview } from "./review";
 
 export const HABITS = [
@@ -90,6 +91,8 @@ export interface BluState {
   weeklyReviews?: WeeklyReview[];
   /** Opcional (móvil): idioma elegido; ausente = idioma del teléfono (BLU-1504). */
   locale?: Locale;
+  /** Opcional (móvil): recordatorio local opt-in (ADR-0010). */
+  reminder?: ReminderPreference;
 }
 
 export interface WeeklySummary {
@@ -184,6 +187,7 @@ export function decodeState(raw: string | null): BluState {
     ...(voice === "natural" || voice === "device" ? { voicePreference: voice } : {}),
     ...(reviews ? { weeklyReviews: reviews } : {}),
     ...(isLocale(value.locale) ? { locale: value.locale } : {}),
+    ...(decodeReminder(value.reminder) ? { reminder: decodeReminder(value.reminder)! } : {}),
   };
 }
 

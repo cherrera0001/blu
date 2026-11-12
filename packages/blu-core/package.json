@@ -9,6 +9,7 @@
     ".": "./src/index.ts",
     "./blu": "./src/blu.ts",
     "./adapt": "./src/adapt.ts",
+    "./reminder": "./src/reminder.ts",
     "./review": "./src/review.ts",
     "./i18n": "./src/i18n.ts",
     "./consent": "./src/consent.ts",

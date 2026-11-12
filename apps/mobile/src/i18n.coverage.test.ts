@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { hasEntry, LOCALES, type Locale } from "blu-core/i18n";
+import { REMINDER_BODY } from "blu-core/reminder";
 import { describeReplySource } from "./chat/source";
 import { OPERATIVE_NOTICE } from "./content/notice";
 import { WHY_DISCLAIMER } from "./content/why";
@@ -33,6 +34,7 @@ function visibleKeys(): string[] {
   const keys = new Set<string>([
     OPERATIVE_NOTICE,
     WHY_DISCLAIMER,
+    REMINDER_BODY,
     describeReplySource("remote")!,
     describeReplySource("local-rules")!,
   ]);

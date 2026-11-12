@@ -34,6 +34,7 @@ Hoy la app declara `android.permissions: []` y un contrato MASVS lo verifica. Un
 ## Consecuencias
 
 - Nueva dependencia nativa (`expo-notifications`) y un nuevo APK (versionCode +1).
+- La librería suma al manifiesto `RECEIVE_BOOT_COMPLETED` (permiso normal, no peligroso) para conservar el aviso programado tras reiniciar el teléfono. El contrato MASVS lo documenta.
 - Hay que actualizar los avisos y `storedSummary` («Recordatorio: activado a las 10:00»).
 - No cambia el aviso de consentimiento: el dato (hora elegida) no sale del teléfono.
 

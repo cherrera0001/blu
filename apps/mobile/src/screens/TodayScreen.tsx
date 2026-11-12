@@ -17,6 +17,7 @@ import {
 } from "blu-core/adapt";
 import { readCompanion } from "blu-core/companion";
 import type { Locale } from "blu-core/i18n";
+import { answerKeep, shouldAskToKeep } from "blu-core/reminder";
 import { getISOWeekKey, reviewDue, upsertReview } from "blu-core/review";
 import { WeeklyReviewCard } from "../components/WeeklyReviewCard";
 import { reviewReply } from "../content/review-copy";
@@ -42,6 +43,7 @@ export interface TodayScreenProps {
   naturalAvailable: boolean;
   onChange: (next: BluState) => void;
   onChangeLocale: (locale: Locale) => void;
+  onReminderChange: (enabled: boolean, hour?: number) => Promise<boolean>;
   onClear: () => void;
   onEditSelection: () => void;
   onOpenChat: () => void;
@@ -53,6 +55,7 @@ export function TodayScreen({
   naturalAvailable,
   onChange,
   onChangeLocale,
+  onReminderChange,
   onClear,
   onEditSelection,
   onOpenChat,
@@ -151,6 +154,27 @@ export function TodayScreen({
               })
             }
             testID="consent-renew-accept"
+          />
+        </View>
+      ) : null}
+
+      {shouldAskToKeep(state, now) ? (
+        <View style={styles.renew} testID="reminder-keep" accessibilityRole="summary">
+          <Text style={styles.renewTitle}>{t("¿Te sigue sirviendo el recordatorio?")}</Text>
+          <Text style={styles.renewText}>
+            {t("Solo pregunto esta vez. Si lo apagas, Blu sigue aquí igual.")}
+          </Text>
+          <ActionButton
+            label={t("Sí, mantenerlo")}
+            variant="outline"
+            onPress={() => onChange(answerKeep(state, true, new Date()))}
+            testID="reminder-keep-yes"
+          />
+          <ActionButton
+            label={t("Apagarlo")}
+            variant="ghost"
+            onPress={() => onChange(answerKeep(state, false, new Date()))}
+            testID="reminder-keep-no"
           />
         </View>
       ) : null}
@@ -260,6 +284,8 @@ export function TodayScreen({
         storedLines={storedSummary(state, t)}
         locale={locale}
         onChangeLocale={onChangeLocale}
+        reminder={state.reminder}
+        onReminderChange={onReminderChange}
         onExport={exportData}
         deviceVoiceOnly={state.voicePreference === "device"}
         onToggleDeviceVoice={() =>

@@ -128,16 +128,33 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     expect(today).toContain('testID="consent-renew"');
   });
 
-  it("MASVS-PLATFORM: sin permisos Android ni micrófono", () => {
+  it("MASVS-PLATFORM: solo POST_NOTIFICATIONS (ADR-0010) y sin micrófono", () => {
     const app = JSON.parse(readFileSync(join(mobileRoot, "app.json"), "utf8")) as {
       expo: { android: { permissions?: string[] }; plugins?: unknown[] };
     };
-    expect(app.expo.android.permissions).toEqual([]);
+    // ADR-0010 regla 6: el único permiso declarado es el del recordatorio local.
+    // expo-notifications suma RECEIVE_BOOT_COMPLETED (permiso normal) para
+    // conservar el aviso tras reiniciar; no es peligroso ni da acceso a datos.
+    expect(app.expo.android.permissions).toEqual(["android.permission.POST_NOTIFICATIONS"]);
     const av = app.expo.plugins?.find(
       (p): p is [string, { microphonePermission?: unknown }] =>
         Array.isArray(p) && p[0] === "expo-av",
     );
     expect(av?.[1].microphonePermission).toBe(false);
+  });
+
+  it("ADR-0010: recordatorio solo local — sin push remoto, sin red, borrado lo cancela", () => {
+    const files = sourceFilesForReminder();
+    for (const [file, text] of files) {
+      expect(text, file).not.toMatch(/getExpoPushTokenAsync|getDevicePushTokenAsync|addPushTokenListener/);
+    }
+    const notify = readFileSync(join(mobileRoot, "src/reminder/notify.ts"), "utf8");
+    expect(notify).not.toMatch(/httpJson|fetch\(|XMLHttpRequest/);
+    expect(notify).toMatch(/SchedulableTriggerInputTypes\.DATE/);
+    const app = readFileSync(join(mobileRoot, "App.tsx"), "utf8");
+    // Permiso pedido solo al activar, y «Borrar mis datos» cancela lo programado.
+    expect(app.indexOf("requestReminderPermission()")).toBeGreaterThan(app.indexOf("onReminderChange="));
+    expect(app.indexOf("await cancelReminders();")).toBeLessThan(app.indexOf("await clearBluState();"));
   });
 
   it("app.json endurece cleartext y backup", () => {
@@ -148,3 +165,17 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     expect(app.expo.android.usesCleartextTraffic).toBe(false);
   });
 });
+
+function sourceFilesForReminder(): [string, string][] {
+  const out: [string, string][] = [];
+  const walk = (dir: string) => {
+    for (const name of readdirSync(dir)) {
+      const path = join(dir, name);
+      if (statSync(path).isDirectory()) walk(path);
+      else if (/\.tsx?$/.test(name) && !/\.test\./.test(name)) out.push([path, readFileSync(path, "utf8")]);
+    }
+  };
+  walk(join(mobileRoot, "src"));
+  out.push([join(mobileRoot, "App.tsx"), readFileSync(join(mobileRoot, "App.tsx"), "utf8")]);
+  return out;
+}
