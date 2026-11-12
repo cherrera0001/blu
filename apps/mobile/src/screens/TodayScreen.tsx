@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     padding: 16,
+    minHeight: 64,
     borderRadius: 12,
     backgroundColor: "#FFFFFF",
     borderWidth: 2,

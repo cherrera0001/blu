@@ -32,6 +32,9 @@ jobs:
       - name: Pruebas (vitest)
         run: npm test
 
+      - name: TDD seguridad móvil (MASTG contratos)
+        run: npm run test:mobile:security
+
       - name: Evaluación de seguridad del asistente (red team)
         run: npm run eval:security
 

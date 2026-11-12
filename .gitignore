@@ -42,3 +42,17 @@ next-env.d.ts
 
 # Diseño local de Blu
 .venv-blu-design/
+
+# APK / sideload locales (no versionar binarios ni extractos)
+*.apk
+/AndroidManifest.xml
+/DebugProbesKt.bin
+/META-INF/
+/assets/
+/classes*.dex
+/kotlin/
+/lib/
+/okhttp3/
+/org/
+/res/
+/resources.arsc

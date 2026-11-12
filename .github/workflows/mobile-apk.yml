@@ -9,7 +9,7 @@ on:
       tag_name:
         description: "Nombre del release (ej. v0.3.0)"
         required: true
-        default: "v0.3.0"
+        default: "v0.3.1"
 
 permissions:
   contents: write
@@ -49,6 +49,15 @@ jobs:
       - name: Instalar dependencias del monorepo
         run: npm ci
 
+      - name: TDD seguridad móvil (MASTG contratos)
+        run: npm run test:mobile:security
+
+      - name: Semgrep móvil (MASTG-TOOL-0110)
+        run: |
+          python3 -m pip install --user semgrep
+          export PATH="$HOME/.local/bin:$PATH"
+          semgrep --config security/semgrep-mobile.yml --error apps/mobile packages/blu-core
+
       - name: Prebuild nativo Android (Expo)
         working-directory: apps/mobile
         env:
@@ -85,6 +94,9 @@ jobs:
           path: ${{ steps.apk.outputs.file }}
           if-no-files-found: error
 
+      - name: MASTG asserts APK (aapt2 + apksigner)
+        run: node scripts/mastg-apk-assert.mjs "${{ steps.apk.outputs.file }}"
+
       - name: Resolver tag del release
         id: release_meta
         run: |
@@ -108,6 +120,7 @@ jobs:
             ## Blu Android ${{ steps.apk.outputs.version }}
 
             APK de **vista previa** para instalación directa (sin Play Store).
+            Gate MASTG automático: contratos Vitest + semgrep + aapt2/apksigner.
 
             ### Instalar en Android
             1. Descarga `blu-android-${{ steps.apk.outputs.version }}.apk` desde Assets.
@@ -118,6 +131,13 @@ jobs:
             - Onboarding: 7 temas, máximo 4
             - Check-in diario y resumen de 7 días
             - Borrado local de datos
+            - `allowBackup=false`, sin cleartext
             - Sin cuentas ni chat/voz (aún)
+
+            ### Probar
+            ```bash
+            adb install -r blu-android-${{ steps.apk.outputs.version }}.apk
+            maestro test apps/mobile/maestro/smoke-onboarding.yaml
+            ```
 
             > Firmado en modo **debug** (preview). Sirve para probar; no es la firma de producción de Play Store.

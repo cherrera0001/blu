@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Expo/Metro tooling configs are CommonJS by convention.
+    "apps/mobile/metro.config.js",
+    "apps/mobile/babel.config.js",
   ]),
 ]);
 

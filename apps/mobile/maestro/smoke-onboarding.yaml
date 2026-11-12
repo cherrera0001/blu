@@ -1,0 +1,18 @@
+# Maestro (MASTG-TOOL-0154) — humo del flujo principal.
+# Requiere dispositivo/emulador con el APK instalado:
+#   adb install -r blu-android-X.Y.Z.apk
+#   maestro test apps/mobile/maestro/smoke-onboarding.yaml
+appId: cl.blu.app
+---
+- launchApp
+- assertVisible: "Blu"
+- assertVisible: "Hay 7 temas"
+- tapOn:
+    id: "habit-movement"
+- tapOn:
+    id: "consent-operativo"
+- tapOn:
+    id: "continue-button"
+- assertVisible: "Hoy"
+- assertVisible:
+    id: "weekly-summary"

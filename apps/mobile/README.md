@@ -1,6 +1,6 @@
-# Blu Mobile (Expo) — v0.3.0
+# Blu Mobile (Expo) — v0.3.1
 
-Shell Expo según ADR-0009 y `specs/021-mobile-shell-v1`.
+Shell Expo según ADR-0009, `specs/021-mobile-shell-v1` y endurecimiento `specs/022-mobile-mastg-tdd`.
 
 ## Instalar desde GitHub
 
@@ -10,32 +10,49 @@ Cada release `vX.Y.Z` publica un APK en [Releases](https://github.com/cherrera00
 2. Descarga `blu-android-X.Y.Z.apk`.
 3. Instálalo en el teléfono (origen desconocido permitido).
 
-Workflow: `.github/workflows/mobile-apk.yml` (tag `v*` o disparo manual).
+## Cómo se prueba (estrategia)
 
-## Qué incluye
-
-- Dominio solo vía `blu-core`.
-- Onboarding: 7 temas, máximo 4, aviso de almacenamiento local.
-- Hoy: check-in, resumen 7 días, cambiar temas, borrar datos.
-- Persistencia AsyncStorage (`blu.local.v1`), sin cuentas.
-
-## Comandos
+### 1. TDD de producto y privacidad (siempre en CI)
 
 ```bash
-npm run mobile          # expo start
-npm run test:mobile     # vitest del shell
+npm run test:mobile:security
 ```
 
-En `apps/mobile`:
+Cubre: 7 temas / máx 4, persistencia local, borrado, contratos MASVS (sin DOM/fetch en `blu-core`, sin secretos/http claro, `allowBackup=false`).
+
+### 2. Estático OWASP MASTG (herramientas del [catálogo](https://mas.owasp.org/MASTG/tools/))
+
+| Herramienta | ID | Dónde |
+|---|---|---|
+| semgrep | TOOL-0110 | `security/semgrep-mobile.yml` en release APK |
+| aapt2 | TOOL-0124 | `npm run mastg:apk -- archivo.apk` |
+| apksigner | TOOL-0123 | idem |
+| Maestro | TOOL-0154 | `apps/mobile/maestro/smoke-onboarding.yaml` |
+| gitleaks | TOOL-0144 | CI general |
 
 ```bash
-npm start
-npm test
-npx expo prebuild --platform android   # genera android/ (CI lo hace)
+# tras descargar el APK (con Android SDK en PATH)
+npm run mastg:apk -- blu-android-0.3.1.apk
 ```
 
-## Notas
+### 3. Humo en dispositivo
 
+```bash
+adb install -r blu-android-0.3.1.apk
+maestro test apps/mobile/maestro/smoke-onboarding.yaml
+```
+
+Fase 2 (aún no automatizada en CI): Frida/objection/MobSF solo en laboratorio controlado.
+
+## Comandos de desarrollo
+
+```bash
+npm run mobile
+npm run test:mobile
+```
+
+## Notas de producto
+
+- Local-first: datos en AsyncStorage (`blu.local.v1`), sin cuentas.
+- Preview firmada en debug; no es firma Play Store.
 - Chat/voz: specs 025/026.
-- JSON canónicos en `packages/blu-core/data` → `npm run sync:data` para la web.
-- El APK de GitHub es **preview** (firma debug), pensado para sideload.

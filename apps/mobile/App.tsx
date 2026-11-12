@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { createInitialState, type BluState } from "blu-core/blu";
+import { ErrorBoundary } from "./src/ErrorBoundary";
 import { OnboardingScreen } from "./src/screens/OnboardingScreen";
 import { TodayScreen } from "./src/screens/TodayScreen";
 import {
@@ -66,39 +67,41 @@ export default function App() {
     state.selectedHabitIds.length === 0;
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar style="dark" />
-      {error ? (
-        <Text style={styles.error} testID="storage-error">
-          {error}
-        </Text>
-      ) : null}
-      {showOnboarding ? (
-        <OnboardingScreen
-          state={state}
-          onComplete={async (next) => {
-            await persist(next);
-            setEditing(false);
-            setScreen("today");
-          }}
-        />
-      ) : (
-        <TodayScreen
-          state={state}
-          onChange={async (next) => {
-            await persist(next);
-          }}
-          onClear={async () => {
-            const snapshot = await clearBluState();
-            setState(snapshot.state);
-            setError(snapshot.error);
-            setEditing(false);
-            setScreen("onboarding");
-          }}
-          onEditSelection={() => setEditing(true)}
-        />
-      )}
-    </SafeAreaView>
+    <ErrorBoundary>
+      <SafeAreaView style={styles.safe}>
+        <StatusBar style="dark" />
+        {error ? (
+          <Text style={styles.error} testID="storage-error">
+            {error}
+          </Text>
+        ) : null}
+        {showOnboarding ? (
+          <OnboardingScreen
+            state={state}
+            onComplete={async (next) => {
+              await persist(next);
+              setEditing(false);
+              setScreen("today");
+            }}
+          />
+        ) : (
+          <TodayScreen
+            state={state}
+            onChange={async (next) => {
+              await persist(next);
+            }}
+            onClear={async () => {
+              const snapshot = await clearBluState();
+              setState(snapshot.state);
+              setError(snapshot.error);
+              setEditing(false);
+              setScreen("onboarding");
+            }}
+            onEditSelection={() => setEditing(true)}
+          />
+        )}
+      </SafeAreaView>
+    </ErrorBoundary>
   );
 }
 

@@ -108,6 +108,8 @@ export default function BluPresence({
       {live && expression ? (
         <BluLiveSvg expression={expression} />
       ) : (
+        // Ilustración estática local del avatar; next/image no aporta aquí (asset fijo, fill CSS).
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           alt=""
           className="blu-face-img"

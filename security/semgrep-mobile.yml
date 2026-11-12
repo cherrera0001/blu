@@ -1,0 +1,40 @@
+# Reglas semgrep (MASTG-TOOL-0110) para Blu móvil / blu-core.
+# Enfoque: privacidad local-first, sin secretos, sin red en dominio.
+rules:
+  - id: blu-no-hardcoded-aws-key
+    message: Posible clave AWS embebida (MASVS-CODE / secretos).
+    languages: [typescript, javascript, tsx, json]
+    severity: ERROR
+    patterns:
+      - pattern-regex: AKIA[0-9A-Z]{16}
+
+  - id: blu-no-private-key-pem
+    message: Material de clave privada embebido.
+    languages: [typescript, javascript, tsx]
+    severity: ERROR
+    patterns:
+      - pattern-regex: BEGIN (RSA |EC )?PRIVATE KEY
+
+  - id: blu-core-no-dom
+    message: blu-core no debe usar APIs de DOM/navegador.
+    languages: [typescript, javascript]
+    severity: ERROR
+    paths:
+      include:
+        - packages/blu-core/**
+    patterns:
+      - pattern-either:
+          - pattern: window.$FUNC
+          - pattern: document.$FUNC
+          - pattern: localStorage
+          - pattern: sessionStorage
+
+  - id: blu-mobile-no-cleartext-http-literal
+    message: URL http:// en cliente móvil (preferir https o cero red en v1).
+    languages: [typescript, javascript, tsx]
+    severity: WARNING
+    paths:
+      include:
+        - apps/mobile/**
+    patterns:
+      - pattern-regex: ['"]http://(?!localhost|127\.0\.0\.1)

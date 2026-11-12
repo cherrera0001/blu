@@ -2,7 +2,7 @@
   "expo": {
     "name": "Blu",
     "slug": "blu",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
@@ -15,11 +15,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "cl.blu.app",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "package": "cl.blu.app",
-      "versionCode": 3,
+      "versionCode": 4,
+      "allowBackup": false,
+      "usesCleartextTraffic": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F4F7FB"

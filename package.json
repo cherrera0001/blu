@@ -1,6 +1,6 @@
 {
   "name": "blu",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,6 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:mobile": "npm run test -w blu-mobile",
+    "test:mobile:security": "vitest run apps/mobile/src/security.contract.test.ts apps/mobile/src/selection.test.ts apps/mobile/src/storage.test.ts apps/mobile/src/version.test.ts",
+    "mastg:apk": "node scripts/mastg-apk-assert.mjs",
     "mobile": "npm run start -w blu-mobile",
     "sync:data": "node scripts/sync-blu-core-data.mjs",
     "eval:security": "vitest run src/lib/assistant/redteam.test.ts",

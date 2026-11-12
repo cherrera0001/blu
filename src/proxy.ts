@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 /**
  * Cabeceras de endurecimiento para la app shell (auditoría Cloudflare security-audit).
  * No sustituyen rate limits ni el guardián del asistente; reducen framing y sniffing.
  * En Next.js 16 el convenio `middleware` pasó a `proxy`.
  */
-export function proxy(_request: NextRequest): NextResponse {
+export function proxy(): NextResponse {
   const response = NextResponse.next();
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");

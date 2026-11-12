@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     padding: 16,
+    minHeight: 64,
     borderRadius: 12,
     backgroundColor: "#FFFFFF",
     borderWidth: 2,
@@ -233,8 +234,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
     backgroundColor: "#1B3A4B",
     paddingVertical: 16,
+    minHeight: 52,
     borderRadius: 12,
     alignItems: "center",
+    justifyContent: "center",
   },
   ctaDisabled: {
     opacity: 0.4,
