@@ -29,3 +29,11 @@ describe("Exportar mis datos (specs/005 en móvil)", () => {
     expect(storedSummary(createInitialState())).toContain("Las conversaciones con Blu no se guardan.");
   });
 });
+
+describe("exportación incluye revisiones semanales (ola B)", () => {
+  it("las revisiones van en `reviews`, como en la web", () => {
+    const weeklyReviews = [{ weekKey: "2026-W46", felt: "same" as const, updatedAt: "t" }];
+    const bundle = buildMobileExport({ ...createInitialState(), weeklyReviews }, NOW);
+    expect(bundle.reviews).toEqual(weeklyReviews);
+  });
+});

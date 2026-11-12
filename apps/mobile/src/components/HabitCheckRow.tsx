@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import type { SmallerOption } from "blu-core/adapt";
 import type { Barrier } from "blu-core/blu";
 import type { WhyNote } from "../content/why";
 import { colors, fonts, space, type as typeScale } from "../theme";
@@ -9,8 +10,9 @@ export interface HabitCheckRowProps {
   action: string;
   done: boolean;
   onToggle: () => void;
-  /** Presente si existe una versión más pequeña disponible. */
-  onSimplify?: (barrier: Barrier) => void;
+  /** Versiones menores para ese motivo (máx. 3); presente si hay alguna. */
+  getOptions?: (barrier: Barrier) => SmallerOption[];
+  onSimplify?: (barrier: Barrier, to: string) => void;
   /** Presente si la persona ya ajustó este hábito y puede volver atrás. */
   onUndo?: () => void;
   /** «¿Por qué este paso?»: notas breves con fuente honesta. */
@@ -35,6 +37,7 @@ export function HabitCheckRow({
   action,
   done,
   onToggle,
+  getOptions,
   onSimplify,
   onUndo,
   why,
@@ -42,6 +45,12 @@ export function HabitCheckRow({
   testID,
 }: HabitCheckRowProps) {
   const [asking, setAsking] = useState(false);
+  const [barrier, setBarrier] = useState<Barrier | null>(null);
+  const options = barrier && getOptions ? getOptions(barrier) : [];
+  const closeAsk = () => {
+    setAsking(false);
+    setBarrier(null);
+  };
   const [showWhy, setShowWhy] = useState(false);
   const canAdapt = !done && Boolean(onSimplify || onUndo);
   const hasWhy = Boolean(why && why.length);
@@ -70,24 +79,46 @@ export function HabitCheckRow({
         <View style={styles.adapt}>
           {asking && onSimplify && canAdapt ? (
             <View style={styles.ask} testID={testID ? `${testID}-barriers` : undefined}>
-              <Text style={styles.askTitle}>¿Qué lo hizo difícil? Probamos algo más pequeño.</Text>
-              {BARRIERS.map((b) => (
-                <Pressable
-                  key={b.id}
-                  accessibilityRole="button"
-                  onPress={() => {
-                    setAsking(false);
-                    onSimplify(b.id);
-                  }}
-                  style={({ pressed }) => [styles.barrier, pressed && styles.pressed]}
-                  testID={testID ? `${testID}-barrier-${b.id}` : undefined}
-                >
-                  <Text style={styles.barrierText}>{b.label}</Text>
-                </Pressable>
-              ))}
+              {barrier === null ? (
+                <>
+                  <Text style={styles.askTitle}>¿Qué lo hizo difícil? Probamos algo más pequeño.</Text>
+                  {BARRIERS.map((b) => (
+                    <Pressable
+                      key={b.id}
+                      accessibilityRole="button"
+                      onPress={() => setBarrier(b.id)}
+                      style={({ pressed }) => [styles.barrier, pressed && styles.pressed]}
+                      testID={testID ? `${testID}-barrier-${b.id}` : undefined}
+                    >
+                      <Text style={styles.barrierText}>{b.label}</Text>
+                    </Pressable>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <Text style={styles.askTitle}>Elige la que te parezca posible hoy:</Text>
+                  {options.map((option, index) => (
+                    <Pressable
+                      key={option.id}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${option.title}. ${option.text}`}
+                      onPress={() => {
+                        onSimplify(barrier, option.text);
+                        closeAsk();
+                      }}
+                      style={({ pressed }) => [styles.barrier, pressed && styles.pressed]}
+                      testID={testID ? `${testID}-option-${index}` : undefined}
+                    >
+                      <Text style={styles.optionTitle}>{option.title}</Text>
+                      <Text style={styles.barrierText}>{option.text}</Text>
+                    </Pressable>
+                  ))}
+                  <Text style={styles.whySource}>Puedes volver a la versión anterior cuando quieras.</Text>
+                </>
+              )}
               <Pressable
                 accessibilityRole="button"
-                onPress={() => setAsking(false)}
+                onPress={closeAsk}
                 style={styles.link}
               >
                 <Text style={styles.linkText}>Ahora no</Text>
@@ -273,10 +304,17 @@ const styles = StyleSheet.create({
     minHeight: 48,
     justifyContent: "center",
     paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 14,
     borderWidth: 1.5,
     borderColor: colors.softBorder,
     backgroundColor: colors.soft,
+  },
+  optionTitle: {
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.bodyBold,
+    color: colors.muted,
+    marginTop: 8,
   },
   barrierText: {
     fontSize: typeScale.meta,

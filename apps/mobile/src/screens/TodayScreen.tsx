@@ -8,8 +8,17 @@ import {
   type BluState,
   type HabitId,
 } from "blu-core/blu";
-import { canSimplify, isAdapted, simplifyHabit, undoLastAdaptation } from "blu-core/adapt";
+import {
+  canSimplify,
+  isAdapted,
+  simplifyHabit,
+  smallerOptions,
+  undoLastAdaptation,
+} from "blu-core/adapt";
 import { readCompanion } from "blu-core/companion";
+import { getISOWeekKey, reviewDue, upsertReview } from "blu-core/review";
+import { WeeklyReviewCard } from "../components/WeeklyReviewCard";
+import { reviewReply } from "../content/review-copy";
 import { acceptPurpose, needsReconsent } from "blu-core/consent";
 import { OPERATIVE_NOTICE } from "../content/notice";
 import { summarizeDays } from "blu-core/history";
@@ -53,6 +62,8 @@ export function TodayScreen({
   const history = useMemo(() => summarizeDays(state, now, 7), [state, now]);
   const companion = useMemo(() => readCompanion(state, now), [state, now]);
   const [busy, setBusy] = useState(false);
+  const [reviewSaved, setReviewSaved] = useState<string | null>(null);
+  const showReview = reviewSaved !== null || reviewDue(state.weeklyReviews, now);
 
   const listenText = useMemo(() => {
     const habits = state.selectedHabitIds
@@ -159,11 +170,12 @@ export function TodayScreen({
               action={currentAction(state, habitId)}
               done={done}
               onToggle={() => toggleCheckIn(habitId)}
+              getOptions={(barrier) => smallerOptions(state, habitId, barrier)}
               onSimplify={
                 canSimplify(state, habitId)
-                  ? (barrier) =>
+                  ? (barrier, to) =>
                       onChange(
-                        simplifyHabit(state, habitId, barrier, new Date().toISOString()).state,
+                        simplifyHabit(state, habitId, barrier, new Date().toISOString(), to).state,
                       )
                   : undefined
               }
@@ -179,6 +191,23 @@ export function TodayScreen({
           );
         })}
       </View>
+
+      {showReview ? (
+        <WeeklyReviewCard
+          savedReply={reviewSaved}
+          onSave={(input) => {
+            onChange({
+              ...state,
+              weeklyReviews: upsertReview(
+                state.weeklyReviews ?? [],
+                { weekKey: getISOWeekKey(now), ...input },
+                new Date().toISOString(),
+              ),
+            });
+            setReviewSaved(reviewReply(input));
+          }}
+        />
+      ) : null}
 
       <View style={styles.destinations}>
         <Text style={styles.destLabel}>Con Blu</Text>

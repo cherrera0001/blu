@@ -22,6 +22,8 @@ appId: cl.blu.app
     id: "checkin-movement-simplify"
 - tapOn:
     id: "checkin-movement-barrier-energy"
+- tapOn:
+    id: "checkin-movement-option-0"
 - assertVisible: "Hacer una pausa de dos minutos para cambiar de postura."
 - assertVisible:
     id: "checkin-movement-undo"

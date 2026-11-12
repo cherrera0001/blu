@@ -1,4 +1,5 @@
 import type { BluState } from "blu-core/blu";
+import type { WeeklyReview } from "blu-core/review";
 
 /**
  * Exportar mis datos (paridad web specs/005). Mismo formato que la web
@@ -14,7 +15,7 @@ export interface MobileExportBundle {
   state: BluState;
   onboarding: null;
   goals: null;
-  reviews: null;
+  reviews: WeeklyReview[] | null;
   errors: string[];
 }
 
@@ -26,7 +27,7 @@ export function buildMobileExport(state: BluState, now: Date): MobileExportBundl
     state,
     onboarding: null,
     goals: null,
-    reviews: null,
+    reviews: state.weeklyReviews ?? null,
     errors: [],
   };
 }
@@ -43,6 +44,7 @@ export function storedSummary(state: BluState): string[] {
     `Temas elegidos: ${state.selectedHabitIds.length}`,
     `Días con alguna marca: ${days}`,
     `Ajustes a pasos más pequeños: ${state.adaptations.length}`,
+    `Revisiones semanales: ${state.weeklyReviews?.length ?? 0}`,
     `Voz: ${state.voicePreference === "device" ? "solo la del teléfono" : "natural (servidor de Blu)"}`,
     "Las conversaciones con Blu no se guardan.",
   ];
