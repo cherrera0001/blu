@@ -15,20 +15,35 @@ if (!apk || !existsSync(apk)) {
   process.exit(2);
 }
 
+function toWindowsPath(p) {
+  try {
+    return execFileSync("wslpath", ["-w", p], { encoding: "utf8" }).trim();
+  } catch {
+    return p;
+  }
+}
+
 function buildToolsBins(name) {
   const home = process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT || "";
   const out = [];
   if (home && existsSync(`${home}/build-tools`)) {
     const versions = readdirSync(`${home}/build-tools`).sort().reverse();
-    for (const v of versions) out.push(`${home}/build-tools/${v}/${name}`);
+    for (const v of versions) {
+      const base = `${home}/build-tools/${v}/${name}`;
+      // WSL suele ver el SDK de Windows: preferir .exe / .bat si existen.
+      out.push(`${base}.exe`, `${base}.bat`, base);
+    }
   }
-  out.push(name);
+  out.push(`${name}.exe`, `${name}.bat`, name);
   return out;
 }
 
 function resolveBin(name) {
   for (const candidate of buildToolsBins(name)) {
-    if (candidate !== name && !existsSync(candidate)) continue;
+    if (!existsSync(candidate) && candidate !== name) continue;
+    if (existsSync(candidate) && (candidate.endsWith(".exe") || candidate.endsWith(".bat"))) {
+      return candidate;
+    }
     try {
       execFileSync(candidate, ["--help"], { stdio: "ignore" });
       return candidate;
@@ -44,6 +59,21 @@ function resolveBin(name) {
   return null;
 }
 
+function runBin(bin, args) {
+  if (bin.endsWith(".bat")) {
+    const winBin = toWindowsPath(bin);
+    const winArgs = args.map((a) =>
+      typeof a === "string" && a.startsWith("/") ? toWindowsPath(a) : a,
+    );
+    return execFileSync("cmd.exe", ["/c", winBin, ...winArgs], {
+      encoding: "utf8",
+      stdio: "pipe",
+      cwd: "/mnt/c/Windows/System32",
+    });
+  }
+  return execFileSync(bin, args, { encoding: "utf8", stdio: "pipe" });
+}
+
 const failures = [];
 const notes = [];
 
@@ -54,9 +84,7 @@ if (!aapt2) {
   failures.push("aapt2 no disponible (MASTG-TOOL-0124)");
 } else {
   try {
-    const badging = execFileSync(aapt2, ["dump", "badging", apk], {
-      encoding: "utf8",
-    });
+    const badging = runBin(aapt2, ["dump", "badging", apk]);
     if (!/package: name='cl\.blu\.app'/.test(badging)) {
       failures.push("package name distinto de cl.blu.app");
     } else {
@@ -91,13 +119,33 @@ if (!apksigner) {
   failures.push("apksigner no disponible (MASTG-TOOL-0123)");
 } else {
   try {
-    execFileSync(apksigner, ["verify", apk], { stdio: "pipe" });
+    runBin(apksigner, ["verify", "--print-certs", apk]);
     notes.push("apksigner verify OK");
   } catch (error) {
     failures.push(
       `apksigner verify falló: ${error instanceof Error ? error.message : error}`,
     );
   }
+}
+
+// Sideload sin Metro: el APK DEBE embeber el bundle JS/Hermes.
+try {
+  const listing = execFileSync("unzip", ["-Z1", apk], { encoding: "utf8" });
+  const hasJsBundle =
+    /(^|\/)index\.android\.bundle$|(^|\/)index\.android\.bundle\.hbc$|(^|\/).+\.hbc$/m.test(
+      listing,
+    ) || /assets\/index\.android\.bundle/m.test(listing);
+  if (!hasJsBundle) {
+    failures.push(
+      "APK sin bundle JS embebido (assets/index.android.bundle) — no es instalable offline",
+    );
+  } else {
+    notes.push("bundle JS embebido OK");
+  }
+} catch (error) {
+  failures.push(
+    `no se pudo listar APK: ${error instanceof Error ? error.message : error}`,
+  );
 }
 
 const manifest = "apps/mobile/android/app/src/main/AndroidManifest.xml";

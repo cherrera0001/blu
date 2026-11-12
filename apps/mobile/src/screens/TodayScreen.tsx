@@ -1,12 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import {
   HABITS,
   currentAction,
@@ -15,27 +8,59 @@ import {
   type BluState,
   type HabitId,
 } from "blu-core/blu";
+import { readCompanion } from "blu-core/companion";
+import { summarizeDays } from "blu-core/history";
+import { ActionButton } from "../components/ActionButton";
+import { BluCompanion } from "../components/BluCompanion";
+import { HabitCheckRow } from "../components/HabitCheckRow";
+import { OptionsPanel } from "../components/OptionsPanel";
+import { ScreenShell } from "../components/ScreenShell";
+import { SpeakButton } from "../components/SpeakButton";
+import { WeekBars } from "../components/WeekBars";
+import { colors, fonts, space, type as typeScale } from "../theme";
 import { APP_VERSION } from "../version";
 
 export interface TodayScreenProps {
   state: BluState;
   now?: Date;
+  naturalAvailable: boolean;
   onChange: (next: BluState) => void;
   onClear: () => void;
   onEditSelection: () => void;
+  onOpenChat: () => void;
 }
 
 export function TodayScreen({
   state,
   now = new Date(),
+  naturalAvailable,
   onChange,
   onClear,
   onEditSelection,
+  onOpenChat,
 }: TodayScreenProps) {
   const todayKey = localDateKey(now);
-  const checked = state.checkInsByDate[todayKey] ?? [];
+  const checked = useMemo(
+    () => state.checkInsByDate[todayKey] ?? [],
+    [state.checkInsByDate, todayKey],
+  );
   const summary = useMemo(() => getWeeklySummary(state, now), [state, now]);
+  const history = useMemo(() => summarizeDays(state, now, 7), [state, now]);
+  const companion = useMemo(() => readCompanion(state, now), [state, now]);
   const [busy, setBusy] = useState(false);
+
+  const listenText = useMemo(() => {
+    const habits = state.selectedHabitIds
+      .map((id) => {
+        const habit = HABITS.find((h) => h.id === id);
+        if (!habit) return null;
+        const done = checked.includes(id);
+        return `${habit.title}: ${done ? "ya marcado" : "pendiente"}. ${currentAction(state, id)}`;
+      })
+      .filter(Boolean)
+      .join(" ");
+    return `${companion.line} Resumen de hoy. ${habits}`;
+  }, [companion.line, state, checked]);
 
   function toggleCheckIn(habitId: HabitId) {
     const current = state.checkInsByDate[todayKey] ?? [];
@@ -55,7 +80,7 @@ export function TodayScreen({
     if (busy) return;
     Alert.alert(
       "Borrar mis datos",
-      "Se borrará todo lo guardado en este dispositivo y volverás al inicio. ¿Continuar?",
+      "Se borrará lo guardado en este teléfono y volverás al inicio.",
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -71,13 +96,29 @@ export function TodayScreen({
     );
   }
 
+  const doneCount = checked.filter((id) => state.selectedHabitIds.includes(id)).length;
+  const total = state.selectedHabitIds.length;
+
   return (
-    <ScrollView contentContainerStyle={styles.container} testID="today-screen">
+    <ScreenShell testID="today-screen">
       <Text style={styles.brand}>Blu</Text>
-      <Text style={styles.title}>Hoy</Text>
-      <Text style={styles.lead}>
-        Marca lo que pudiste hacer. No hay puntuación: solo un registro para ti.
-      </Text>
+      <BluCompanion view={companion} size="lg" />
+
+      <SpeakButton
+        text={listenText}
+        label="Escuchar a Blu"
+        naturalAvailable={naturalAvailable}
+        variant="soft"
+        testID="speak-today"
+      />
+
+      <View style={styles.section}>
+        <Text style={styles.title}>Hoy</Text>
+        <Text style={styles.lead}>Marca lo que pudiste hacer. Sin puntuación.</Text>
+        <Text style={styles.progress} testID="today-progress">
+          {doneCount} de {total} {total === 1 ? "tema" : "temas"} marcados
+        </Text>
+      </View>
 
       <View style={styles.summary} testID="weekly-summary">
         <Text style={styles.summaryText}>
@@ -85,6 +126,7 @@ export function TodayScreen({
           {summary.actionsCompleted === 1 ? "paso" : "pasos"} en{" "}
           {summary.activeDays} {summary.activeDays === 1 ? "día" : "días"}.
         </Text>
+        <WeekBars days={history.days} />
       </View>
 
       <View style={styles.list}>
@@ -93,140 +135,92 @@ export function TodayScreen({
           if (!habit) return null;
           const done = checked.includes(habitId);
           return (
-            <Pressable
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: done }}
+            <HabitCheckRow
               key={habitId}
-              onPress={() => toggleCheckIn(habitId)}
-              style={[styles.row, done && styles.rowDone]}
+              title={habit.title}
+              action={currentAction(state, habitId)}
+              done={done}
+              onToggle={() => toggleCheckIn(habitId)}
               testID={`checkin-${habitId}`}
-            >
-              <Text style={styles.check}>{done ? "☑" : "☐"}</Text>
-              <View style={styles.rowCopy}>
-                <Text style={styles.rowTitle}>{habit.title}</Text>
-                <Text style={styles.rowAction}>{currentAction(state, habitId)}</Text>
-              </View>
-            </Pressable>
+            />
           );
         })}
       </View>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={onEditSelection}
-        style={styles.secondary}
-        testID="edit-selection"
-      >
-        <Text style={styles.secondaryText}>Cambiar temas</Text>
-      </Pressable>
+      <View style={styles.destinations}>
+        <Text style={styles.destLabel}>Con Blu</Text>
+        <ActionButton
+          label="Hablar con Blu"
+          variant="secondary"
+          onPress={onOpenChat}
+          testID="open-chat"
+        />
+      </View>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={confirmClear}
-        style={styles.danger}
-        testID="clear-data"
-      >
-        <Text style={styles.dangerText}>Borrar mis datos</Text>
-      </Pressable>
+      <OptionsPanel onEditSelection={onEditSelection} onClear={confirmClear} />
 
       <Text style={styles.version} testID="app-version">
-        Blu {APP_VERSION} · datos solo en este dispositivo
+        Blu {APP_VERSION} · datos solo en este teléfono
       </Text>
-    </ScrollView>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    paddingBottom: 48,
-    backgroundColor: "#F4F7FB",
-    gap: 14,
-  },
   brand: {
-    fontSize: 36,
-    fontWeight: "700",
-    color: "#1B3A4B",
+    fontSize: typeScale.brand,
+    fontFamily: fonts.display,
+    color: colors.ink,
+    textAlign: "center",
+    letterSpacing: -1,
+  },
+  section: {
+    gap: 6,
+    marginTop: 4,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "#1B3A4B",
+    fontSize: typeScale.title,
+    fontFamily: fonts.displaySoft,
+    color: colors.ink,
   },
   lead: {
-    fontSize: 18,
-    color: "#334E5C",
-    lineHeight: 28,
+    fontSize: typeScale.lead,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    lineHeight: 30,
+  },
+  progress: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.ctaDeep,
   },
   summary: {
-    padding: 14,
-    borderRadius: 12,
-    backgroundColor: "#E8F1F6",
+    gap: 10,
+    paddingVertical: 4,
   },
   summaryText: {
-    fontSize: 16,
-    color: "#1B3A4B",
-    lineHeight: 24,
-  },
-  list: {
-    gap: 10,
-  },
-  row: {
-    flexDirection: "row",
-    gap: 12,
-    padding: 16,
-    minHeight: 64,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 2,
-    borderColor: "#D7E2EA",
-    alignItems: "flex-start",
-  },
-  rowDone: {
-    borderColor: "#2F6F4E",
-    backgroundColor: "#EEF7F1",
-  },
-  check: {
-    fontSize: 22,
+    fontSize: typeScale.body,
+    fontFamily: fonts.bodySemi,
+    color: colors.inkSoft,
     lineHeight: 28,
   },
-  rowCopy: {
-    flex: 1,
-    gap: 4,
+  list: {
+    gap: 12,
   },
-  rowTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1B3A4B",
+  destinations: {
+    gap: 10,
+    marginTop: space.gap,
   },
-  rowAction: {
-    fontSize: 15,
-    color: "#4A6673",
-    lineHeight: 22,
-  },
-  secondary: {
-    marginTop: 8,
-    paddingVertical: 14,
-    alignItems: "center",
-  },
-  secondaryText: {
-    fontSize: 17,
-    color: "#1B3A4B",
-    fontWeight: "500",
-  },
-  danger: {
-    paddingVertical: 14,
-    alignItems: "center",
-  },
-  dangerText: {
-    fontSize: 17,
-    color: "#8B2E2E",
-    fontWeight: "500",
+  destLabel: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.muted,
   },
   version: {
     marginTop: 8,
     textAlign: "center",
-    fontSize: 14,
-    color: "#7A90A0",
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.body,
+    color: colors.faint,
   },
 });

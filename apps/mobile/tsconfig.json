@@ -7,5 +7,6 @@
       "blu-core/*": ["../../packages/blu-core/src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "android", "dist", "**/*.test.ts"]
 }

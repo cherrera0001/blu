@@ -12,7 +12,7 @@ describe("versión móvil", () => {
     const app = JSON.parse(readFileSync(join(root, "app.json"), "utf8")) as {
       expo: { version: string; android: { versionCode: number } };
     };
-    expect(APP_VERSION).toBe("0.3.1");
+    expect(APP_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
     expect(APP_VERSION).toBe(pkg.version);
     expect(APP_VERSION).toBe(app.expo.version);
     expect(APP_VERSION_CODE).toBe(app.expo.android.versionCode);

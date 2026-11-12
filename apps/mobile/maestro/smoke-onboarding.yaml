@@ -6,6 +6,8 @@ appId: cl.blu.app
 ---
 - launchApp
 - assertVisible: "Blu"
+- assertVisible:
+    id: "blu-companion"
 - assertVisible: "Hay 7 temas"
 - tapOn:
     id: "habit-movement"
@@ -15,4 +17,19 @@ appId: cl.blu.app
     id: "continue-button"
 - assertVisible: "Hoy"
 - assertVisible:
+    id: "blu-companion"
+- assertVisible:
     id: "weekly-summary"
+- assertVisible:
+    id: "week-bars"
+- assertVisible:
+    id: "speak-today"
+- assertVisible: "Escuchar a Blu"
+- assertVisible:
+    id: "open-chat"
+- assertVisible:
+    id: "options-toggle"
+- tapOn:
+    id: "options-toggle"
+- assertVisible:
+    id: "edit-selection"

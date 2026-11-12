@@ -12,5 +12,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, "node_modules"),
 ];
 config.resolver.disableHierarchicalLookup = true;
+// Monorepo: Next.js en raíz usa react 19.3.x; RN 0.81 exige el renderer 19.1.0.
+config.resolver.extraNodeModules = {
+  react: path.resolve(projectRoot, "node_modules/react"),
+};
 
 module.exports = config;

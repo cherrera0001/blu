@@ -40,7 +40,7 @@ La persona ve los siete temas con descripción, elige entre 1 y 4, acepta el avi
 - **FR-001**: App Expo en `apps/mobile` importa solo dominio desde `blu-core`.
 - **FR-002**: Persistencia vía adaptador (AsyncStorage); sin cuentas.
 - **FR-003**: UI lenguaje llano (mismo criterio senior que web post-021 web).
-- **FR-004**: Chat/voz fuera de esta spec (025/026).
+- **FR-004**: Chat/voz fuera de esta spec: ver `specs/025-mobile-chat-bff` y `specs/026-mobile-voice-natural`.
 - **FR-005**: TDD: pruebas de dominio + pruebas de pantalla onboarding (7 botones, tope 4).
 
 ## Success Criteria

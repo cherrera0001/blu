@@ -54,5 +54,6 @@ npm run test:mobile
 ## Notas de producto
 
 - Local-first: datos en AsyncStorage (`blu.local.v1`), sin cuentas.
-- Preview firmada en debug; no es firma Play Store.
-- Chat/voz: specs 025/026.
+- Preview: APK **release** firmado con keystore de debug (embebe JS; sin Metro). No es firma Play Store.
+- En v0.4.0+: diseño de marca (Fraunces/Nunito + atmósfera), avatar animado / poses oficiales, historial 7 días, educación por hábito, **Escuchar** (voz natural ElevenLabs vía BFF + respaldo local), chat móvil contra `/api/assistant`.
+- Specs formales 025/026 siguen como seguimiento de madurez; la app ya usa el BFF de producción.

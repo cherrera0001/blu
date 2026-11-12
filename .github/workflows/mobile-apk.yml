@@ -66,20 +66,22 @@ jobs:
           NODE_ENV: development
         run: npx expo prebuild --platform android --clean --no-install
 
-      - name: Compilar APK (debug firmado, instalable)
+      # assembleRelease embebe el JS (export:embed). assembleDebug omite el bundle y
+      # exige Metro → RedBox "loadJSBundleFromAssets" al sideloadear sin PC.
+      - name: Compilar APK (release firmado con keystore debug, instalable)
         working-directory: apps/mobile/android
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
           NODE_ENV: production
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
+          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
 
       - name: Nombrar artefacto
         id: apk
         run: |
           VERSION=$(node -p "require('./apps/mobile/package.json').version")
-          SRC="apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk"
+          SRC="apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
           DEST="blu-android-${VERSION}.apk"
           test -f "$SRC"
           cp "$SRC" "$DEST"
@@ -140,4 +142,4 @@ jobs:
             maestro test apps/mobile/maestro/smoke-onboarding.yaml
             ```
 
-            > Firmado en modo **debug** (preview). Sirve para probar; no es la firma de producción de Play Store.
+            > APK **release** firmado con keystore de preview (debug). Embebe el JS; instalable sin Metro. No es la firma de producción de Play Store.
