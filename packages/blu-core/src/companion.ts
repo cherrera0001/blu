@@ -13,7 +13,7 @@ export interface CompanionView {
   daysSinceLast: number | null;
 }
 
-const LINES: Record<CompanionMood, string> = {
+export const COMPANION_LINES: Record<CompanionMood, string> = {
   waiting: "Blu te espera, sin prisa.",
   encouraging: "Blu se anima: ya diste un paso.",
   celebrate: "Blu celebra contigo. Hoy hubo espacio.",
@@ -72,5 +72,5 @@ export function readCompanion(state: BluState, today: Date): CompanionView {
   // momento de celebración / rachas visibles, cuando el 3D oficial aporta peso.
   let pose: CompanionPose = "companion";
   if (mood === "celebrate" || mood === "thriving") pose = "builder";
-  return { mood, pose, line: LINES[mood], recentActiveDays, daysSinceLast };
+  return { mood, pose, line: COMPANION_LINES[mood], recentActiveDays, daysSinceLast };
 }

@@ -1,27 +1,29 @@
 import { StyleSheet, Text, View } from "react-native";
 import type { DayCount } from "blu-core/history";
+import { useI18n } from "../i18n";
 import { colors, type as typeScale } from "../theme";
 
 /**
  * Barras de los últimos 7 días: lectura visual amable, sin rachas ni juicio.
  */
 export function WeekBars({ days }: { days: DayCount[] }) {
+  const { t } = useI18n();
   const max = Math.max(1, ...days.map((d) => d.count));
   return (
     <View
       accessibilityRole="summary"
-      accessibilityLabel="Acciones registradas por día, últimos 7 días"
+      accessibilityLabel={t("Acciones registradas por día, últimos 7 días")}
       style={styles.row}
       testID="week-bars"
     >
       {days.map((day) => {
         const heightPx = Math.max(8, Math.round((day.count / max) * 64));
         const [, , date] = day.date.split("-");
-        const unit = day.count === 1 ? "paso" : "pasos";
+        const unit = day.count === 1 ? t("1 paso") : t("{n} pasos", { n: day.count });
         return (
           <View
             key={day.date}
-            accessibilityLabel={`${date}: ${day.count} ${unit}`}
+            accessibilityLabel={`${date}: ${unit}`}
             style={styles.item}
           >
             <View style={styles.track}>

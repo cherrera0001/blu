@@ -30,6 +30,7 @@
 - **FR-002**: La conversación vive solo en memoria de la pantalla; nada se persiste en AsyncStorage (memoria opt-in sigue gated en BLU-1003).
 - **FR-003**: Guardián de entrada/salida, rate limit y selección de proveedor ocurren en el BFF (specs/016); el cliente no decide seguridad.
 - **FR-005**: Cada respuesta indica su origen según `meta.providerId` del BFF (`remote` → modelo de lenguaje; `local-rules` → reglas sencillas); origen desconocido no se etiqueta.
+- **FR-006** (BLU-1504, #126): El cliente envía `scene` con el idioma elegido, los identificadores de temas elegidos y conteos (marcados hoy, días activos en 14 días), sin texto libre ni fechas, para que Blu responda en ese idioma. Sin temas no se envía `scene`. El aviso en contexto lo declara: «Tus mensajes, tu idioma y qué temas elegiste viajan al servidor de Blu solo para responderte y no se guardan».
 - **FR-004**: Sin credenciales en el binario. `BLU_API_TOKEN` del BFF no se usa desde móvil (endpoint público con rate limit).
 
 ## Success Criteria

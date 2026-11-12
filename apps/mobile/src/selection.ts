@@ -23,7 +23,8 @@ export function toggleHabitSelection(
     return {
       next: [...current],
       blocked: true,
-      message: `Solo puedes elegir hasta ${max} temas. Quita uno si quieres cambiar.`,
+      // Plantilla traducible: la pantalla rellena {max} al mostrarla.
+      message: "Solo puedes elegir hasta {max} temas. Quita uno si quieres cambiar.",
     };
   }
   return {

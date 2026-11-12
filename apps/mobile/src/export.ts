@@ -1,5 +1,6 @@
 import type { BluState } from "blu-core/blu";
 import type { WeeklyReview } from "blu-core/review";
+import { esT, type Translate } from "./i18n-core";
 
 /**
  * Exportar mis datos (paridad web specs/005). Mismo formato que la web
@@ -33,19 +34,22 @@ export function buildMobileExport(state: BluState, now: Date): MobileExportBundl
 }
 
 /** Texto legible antes del JSON: quien lo reciba sabe qué es. */
-export function exportMessage(bundle: MobileExportBundle): string {
-  return `Mis datos de Blu (${bundle.exportedAt.slice(0, 10)})\n\n${JSON.stringify(bundle, null, 2)}`;
+export function exportMessage(bundle: MobileExportBundle, t: Translate = esT): string {
+  const title = t("Mis datos de Blu ({date})", { date: bundle.exportedAt.slice(0, 10) });
+  return `${title}\n\n${JSON.stringify(bundle, null, 2)}`;
 }
 
 /** Resumen llano de lo que Blu guarda en el teléfono. */
-export function storedSummary(state: BluState): string[] {
+export function storedSummary(state: BluState, t: Translate = esT): string[] {
   const days = Object.keys(state.checkInsByDate).length;
   return [
-    `Temas elegidos: ${state.selectedHabitIds.length}`,
-    `Días con alguna marca: ${days}`,
-    `Ajustes a pasos más pequeños: ${state.adaptations.length}`,
-    `Revisiones semanales: ${state.weeklyReviews?.length ?? 0}`,
-    `Voz: ${state.voicePreference === "device" ? "solo la del teléfono" : "natural (servidor de Blu)"}`,
-    "Las conversaciones con Blu no se guardan.",
+    t("Temas elegidos: {n}", { n: state.selectedHabitIds.length }),
+    t("Días con alguna marca: {n}", { n: days }),
+    t("Ajustes a pasos más pequeños: {n}", { n: state.adaptations.length }),
+    t("Revisiones semanales: {n}", { n: state.weeklyReviews?.length ?? 0 }),
+    state.voicePreference === "device"
+      ? t("Voz: solo la del teléfono")
+      : t("Voz: natural (servidor de Blu)"),
+    t("Las conversaciones con Blu no se guardan."),
   ];
 }

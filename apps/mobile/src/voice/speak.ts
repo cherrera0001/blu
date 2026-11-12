@@ -1,7 +1,9 @@
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Speech from "expo-speech";
+import type { Locale } from "blu-core/i18n";
 import { BLU_API_BASE } from "../config";
+import { SPEECH_LANG } from "../i18n-core";
 import { httpJson } from "../net/http";
 
 export type SpeakResult = "natural" | "local" | "failed";
@@ -32,11 +34,11 @@ function bytesToBase64(buffer: ArrayBuffer): string {
   return globalThis.btoa(binary);
 }
 
-async function speakLocal(text: string): Promise<boolean> {
+async function speakLocal(text: string, language: string): Promise<boolean> {
   return await new Promise((resolve) => {
     try {
       Speech.speak(text, {
-        language: "es-ES",
+        language,
         rate: 0.9,
         pitch: 1.0,
         onDone: () => resolve(true),
@@ -55,13 +57,14 @@ async function speakLocal(text: string): Promise<boolean> {
  */
 export async function speakText(
   text: string,
-  options: { preferNatural?: boolean } = {},
+  options: { preferNatural?: boolean; locale?: Locale } = {},
 ): Promise<SpeakResult> {
   const trimmed = text.trim();
   if (!trimmed) return "failed";
   stopSpeaking();
 
   const preferNatural = options.preferNatural !== false;
+  const locale: Locale = options.locale ?? "es";
   if (preferNatural) {
     let sound: Audio.Sound | null = null;
     const cacheUri = `${FileSystem.cacheDirectory}blu-voice.mp3`;
@@ -84,7 +87,7 @@ export async function speakText(
       const res = await httpJson(`${BLU_API_BASE}/api/voice`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: trimmed.slice(0, 500), locale: "es" }),
+        body: JSON.stringify({ text: trimmed.slice(0, 500), locale }),
       });
       if (!res.ok || aborted) throw new Error(`voice_${res.status}`);
       const buffer = await res.arrayBuffer();
@@ -121,7 +124,7 @@ export async function speakText(
     Speech.stop();
     stopCurrent = null;
   };
-  const ok = await speakLocal(trimmed);
+  const ok = await speakLocal(trimmed, SPEECH_LANG[locale]);
   stopCurrent = null;
   return ok ? "local" : "failed";
 }

@@ -1,0 +1,33 @@
+# Maestro — humo de idioma (BLU-1504, #126). Corre después de smoke-onboarding
+# (o con temas ya elegidos): cambia a inglés desde Opciones y vuelve a castellano.
+#   maestro test apps/mobile/maestro/smoke-idioma.yaml
+appId: cl.blu.app
+---
+- launchApp
+- scrollUntilVisible:
+    element:
+      id: "options-toggle"
+- tapOn:
+    id: "options-toggle"
+- scrollUntilVisible:
+    element:
+      id: "locale-en-US"
+- tapOn:
+    id: "locale-en-US"
+- assertVisible: "Options"
+- assertVisible: "My data"
+- assertVisible: ".*Conversations with Blu are not saved.*"
+- stopApp
+- launchApp
+- assertVisible: "Today"
+- scrollUntilVisible:
+    element:
+      id: "options-toggle"
+- tapOn:
+    id: "options-toggle"
+- scrollUntilVisible:
+    element:
+      id: "locale-es"
+- tapOn:
+    id: "locale-es"
+- assertVisible: "Opciones"

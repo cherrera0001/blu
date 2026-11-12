@@ -8,12 +8,17 @@ import { BluCompanion } from "../components/BluCompanion";
 import { SpeakButton } from "../components/SpeakButton";
 import { BLU_API_BASE } from "../config";
 import { httpJson } from "../net/http";
+import { buildChatScene } from "../chat/scene";
 import { describeReplySource, parseReplySource, type ReplySource } from "../chat/source";
+import { useI18n } from "../i18n";
 import { colors, fonts, space, type as typeScale } from "../theme";
 
 /** Aviso en contexto (specs/025): el chat es la única vía por la que el texto sale del teléfono. */
 export const CHAT_PRIVACY_NOTICE =
-  "Tus mensajes viajan al servidor de Blu solo para responderte y no se guardan. Evita escribir datos personales.";
+  "Tus mensajes, tu idioma y qué temas elegiste viajan al servidor de Blu solo para responderte y no se guardan. Evita escribir datos personales.";
+
+const GREETING =
+  "Hola. Puedo acompañarte con ideas sencillas sobre tus temas. No soy un servicio médico.";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -28,6 +33,7 @@ export interface ChatScreenProps {
 }
 
 export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps) {
+  const { locale, t } = useI18n();
   const companion = useMemo(
     () => readCompanion(state.selectedHabitIds.length ? state : createInitialState(), new Date()),
     [state],
@@ -35,7 +41,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      text: "Hola. Puedo acompañarte con ideas sencillas sobre tus temas. No soy un servicio médico.",
+      text: t(GREETING),
     },
   ]);
   const [draft, setDraft] = useState("");
@@ -57,6 +63,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          scene: buildChatScene(state, locale, companion.mood, new Date()) ?? undefined,
           messages: nextMessages.slice(-8).map((m) => ({
             role: m.role,
             text: m.text.slice(0, 2000),
@@ -67,11 +74,11 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
       const data = await res.json();
       const reply =
         data.text?.trim() ||
-        "No pude responder ahora. Puedes intentarlo de nuevo.";
+        t("No pude responder ahora. Puedes intentarlo de nuevo.");
       const source = parseReplySource(data);
       setMessages((prev) => [...prev, { role: "assistant", text: reply, source }]);
     } catch {
-      setError("No pude contactar a Blu ahora. Revisa la conexión e inténtalo otra vez.");
+      setError(t("No pude contactar a Blu ahora. Revisa la conexión e inténtalo otra vez."));
     } finally {
       setBusy(false);
     }
@@ -85,13 +92,13 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
     >
       <View style={styles.header}>
         <ActionButton
-          label="← Volver a Hoy"
+          label={t("← Volver a Hoy")}
           variant="ghost"
           onPress={onBack}
           testID="chat-back"
           style={styles.back}
         />
-        <Text style={styles.brand}>Hablar con Blu</Text>
+        <Text style={styles.brand}>{t("Hablar con Blu")}</Text>
       </View>
 
       <View style={styles.presence}>
@@ -99,7 +106,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
         {lastAssistant ? (
           <SpeakButton
             text={lastAssistant}
-            label="Escuchar respuesta"
+            label={t("Escuchar respuesta")}
             naturalAvailable={naturalAvailable}
             variant="outline"
             testID="speak-chat"
@@ -121,7 +128,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
             <Text style={styles.bubbleText}>{item.text}</Text>
             {item.source && describeReplySource(item.source) ? (
               <Text style={styles.source} testID="chat-reply-source">
-                {describeReplySource(item.source)}
+                {t(describeReplySource(item.source)!)}
               </Text>
             ) : null}
           </View>
@@ -131,13 +138,13 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <Text style={styles.privacy} testID="chat-privacy-notice">
-        {CHAT_PRIVACY_NOTICE}
+        {t(CHAT_PRIVACY_NOTICE)}
       </Text>
 
       <View style={styles.composer}>
         <TextInput
-          accessibilityLabel="Mensaje para Blu"
-          placeholder="Escribe aquí…"
+          accessibilityLabel={t("Mensaje para Blu")}
+          placeholder={t("Escribe aquí…")}
           placeholderTextColor={colors.faint}
           value={draft}
           onChangeText={setDraft}
@@ -146,7 +153,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
           testID="chat-input"
         />
         <ActionButton
-          label="Enviar"
+          label={t("Enviar")}
           variant="primary"
           onPress={send}
           disabled={busy || !draft.trim()}

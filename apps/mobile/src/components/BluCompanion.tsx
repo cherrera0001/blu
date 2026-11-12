@@ -10,6 +10,7 @@ import {
 import type { CompanionView } from "blu-core/companion";
 import { HOP_MS, reactionFor } from "../content/companion-motion";
 import { colors, fonts, type as typeScale } from "../theme";
+import { useI18n } from "../i18n";
 import NEWSPAPER from "../../assets/blu-newspaper.png";
 import BUILDER from "../../assets/blu-builder.png";
 
@@ -36,6 +37,7 @@ export function BluCompanion({
   view: CompanionView;
   size?: "sm" | "md" | "lg";
 }) {
+  const { t } = useI18n();
   const dim = size === "lg" ? 260 : size === "md" ? 170 : 120;
   const [breathe] = useState(() => new Animated.Value(0));
   const [hop] = useState(() => new Animated.Value(0));
@@ -128,7 +130,7 @@ export function BluCompanion({
   return (
     <View
       accessibilityRole="summary"
-      accessibilityLabel={`Blu. ${view.line}`}
+      accessibilityLabel={`Blu. ${t(view.line)}`}
       style={[styles.wrap, size === "lg" && styles.wrapHero]}
       testID="blu-companion"
     >
@@ -154,7 +156,7 @@ export function BluCompanion({
         style={[styles.line, size !== "sm" && styles.lineHero, { opacity: lineOpacity }]}
         testID="companion-line"
       >
-        {view.line}
+        {t(view.line)}
       </Animated.Text>
     </View>
   );

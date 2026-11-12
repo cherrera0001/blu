@@ -850,5 +850,237 @@
   "Autoevaluación orientativa de hábitos. No es un diagnóstico médico ni una escala psicométrica validada.": {
     "pt-BR": "Autoavaliação orientativa de hábitos. Não é um diagnóstico médico nem uma escala psicométrica validada.",
     "pt-PT": "Autoavaliação orientativa de hábitos. Não é um diagnóstico médico nem uma escala psicométrica validada."
+  },
+  "Contenido educativo general. Todo recurso está pendiente de verificación en el registro de evidencia: no afirmamos eficacia.": {
+    "pt-BR": "Conteúdo educativo geral. Todo recurso está pendente de verificação no registro de evidências: não afirmamos eficácia.",
+    "pt-PT": "Conteúdo educativo geral. Todo o recurso está pendente de verificação no registo de evidência: não afirmamos eficácia."
+  },
+  "Catálogo de inspiración para microhábitos. Sin evidencia verificada: no son recomendaciones clínicas.": {
+    "pt-BR": "Catálogo de inspiração para micro-hábitos. Sem evidência verificada: não são recomendações clínicas.",
+    "pt-PT": "Catálogo de inspiração para micro-hábitos. Sem evidência verificada: não são recomendações clínicas."
+  },
+  "Pausa postura": {
+    "pt-BR": "Pausa de postura",
+    "pt-PT": "Pausa de postura"
+  },
+  "Cambiar de postura ahora mismo.": {
+    "pt-BR": "Mudar de postura agora mesmo.",
+    "pt-PT": "Mudar de postura agora mesmo."
+  },
+  "Escaleras": {
+    "pt-BR": "Escadas",
+    "pt-PT": "Escadas"
+  },
+  "Subir los primeros 5 escalones.": {
+    "pt-BR": "Subir os primeiros 5 degraus.",
+    "pt-PT": "Subir os primeiros 5 degraus."
+  },
+  "Caminata corta": {
+    "pt-BR": "Caminhada curta",
+    "pt-PT": "Caminhada curta"
+  },
+  "Caminar hasta la esquina y volver.": {
+    "pt-BR": "Caminhar até a esquina e voltar.",
+    "pt-PT": "Caminhar até à esquina e voltar."
+  },
+  "Movimiento en casa": {
+    "pt-BR": "Movimento em casa",
+    "pt-PT": "Movimento em casa"
+  },
+  "Mover los hombros durante un anuncio.": {
+    "pt-BR": "Mexer os ombros durante um comercial.",
+    "pt-PT": "Mexer os ombros durante um anúncio."
+  },
+  "Sin pantallas": {
+    "pt-BR": "Sem telas",
+    "pt-PT": "Sem ecrãs"
+  },
+  "Apagar la pantalla el primer minuto de la comida.": {
+    "pt-BR": "Desligar a tela no primeiro minuto da refeição.",
+    "pt-PT": "Desligar o ecrã no primeiro minuto da refeição."
+  },
+  "Color al plato": {
+    "pt-BR": "Cor no prato",
+    "pt-PT": "Cor no prato"
+  },
+  "Tomar un vaso de agua antes de comer.": {
+    "pt-BR": "Tomar um copo de água antes de comer.",
+    "pt-PT": "Beber um copo de água antes de comer."
+  },
+  "Compra consciente": {
+    "pt-BR": "Compra consciente",
+    "pt-PT": "Compra consciente"
+  },
+  "Mirar una etiqueta sin compromiso de compra.": {
+    "pt-BR": "Olhar um rótulo sem compromisso de comprar.",
+    "pt-PT": "Olhar para um rótulo sem compromisso de comprar."
+  },
+  "Desayuno atento": {
+    "pt-BR": "Café da manhã atento",
+    "pt-PT": "Pequeno-almoço atento"
+  },
+  "Tres respiraciones antes del primer bocado.": {
+    "pt-BR": "Três respirações antes da primeira garfada.",
+    "pt-PT": "Três respirações antes da primeira garfada."
+  },
+  "Pantallas fuera": {
+    "pt-BR": "Telas de lado",
+    "pt-PT": "Ecrãs de lado"
+  },
+  "Activar modo no molestar 15 minutos antes de dormir.": {
+    "pt-BR": "Ativar o modo não perturbe 15 minutos antes de dormir.",
+    "pt-PT": "Ativar o modo não incomodar 15 minutos antes de dormir."
+  },
+  "Pausa de calma": {
+    "pt-BR": "Pausa de calma",
+    "pt-PT": "Pausa de calma"
+  },
+  "Una respiración lenta ahora.": {
+    "pt-BR": "Uma respiração lenta agora.",
+    "pt-PT": "Uma respiração lenta agora."
+  },
+  "Ritual nocturno": {
+    "pt-BR": "Ritual noturno",
+    "pt-PT": "Ritual noturno"
+  },
+  "Elegir qué harás mañana como ritual.": {
+    "pt-BR": "Escolher o que você vai fazer amanhã como ritual.",
+    "pt-PT": "Escolher o que vais fazer amanhã como ritual."
+  },
+  "Siesta breve": {
+    "pt-BR": "Cochilo breve",
+    "pt-PT": "Sesta breve"
+  },
+  "Cerrar los ojos un minuto.": {
+    "pt-BR": "Fechar os olhos por um minuto.",
+    "pt-PT": "Fechar os olhos durante um minuto."
+  },
+  "Mensaje breve": {
+    "pt-BR": "Mensagem breve",
+    "pt-PT": "Mensagem breve"
+  },
+  "Pensar en alguien importante y sonreír.": {
+    "pt-BR": "Pensar em alguém importante e sorrir.",
+    "pt-PT": "Pensar em alguém importante e sorrir."
+  },
+  "Momento presente": {
+    "pt-BR": "Momento presente",
+    "pt-PT": "Momento presente"
+  },
+  "Preguntar cómo está una persona hoy.": {
+    "pt-BR": "Perguntar como uma pessoa está hoje.",
+    "pt-PT": "Perguntar como está uma pessoa hoje."
+  },
+  "Recuerdo compartido": {
+    "pt-BR": "Lembrança compartilhada",
+    "pt-PT": "Recordação partilhada"
+  },
+  "Anotar un recuerdo grato para contar luego.": {
+    "pt-BR": "Anotar uma boa lembrança para contar depois.",
+    "pt-PT": "Anotar uma boa recordação para contar depois."
+  },
+  "Gestos en casa": {
+    "pt-BR": "Gestos em casa",
+    "pt-PT": "Gestos em casa"
+  },
+  "Agradecer en voz alta un gesto pequeño.": {
+    "pt-BR": "Agradecer em voz alta um gesto pequeno.",
+    "pt-PT": "Agradecer em voz alta um gesto pequeno."
+  },
+  "Saludo vecinal": {
+    "pt-BR": "Cumprimento ao vizinho",
+    "pt-PT": "Cumprimento ao vizinho"
+  },
+  "Sonreír a alguien desconocido con respeto.": {
+    "pt-BR": "Sorrir com respeito para alguém desconhecido.",
+    "pt-PT": "Sorrir com respeito a alguém desconhecido."
+  },
+  "Actividad cercana": {
+    "pt-BR": "Atividade por perto",
+    "pt-PT": "Atividade por perto"
+  },
+  "Buscar en internet una actividad cercana.": {
+    "pt-BR": "Procurar na internet uma atividade por perto.",
+    "pt-PT": "Procurar na internet uma atividade perto de si."
+  },
+  "Grupo en línea": {
+    "pt-BR": "Grupo on-line",
+    "pt-PT": "Grupo online"
+  },
+  "Leer una conversación del grupo sin responder.": {
+    "pt-BR": "Ler uma conversa do grupo sem responder.",
+    "pt-PT": "Ler uma conversa do grupo sem responder."
+  },
+  "Ayuda pequeña": {
+    "pt-BR": "Pequena ajuda",
+    "pt-PT": "Pequena ajuda"
+  },
+  "Preguntar a alguien si está bien.": {
+    "pt-BR": "Perguntar a alguém se está tudo bem.",
+    "pt-PT": "Perguntar a alguém se está bem."
+  },
+  "Luz del día": {
+    "pt-BR": "Luz do dia",
+    "pt-PT": "Luz do dia"
+  },
+  "Mirar por la ventana un minuto atentamente.": {
+    "pt-BR": "Olhar pela janela com atenção por um minuto.",
+    "pt-PT": "Olhar pela janela com atenção durante um minuto."
+  },
+  "Verde cercano": {
+    "pt-BR": "Verde por perto",
+    "pt-PT": "Verde por perto"
+  },
+  "Buscar en el mapa el parque más cercano.": {
+    "pt-BR": "Procurar no mapa o parque mais próximo.",
+    "pt-PT": "Procurar no mapa o parque mais próximo."
+  },
+  "Planta o balcón": {
+    "pt-BR": "Planta ou varanda",
+    "pt-PT": "Planta ou varanda"
+  },
+  "Mirar una planta y notar su color.": {
+    "pt-BR": "Olhar uma planta e notar sua cor.",
+    "pt-PT": "Olhar para uma planta e reparar na sua cor."
+  },
+  "Camino consciente": {
+    "pt-BR": "Caminho consciente",
+    "pt-PT": "Caminho consciente"
+  },
+  "Escuchar un sonido exterior ahora.": {
+    "pt-BR": "Escutar um som lá fora agora.",
+    "pt-PT": "Ouvir um som lá fora agora."
+  },
+  "Cinco minutos": {
+    "pt-BR": "Cinco minutos",
+    "pt-PT": "Cinco minutos"
+  },
+  "Nombrar en voz alta una cosa que te importa.": {
+    "pt-BR": "Dizer em voz alta uma coisa que importa para você.",
+    "pt-PT": "Dizer em voz alta uma coisa que te importa."
+  },
+  "Aprendizaje": {
+    "pt-BR": "Aprendizado",
+    "pt-PT": "Aprendizagem"
+  },
+  "Guardar un enlace para ver después.": {
+    "pt-BR": "Salvar um link para ver depois.",
+    "pt-PT": "Guardar uma ligação para ver depois."
+  },
+  "Contribución": {
+    "pt-BR": "Contribuição",
+    "pt-PT": "Contribuição"
+  },
+  "Anotar una forma en que te gustaría ayudar.": {
+    "pt-BR": "Anotar uma forma como você gostaria de ajudar.",
+    "pt-PT": "Anotar uma forma como gostarias de ajudar."
+  },
+  "Conexión valores": {
+    "pt-BR": "Conexão com valores",
+    "pt-PT": "Ligação aos valores"
+  },
+  "Recordar una frase que te represente.": {
+    "pt-BR": "Lembrar uma frase que represente você.",
+    "pt-PT": "Lembrar uma frase que te represente."
   }
 }

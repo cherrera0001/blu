@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ActionButton } from "./ActionButton";
+import { useI18n } from "../i18n";
 import { colors, fonts, type as typeScale } from "../theme";
 import { speakText, stopSpeaking, type SpeakResult } from "../voice/speak";
 
@@ -20,12 +21,13 @@ export interface SpeakButtonProps {
  */
 export function SpeakButton({
   text,
-  label = "Escuchar",
+  label,
   testID = "speak-button",
   preferNatural = true,
   naturalAvailable = true,
   variant = "soft",
 }: SpeakButtonProps) {
+  const { locale, t } = useI18n();
   const [speaking, setSpeaking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<SpeakResult | null>(null);
@@ -50,6 +52,7 @@ export function SpeakButton({
     try {
       const result = await speakText(text, {
         preferNatural: preferNatural && naturalAvailable,
+        locale,
       });
       setMode(result);
     } finally {
@@ -58,17 +61,17 @@ export function SpeakButton({
     }
   }
 
-  const title = loading ? "Preparando voz…" : speaking ? "Detener" : label;
+  const title = loading ? t("Preparando voz…") : speaking ? t("Detener") : (label ?? t("Escuchar"));
   const hint =
     mode === "natural"
-      ? "Voz natural de Blu (audio generado en el servidor)"
+      ? t("Voz natural de Blu (audio generado en el servidor)")
       : mode === "local"
-        ? "Voz del teléfono (respaldo)"
+        ? t("Voz del teléfono (respaldo)")
         : mode === "failed"
-          ? "No pude reproducir el audio. Intenta de nuevo."
+          ? t("No pude reproducir el audio. Intenta de nuevo.")
           : naturalAvailable && preferNatural
-            ? "La voz natural envía este texto al servidor de Blu; no se guarda."
-            : "Puedes oír a Blu con la voz del teléfono";
+            ? t("La voz natural envía este texto al servidor de Blu; no se guarda.")
+            : t("Puedes oír a Blu con la voz del teléfono");
 
   return (
     <View style={styles.wrap}>
@@ -78,7 +81,7 @@ export function SpeakButton({
         variant={speaking || loading ? "outline" : variant}
         busy={loading}
         testID={testID}
-        accessibilityLabel={speaking ? "Detener lectura" : "Escuchar en voz alta"}
+        accessibilityLabel={speaking ? t("Detener lectura") : t("Escuchar en voz alta")}
       />
       <Text style={styles.hint} testID={`${testID}-hint`}>
         {hint}

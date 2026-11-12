@@ -1,5 +1,6 @@
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, type ContextType, type ErrorInfo, type ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { I18nContext } from "./i18n";
 import { APP_VERSION } from "./version";
 
 interface Props {
@@ -12,6 +13,7 @@ interface State {
 
 /** Contención de fallos de UI: mensaje llano, sin stack al usuario. */
 export class ErrorBoundary extends Component<Props, State> {
+  static contextType = I18nContext;
   state: State = { error: null };
 
   static getDerivedStateFromError(error: Error): State {
@@ -24,12 +26,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (!this.state.error) return this.props.children;
+    const { t } = this.context as ContextType<typeof I18nContext>;
     return (
       <View style={styles.box} testID="error-boundary">
-        <Text style={styles.title}>Algo no salió bien</Text>
+        <Text style={styles.title}>{t("Algo no salió bien")}</Text>
         <Text style={styles.body}>
-          Blu se detuvo por un error interno. Tus datos siguen en este dispositivo.
-          Prueba reiniciar la pantalla.
+          {t("Blu se detuvo por un error interno. Tus datos siguen en este dispositivo. Prueba reiniciar la pantalla.")}
         </Text>
         <Pressable
           accessibilityRole="button"
@@ -37,7 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
           style={styles.btn}
           testID="error-boundary-retry"
         >
-          <Text style={styles.btnText}>Reintentar</Text>
+          <Text style={styles.btnText}>{t("Reintentar")}</Text>
         </Pressable>
         <Text style={styles.meta}>Blu {APP_VERSION}</Text>
       </View>
