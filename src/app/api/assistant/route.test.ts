@@ -18,7 +18,14 @@ function req(body: unknown, ip?: string): Request {
 
 describe("POST /api/assistant — BFF local (specs/016, proveedor local)", () => {
   beforeEach(() => {
-    // el rate limiter es por IP: reiniciar vía módulo no es trivial; usamos IPs distintas por test
+    // Aislar del .env.local del desarrollador: estos tests exigen proveedor local.
+    vi.stubEnv("BLU_LLM_BASE_URL", "");
+    vi.stubEnv("BLU_LLM_API_KEY", "");
+    vi.stubEnv("BLU_LLM_MODEL", "");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("responde 200 con la forma del contrato para entrada válida", async () => {
@@ -125,6 +132,9 @@ describe("GET /api/assistant — capacidades sin secretos", () => {
   });
 
   it("reporta remoteConfigured=false sin configuración y true con BLU_LLM_*", async () => {
+    vi.stubEnv("BLU_LLM_BASE_URL", "");
+    vi.stubEnv("BLU_LLM_API_KEY", "");
+    vi.stubEnv("BLU_LLM_MODEL", "");
     const without = await GET();
     expect(await without.json()).toEqual({ remoteConfigured: false });
 

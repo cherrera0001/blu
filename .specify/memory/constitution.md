@@ -55,12 +55,18 @@ documentada y aprobada.
 
 ## Additional Constraints
 
-- **Stack vigente:** Next.js + TypeScript + React; pruebas con Vitest y Testing Library; CI en
-  GitHub Actions. Cualquier tecnología adicional pasa por ADR.
+- **Stack vigente (web):** Next.js + TypeScript + React; pruebas con Vitest y Testing Library; CI en
+  GitHub Actions.
+- **Stack vigente (móvil v1):** Expo (React Native) + TypeScript; dominio compartido en
+  `packages/blu-core` (puro, sin DOM ni APIs nativas). Decisión: ADR-0009.
+- **Frontera de dominio:** `blu-core` no importa `window`, `document`, `localStorage`, React ni
+  módulos de Expo. Adaptadores de almacenamiento/UI viven en cada app.
 - **Localidad de datos:** el MVP no transmite datos personales; cualquier backend exige las
-  aprobaciones del PRD (privacidad, seguridad, jurídico, revisión científica).
+  aprobaciones del PRD (privacidad, seguridad, jurídico, revisión científica). Móvil v1 sigue
+  local-first en el dispositivo (sin cuentas/sync).
 - **Contenido:** versionado como datos (JSON esquematizado) con validación al cargar y errores
   visibles; nunca excepciones silenciosas.
+- **Cualquier tecnología adicional** fuera de web Next o móvil Expo pasa por ADR.
 
 ## Development Workflow
 
