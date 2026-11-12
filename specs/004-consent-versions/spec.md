@@ -70,5 +70,6 @@ puede retirar solo borrando todos los datos.
 
 ## Assumptions
 
-- La versión vigente del aviso es `2.0.0` (la 1.0.0 fue el checkbox único del prototipo).
+- La versión vigente del aviso es `2.1.0` (la 1.0.0 fue el checkbox único del prototipo).
+- **2.1.0 (2026-11-12):** el aviso operativo (web y móvil) declara que el chat y la voz natural pasan por el servidor de Blu y no se guardan (revisión crítica móvil, H5). Quien aceptó 2.0.0 ve el aviso de renovación sin bloqueo.
 - Los textos del aviso viven en el código (MVP local-first); la versión los representa.

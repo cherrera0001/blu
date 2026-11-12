@@ -6,7 +6,8 @@ import {
   type HabitId,
   type BluState,
 } from "blu-core/blu";
-import { acceptPurpose, emptyConsent } from "blu-core/consent";
+import { acceptPurpose, emptyConsent, needsReconsent } from "blu-core/consent";
+import { OPERATIVE_NOTICE } from "../content/notice";
 import { readCompanion } from "blu-core/companion";
 import { ActionButton } from "../components/ActionButton";
 import { BluCompanion } from "../components/BluCompanion";
@@ -28,8 +29,9 @@ export function OnboardingScreen({
   onComplete,
 }: OnboardingScreenProps) {
   const [draft, setDraft] = useState<HabitId[]>(state.selectedHabitIds);
+  // Con un aviso nuevo (otra versión), hay que volver a marcarlo.
   const [noticeAccepted, setNoticeAccepted] = useState(
-    Boolean(state.consentAcceptedAt),
+    Boolean(state.consentAcceptedAt) && !needsReconsent(state.consent),
   );
   const [message, setMessage] = useState("");
   const companion = useMemo(
@@ -134,10 +136,7 @@ export function OnboardingScreen({
         <View style={[styles.consentBox, noticeAccepted && styles.consentBoxOn]}>
           <Text style={styles.consentMark}>{noticeAccepted ? "✓" : ""}</Text>
         </View>
-        <Text style={styles.consentLabel}>
-          Guardo mis elecciones solo en este dispositivo. Blu no es un servicio
-          médico.
-        </Text>
+        <Text style={styles.consentLabel}>{OPERATIVE_NOTICE}</Text>
       </Pressable>
 
       {message ? (

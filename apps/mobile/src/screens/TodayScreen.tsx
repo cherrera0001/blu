@@ -10,6 +10,8 @@ import {
 } from "blu-core/blu";
 import { canSimplify, isAdapted, simplifyHabit, undoLastAdaptation } from "blu-core/adapt";
 import { readCompanion } from "blu-core/companion";
+import { acceptPurpose, needsReconsent } from "blu-core/consent";
+import { OPERATIVE_NOTICE } from "../content/notice";
 import { summarizeDays } from "blu-core/history";
 import { ActionButton } from "../components/ActionButton";
 import { BluCompanion } from "../components/BluCompanion";
@@ -117,6 +119,25 @@ export function TodayScreen({
   return (
     <ScreenShell testID="today-screen">
       <BluCompanion view={companion} size="md" />
+
+      {needsReconsent(state.consent) ? (
+        <View style={styles.renew} testID="consent-renew" accessibilityRole="summary">
+          <Text style={styles.renewTitle}>Actualizamos el aviso</Text>
+          <Text style={styles.renewText}>{OPERATIVE_NOTICE}</Text>
+          <Text style={styles.summaryNote}>Puedes seguir usando Blu igual mientras tanto.</Text>
+          <ActionButton
+            label="Entendido"
+            variant="outline"
+            onPress={() =>
+              onChange({
+                ...state,
+                consent: acceptPurpose(state.consent, "operativo", new Date().toISOString()),
+              })
+            }
+            testID="consent-renew-accept"
+          />
+        </View>
+      ) : null}
 
       <View style={styles.section}>
         <Text style={styles.title}>Hoy</Text>
@@ -254,6 +275,25 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     color: colors.inkSoft,
     marginTop: 4,
+  },
+  renew: {
+    gap: 8,
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    borderColor: colors.softBorder,
+    backgroundColor: colors.soft,
+  },
+  renewTitle: {
+    fontSize: typeScale.body,
+    fontFamily: fonts.bodyBold,
+    color: colors.ink,
+  },
+  renewText: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    lineHeight: 24,
   },
   summaryNote: {
     fontSize: typeScale.tiny,

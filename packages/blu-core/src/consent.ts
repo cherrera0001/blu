@@ -1,4 +1,5 @@
-export const CONSENT_VERSION = "2.0.0";
+/** 2.1.0 (2026-11-12): el aviso operativo declara que chat y voz natural pasan por el servidor. */
+export const CONSENT_VERSION = "2.1.0";
 
 export type PurposeId = "operativo" | "mejora" | "investigacion";
 

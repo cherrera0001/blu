@@ -60,7 +60,7 @@ a Blu amable de verdad: **«esto me cuesta → probemos algo más pequeño»**.
 - **Cambio mínimo:** encargar 3 poses 3D del mismo estilo (bienvenida, calma a tu lado, alegría suave). Mientras tanto no hay una alternativa coherente: se mantiene el periódico, que al menos mira a la persona y sonríe.
 - **Qué NO hacer:** mezclar las 6 poses planas de 512 px que hay en `assets/` (estilo 2D distinto y `companion` = `happy` byte a byte): un avatar inconsistente hace que la compañía se sienta falsa. Por eso siguen fuera del repo.
 
-### H5 — Alta · Onboarding · el aviso promete más privacidad de la real
+### H5 — Alta · Onboarding · el aviso promete más privacidad de la real *(corregido en ola A, consentimiento 2.1.0)*
 - **Qué falla:** «Guardo mis elecciones solo en este dispositivo». Es cierto para el almacenamiento, pero el chat y la voz natural envían texto al servidor. Los avisos en contexto lo dicen; el primer aviso, no.
 - **Por qué duele:** si alguien descubre después que su texto salió del teléfono, se rompe la confianza, que es lo más frágil.
 - **Contraprueba:** «Tus elecciones se guardan en este teléfono. Si usas el chat o la voz natural, ese texto pasa por el servidor de Blu y no se guarda.»
@@ -108,7 +108,7 @@ almacenamiento como adaptador. Si no, la web y la app volverán a divergir.
 **A — Confianza emocional (reparar el vínculo).**
 1. ✅ Jerarquía de Hoy · ✅ «Se me hace difícil» · ✅ el cero sin reproche · ✅ contraste.
 2. ✅ «¿Por qué este paso?» por hábito (nota breve + fuente honesta).
-3. Copy del aviso inicial y versión de consentimiento (H5, **pendiente de decisión**).
+3. ✅ Aviso inicial honesto y `CONSENT_VERSION` 2.1.0 (H5): web y móvil; quien aceptó 2.0.0 ve «Actualizamos el aviso» sin bloqueo.
 4. ✅ «Mis datos»: qué guarda Blu + compartir una copia.
 
 **B — Claridad de uso (volver sin presión).**
