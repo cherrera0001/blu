@@ -61,3 +61,22 @@ appId: cl.blu.app
 - scrollUntilVisible:
     element:
       id: "edit-selection"
+# Volver: «Cambiar temas» tiene salida visible y el botón atrás del teléfono vuelve a Hoy.
+- tapOn:
+    id: "edit-selection"
+- assertVisible:
+    id: "onboarding-back"
+- tapOn:
+    id: "onboarding-back"
+- assertVisible: "Hoy"
+- scrollUntilVisible:
+    element:
+      id: "open-chat"
+- tapOn:
+    id: "open-chat"
+- assertVisible:
+    id: "chat-back"
+- assertVisible:
+    id: "chat-send"
+- back
+- assertVisible: "Hoy"

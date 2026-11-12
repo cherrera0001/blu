@@ -377,12 +377,6 @@
     "pt-PT": "Não consegui contactar a Blu agora. Verifica a ligação e tenta novamente.",
     "zh-CN": "现在联系不上 Blu。请检查网络后再试。"
   },
-  "← Volver a Hoy": {
-    "en-US": "← Back to Today",
-    "pt-BR": "← Voltar para Hoje",
-    "pt-PT": "← Voltar a Hoje",
-    "zh-CN": "← 回到今天"
-  },
   "Hablar con Blu": {
     "en-US": "Talk with Blu",
     "pt-BR": "Conversar com a Blu",
@@ -708,5 +702,29 @@
     "pt-BR": "Desativar",
     "pt-PT": "Desativar",
     "zh-CN": "关掉"
+  },
+  "Volver a Hoy": {
+    "en-US": "Back to Today",
+    "pt-BR": "Voltar para Hoje",
+    "pt-PT": "Voltar a Hoje",
+    "zh-CN": "回到今天"
+  },
+  "Volver sin cambiar": {
+    "en-US": "Go back without changes",
+    "pt-BR": "Voltar sem mudar",
+    "pt-PT": "Voltar sem alterar",
+    "zh-CN": "返回，不做更改"
+  },
+  "Encendido": {
+    "en-US": "On",
+    "pt-BR": "Ligado",
+    "pt-PT": "Ligado",
+    "zh-CN": "已开启"
+  },
+  "Apagado": {
+    "en-US": "Off",
+    "pt-BR": "Desligado",
+    "pt-PT": "Desligado",
+    "zh-CN": "已关闭"
   }
 }

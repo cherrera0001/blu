@@ -34,7 +34,6 @@ export function ActionButton({
   accessibilityLabel,
   style,
 }: ActionButtonProps) {
-  const isGhost = variant === "ghost";
   return (
     <Pressable
       accessibilityRole="button"
@@ -69,7 +68,7 @@ export function ActionButton({
             variant === "outline" && styles.labelOutline,
             variant === "danger" && styles.labelDanger,
             variant === "ghost" && styles.labelGhost,
-            isGhost && styles.labelGhostSize,
+            (disabled || busy) && styles.labelDisabled,
           ]}
         >
           {label}
@@ -112,15 +111,21 @@ const styles = StyleSheet.create({
   },
   ghost: {
     backgroundColor: "transparent",
-    minHeight: 48,
+    minHeight: space.touch,
     paddingVertical: 10,
   },
   pressed: {
     opacity: 0.88,
     transform: [{ scale: 0.985 }],
   },
+  // Deshabilitado sin opacidad: el texto sigue legible (contraste ≥ 4,5:1) y
+  // se ve claramente distinto de un botón activo.
   disabled: {
-    opacity: 0.4,
+    backgroundColor: colors.tint,
+    borderColor: colors.cardBorder,
+  },
+  labelDisabled: {
+    color: colors.muted,
   },
   label: {
     fontFamily: fonts.bodyBold,
@@ -140,10 +145,8 @@ const styles = StyleSheet.create({
     color: colors.danger,
   },
   labelGhost: {
-    color: colors.inkSoft,
-    fontFamily: fonts.bodySemi,
-  },
-  labelGhostSize: {
-    fontSize: typeScale.meta,
+    color: colors.ctaDeep,
+    fontFamily: fonts.bodyBold,
+    textDecorationLine: "underline",
   },
 });

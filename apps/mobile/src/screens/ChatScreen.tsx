@@ -1,9 +1,19 @@
 import { useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { createInitialState, type BluState } from "blu-core/blu";
 import { readCompanion } from "blu-core/companion";
 import { ActionButton } from "../components/ActionButton";
+import { BackButton } from "../components/BackButton";
 import { BluCompanion } from "../components/BluCompanion";
 import { SpeakButton } from "../components/SpeakButton";
 import { BLU_API_BASE } from "../config";
@@ -49,6 +59,10 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
   const [error, setError] = useState("");
 
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant")?.text ?? "";
+  // Blu acompaña al saludo; en cuanto hay conversación, el espacio es para los mensajes.
+  // En teléfonos bajos, ni siquiera al saludo: los mensajes no cabrían.
+  const { height } = useWindowDimensions();
+  const showCompanion = height >= 720 && !messages.some((m) => m.role === "user");
 
   async function send() {
     const text = draft.trim();
@@ -90,19 +104,17 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
       style={styles.root}
       testID="chat-screen"
     >
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
       <View style={styles.header}>
-        <ActionButton
-          label={t("← Volver a Hoy")}
-          variant="ghost"
-          onPress={onBack}
-          testID="chat-back"
-          style={styles.back}
-        />
+        <BackButton label={t("Volver a Hoy")} onPress={onBack} testID="chat-back" />
         <Text style={styles.brand}>{t("Hablar con Blu")}</Text>
       </View>
 
       <View style={styles.presence}>
-        <BluCompanion view={companion} size="sm" />
+        {showCompanion ? <BluCompanion view={companion} size="sm" /> : null}
         {lastAssistant ? (
           <SpeakButton
             text={lastAssistant}
@@ -125,7 +137,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
               item.role === "user" ? styles.bubbleUser : styles.bubbleAssistant,
             ]}
           >
-            <Text style={styles.bubbleText}>{item.text}</Text>
+            <Text style={[styles.bubbleText, item.role === "user" && styles.bubbleTextUser]}>{item.text}</Text>
             {item.source && describeReplySource(item.source) ? (
               <Text style={styles.source} testID="chat-reply-source">
                 {t(describeReplySource(item.source)!)}
@@ -162,6 +174,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
           style={styles.send}
         />
       </View>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
@@ -171,13 +184,8 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: space.screen,
     paddingTop: 12,
-    paddingBottom: 8,
-    gap: 8,
-  },
-  back: {
-    alignSelf: "flex-start",
-    width: "auto",
-    paddingHorizontal: 0,
+    paddingBottom: 4,
+    gap: 10,
   },
   brand: {
     fontSize: 28,
@@ -200,7 +208,7 @@ const styles = StyleSheet.create({
   },
   bubbleUser: {
     alignSelf: "flex-end",
-    backgroundColor: colors.cta,
+    backgroundColor: colors.ctaDeep,
   },
   bubbleAssistant: {
     alignSelf: "flex-start",
@@ -209,10 +217,13 @@ const styles = StyleSheet.create({
     borderColor: colors.cardBorder,
   },
   bubbleText: {
-    fontSize: typeScale.meta,
+    fontSize: typeScale.body,
     fontFamily: fonts.body,
-    lineHeight: 24,
+    lineHeight: 26,
     color: colors.ink,
+  },
+  bubbleTextUser: {
+    color: colors.ctaText,
   },
   source: {
     marginTop: 6,
@@ -238,12 +249,14 @@ const styles = StyleSheet.create({
   composer: {
     flexDirection: "row",
     gap: 10,
-    padding: space.screen,
-    paddingBottom: 28,
+    paddingHorizontal: space.screen,
+    paddingTop: 8,
+    paddingBottom: 16,
     alignItems: "center",
   },
   input: {
     flex: 1,
+    minWidth: 0,
     minHeight: space.touch,
     borderRadius: 14,
     borderWidth: 2,
@@ -256,6 +269,7 @@ const styles = StyleSheet.create({
   },
   send: {
     width: "auto",
+    flexShrink: 0,
     minWidth: 104,
     paddingHorizontal: 16,
   },
