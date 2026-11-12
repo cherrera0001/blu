@@ -427,7 +427,7 @@ describe("Blu user flows", () => {
     const saved = JSON.parse(window.localStorage.getItem("blu.local.v1") ?? "null") as {
       consent: { version: string; purposes: Record<string, { acceptedAt: string }> };
     };
-    expect(saved.consent.version).toBe("2.1.0");
+    expect(saved.consent.version).toBe("2.2.0");
     expect(saved.consent.purposes.operativo.acceptedAt).toBeTruthy();
     expect(saved.consent.purposes.investigacion.acceptedAt).toBeTruthy();
     expect(saved.consent.purposes.mejora).toBeUndefined();

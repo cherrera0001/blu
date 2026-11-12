@@ -279,9 +279,9 @@
     "pt-BR": "Blu é um protótipo de bem-estar: acompanha hábitos, não diagnostica nem trata.",
     "pt-PT": "Blu é um protótipo de bem-estar: acompanha hábitos, não diagnostica nem trata."
   },
-  "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. Si uso el chat o la voz natural, ese texto pasa por el servidor de Blu y no se guarda. (requerido)": {
-    "pt-BR": "Entendo que isto é um protótipo. Guardo meus hábitos e registros só neste navegador, sem criptografia nem sincronização, e posso apagá-los na Blu. Se eu usar o chat ou a voz natural, esse texto passa pelo servidor da Blu e não é guardado. (obrigatório)",
-    "pt-PT": "Entendo que isto é um protótipo. Guardo os meus hábitos e registos só neste navegador, sem cifragem nem sincronização, e posso apagá-los na Blu. Se eu usar o chat ou a voz natural, esse texto passa pelo servidor da Blu e não é guardado. (obrigatório)"
+  "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. Si uso el chat o la voz natural, ese texto pasa por el servidor de Blu y no se guarda; el chat también envía mi idioma y qué temas elegí. (requerido)": {
+    "pt-BR": "Entendo que isto é um protótipo. Guardo meus hábitos e registros só neste navegador, sem criptografia nem sincronização, e posso apagá-los na Blu. Se eu usar o chat ou a voz natural, esse texto passa pelo servidor da Blu e não é guardado; o chat também envia meu idioma e quais temas escolhi. (obrigatório)",
+    "pt-PT": "Entendo que isto é um protótipo. Guardo os meus hábitos e registos só neste navegador, sem cifragem nem sincronização, e posso apagá-los na Blu. Se eu usar o chat ou a voz natural, esse texto passa pelo servidor da Blu e não é guardado; o chat também envia o meu idioma e os temas que escolhi. (obrigatório)"
   },
   "Acepto que datos agregados y anónimos orienten la mejora del producto. (opcional)": {
     "pt-BR": "Aceito que dados agregados e anônimos orientem a melhoria do produto. (opcional)",

@@ -113,10 +113,11 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     expect(speak.indexOf("httpJson(")).toBeGreaterThan(gate);
   });
 
-  it("consentimiento 2.1.0 (H5): el aviso inicial declara qué pasa por el servidor y se renueva sin bloquear", async () => {
+  it("consentimiento 2.2.0 (H5, BLU-1504): el aviso inicial declara qué pasa por el servidor y se renueva sin bloquear", async () => {
     const { CONSENT_VERSION } = await import("blu-core/consent");
     const { OPERATIVE_NOTICE } = await import("./content/notice");
-    expect(CONSENT_VERSION).toBe("2.1.0");
+    expect(CONSENT_VERSION).toBe("2.2.0");
+    expect(OPERATIVE_NOTICE).toMatch(/chat también envía tu idioma y qué temas elegiste/);
     expect(OPERATIVE_NOTICE).toMatch(/solo en este teléfono/);
     expect(OPERATIVE_NOTICE).toMatch(/chat o la voz natural.*servidor de Blu y no se guarda/);
     expect(OPERATIVE_NOTICE).toMatch(/no es un servicio médico/);
