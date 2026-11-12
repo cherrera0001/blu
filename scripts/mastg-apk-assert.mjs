@@ -6,7 +6,7 @@
  * Uso: node scripts/mastg-apk-assert.mjs path/to/blu.apk
  */
 import { execFileSync, execSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { accessSync, constants, existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const apk = resolve(process.argv[2] ?? "");
@@ -38,22 +38,29 @@ function buildToolsBins(name) {
   return out;
 }
 
+/**
+ * Resuelve el binario sin ejecutarlo: `aapt2 --help` sale con código ≠ 0 en
+ * algunas versiones y descartaba un aapt2 instalado (el gate nunca corrió en CI).
+ * Ruta del SDK → basta con que exista y sea ejecutable; nombre suelto → PATH.
+ */
 function resolveBin(name) {
   for (const candidate of buildToolsBins(name)) {
-    if (!existsSync(candidate) && candidate !== name) continue;
-    if (existsSync(candidate) && (candidate.endsWith(".exe") || candidate.endsWith(".bat"))) {
-      return candidate;
+    const bare = !candidate.includes("/");
+    if (bare) {
+      try {
+        execSync(`command -v ${JSON.stringify(candidate)}`, { stdio: "ignore" });
+        return candidate;
+      } catch {
+        continue;
+      }
     }
+    if (!existsSync(candidate)) continue;
+    if (candidate.endsWith(".exe") || candidate.endsWith(".bat")) return candidate;
     try {
-      execFileSync(candidate, ["--help"], { stdio: "ignore" });
+      accessSync(candidate, constants.X_OK);
       return candidate;
     } catch {
-      try {
-        execSync(`command -v ${name}`, { stdio: "ignore" });
-        return name;
-      } catch {
-        /* try next */
-      }
+      /* existe pero no es ejecutable: probar el siguiente */
     }
   }
   return null;

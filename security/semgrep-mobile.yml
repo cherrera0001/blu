@@ -3,14 +3,14 @@
 rules:
   - id: blu-no-hardcoded-aws-key
     message: Posible clave AWS embebida (MASVS-CODE / secretos).
-    languages: [typescript, javascript, tsx, json]
+    languages: [typescript, javascript, json]
     severity: ERROR
     patterns:
       - pattern-regex: AKIA[0-9A-Z]{16}
 
   - id: blu-no-private-key-pem
     message: Material de clave privada embebido.
-    languages: [typescript, javascript, tsx]
+    languages: [typescript, javascript]
     severity: ERROR
     patterns:
       - pattern-regex: BEGIN (RSA |EC )?PRIVATE KEY
@@ -21,7 +21,7 @@ rules:
     severity: ERROR
     paths:
       include:
-        - packages/blu-core/**
+        - /packages/blu-core/**
     patterns:
       - pattern-either:
           - pattern: window.$FUNC
@@ -31,10 +31,11 @@ rules:
 
   - id: blu-mobile-no-cleartext-http-literal
     message: URL http:// en cliente móvil (preferir https o cero red en v1).
-    languages: [typescript, javascript, tsx]
+    languages: [typescript, javascript]
     severity: WARNING
     paths:
       include:
-        - apps/mobile/**
+        - /apps/mobile/**
     patterns:
-      - pattern-regex: ['"]http://(?!localhost|127\.0\.0\.1)
+      # Entre comillas: un valor que empieza con «[» es una lista en YAML.
+      - pattern-regex: '[''"]http://(?!localhost|127\.0\.0\.1)'
