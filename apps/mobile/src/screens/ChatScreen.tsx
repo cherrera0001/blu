@@ -8,6 +8,7 @@ import { BluCompanion } from "../components/BluCompanion";
 import { SpeakButton } from "../components/SpeakButton";
 import { BLU_API_BASE } from "../config";
 import { httpJson } from "../net/http";
+import { describeReplySource, parseReplySource, type ReplySource } from "../chat/source";
 import { colors, fonts, space, type as typeScale } from "../theme";
 
 /** Aviso en contexto (specs/025): el chat es la única vía por la que el texto sale del teléfono. */
@@ -17,6 +18,7 @@ export const CHAT_PRIVACY_NOTICE =
 interface ChatMessage {
   role: "user" | "assistant";
   text: string;
+  source?: ReplySource;
 }
 
 export interface ChatScreenProps {
@@ -51,7 +53,7 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
     setBusy(true);
     setError("");
     try {
-      const res = await httpJson<{ text?: string }>(`${BLU_API_BASE}/api/assistant`, {
+      const res = await httpJson<{ text?: string; meta?: unknown }>(`${BLU_API_BASE}/api/assistant`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,7 +68,8 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
       const reply =
         data.text?.trim() ||
         "No pude responder ahora. Puedes intentarlo de nuevo.";
-      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
+      const source = parseReplySource(data);
+      setMessages((prev) => [...prev, { role: "assistant", text: reply, source }]);
     } catch {
       setError("No pude contactar a Blu ahora. Revisa la conexión e inténtalo otra vez.");
     } finally {
@@ -116,6 +119,11 @@ export function ChatScreen({ state, naturalAvailable, onBack }: ChatScreenProps)
             ]}
           >
             <Text style={styles.bubbleText}>{item.text}</Text>
+            {item.source && describeReplySource(item.source) ? (
+              <Text style={styles.source} testID="chat-reply-source">
+                {describeReplySource(item.source)}
+              </Text>
+            ) : null}
           </View>
         )}
       />
@@ -198,6 +206,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     lineHeight: 24,
     color: colors.ink,
+  },
+  source: {
+    marginTop: 6,
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.body,
+    color: colors.muted,
+    lineHeight: 18,
   },
   privacy: {
     marginHorizontal: space.screen,

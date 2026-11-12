@@ -73,12 +73,17 @@ export interface Adaptation {
   at: string;
 }
 
+/** «device»: solo voz local del teléfono; ningún texto sale hacia /api/voice. */
+export type VoicePreference = "natural" | "device";
+
 export interface BluState {
   consentAcceptedAt: string | null;
   consent: ConsentState;
   selectedHabitIds: HabitId[];
   checkInsByDate: Record<string, HabitId[]>;
   adaptations: Adaptation[];
+  /** Opcional: ausente = voz natural por defecto (specs/026). */
+  voicePreference?: VoicePreference;
 }
 
 export interface WeeklySummary {
@@ -161,12 +166,15 @@ export function decodeState(raw: string | null): BluState {
     };
   });
 
+  const voice = value.voicePreference;
   return {
     consentAcceptedAt: consent,
     consent: resolveConsent(value.consent, consent),
     selectedHabitIds: [...selected],
     checkInsByDate: parsedCheckIns,
     adaptations: parsedAdaptations,
+    // Valores desconocidos se ignoran: una preferencia nunca invalida los datos.
+    ...(voice === "natural" || voice === "device" ? { voicePreference: voice } : {}),
   };
 }
 

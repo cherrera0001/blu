@@ -100,6 +100,18 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     expect(speak).toMatch(/envía este texto al servidor de Blu; no se guarda/);
   });
 
+  it("specs/026 FR-005: «solo voz del teléfono» corta la llamada a /api/voice", () => {
+    const app = readFileSync(join(mobileRoot, "App.tsx"), "utf8");
+    expect(app).toMatch(/naturalAvailable = state\.voicePreference !== "device"/);
+    const button = readFileSync(join(mobileRoot, "src/components/SpeakButton.tsx"), "utf8");
+    expect(button).toMatch(/preferNatural: preferNatural && naturalAvailable/);
+    const speak = readFileSync(join(mobileRoot, "src/voice/speak.ts"), "utf8");
+    // La única llamada de red está dentro del bloque if (preferNatural).
+    const gate = speak.indexOf("if (preferNatural) {");
+    expect(gate).toBeGreaterThan(-1);
+    expect(speak.indexOf("httpJson(")).toBeGreaterThan(gate);
+  });
+
   it("MASVS-PLATFORM: sin permisos Android ni micrófono", () => {
     const app = JSON.parse(readFileSync(join(mobileRoot, "app.json"), "utf8")) as {
       expo: { android: { permissions?: string[] }; plugins?: unknown[] };

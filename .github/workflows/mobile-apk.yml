@@ -9,7 +9,7 @@ on:
       tag_name:
         description: "Nombre del release (ej. v0.3.0)"
         required: true
-        default: "v0.3.1"
+        default: "v0.4.3"
 
 permissions:
   contents: write

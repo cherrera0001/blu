@@ -157,7 +157,17 @@ export function TodayScreen({
         />
       </View>
 
-      <OptionsPanel onEditSelection={onEditSelection} onClear={confirmClear} />
+      <OptionsPanel
+        onEditSelection={onEditSelection}
+        onClear={confirmClear}
+        deviceVoiceOnly={state.voicePreference === "device"}
+        onToggleDeviceVoice={() =>
+          onChange({
+            ...state,
+            voicePreference: state.voicePreference === "device" ? "natural" : "device",
+          })
+        }
+      />
 
       <Text style={styles.version} testID="app-version">
         Blu {APP_VERSION} · datos solo en este teléfono

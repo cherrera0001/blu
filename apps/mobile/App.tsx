@@ -44,8 +44,9 @@ export default function App() {
   const [state, setState] = useState<BluState>(createInitialState());
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
-  // ElevenLabs vía BFF de producción; no sondear en el arranque (evita crash Hermes/fetch).
-  const naturalAvailable = true;
+  // ElevenLabs vía BFF de producción salvo que la persona elija solo voz del teléfono.
+  // No sondear en el arranque (evita crash Hermes/fetch).
+  const naturalAvailable = state.voicePreference !== "device";
 
   useEffect(() => {
     let cancelled = false;

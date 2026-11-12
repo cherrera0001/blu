@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-12
 
-**Status**: Implemented (v0.4.2 — documentación retroactiva + aviso en contexto)
+**Status**: Implemented (v0.4.3 — documentación retroactiva + aviso en contexto)
 
 **Input**: Botón «Escuchar» con voz natural (ElevenLabs vía BFF `/api/voice`) y respaldo local `expo-speech`.
 
@@ -27,6 +27,7 @@
 - **FR-001**: Solo salida de voz. Sin permiso de micrófono (`expo-av` con `microphonePermission: false`; `android.permissions: []`).
 - **FR-002**: Red solo vía `httpJson`; mismo contrato que specs/025 FR-001.
 - **FR-004**: `blu-voice.mp3` se borra de caché al terminar, detener o fallar la reproducción.
+- **FR-005**: Opciones → «Usar solo la voz del teléfono» (`BluState.voicePreference = "device"`, misma clave local, se borra con «Borrar mis datos»). Activo: ninguna llamada a `/api/voice`.
 - **FR-003**: El texto enviado puede incluir títulos de hábitos elegidos (resumen de Hoy): por eso el aviso de US-2 es obligatorio.
 
 ## Success Criteria
@@ -35,4 +36,3 @@
 
 ## Pendiente / riesgos
 
-- Preferencia persistente «usar solo voz del teléfono» para quien no quiera enviar texto.

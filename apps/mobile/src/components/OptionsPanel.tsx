@@ -6,12 +6,20 @@ import { colors, fonts, space, type as typeScale } from "../theme";
 export interface OptionsPanelProps {
   onEditSelection: () => void;
   onClear: () => void;
+  /** true = solo voz del teléfono: el texto nunca va a /api/voice (specs/026 FR-005). */
+  deviceVoiceOnly: boolean;
+  onToggleDeviceVoice: () => void;
 }
 
 /**
  * Menú de opciones colapsable: no compite con la acción principal de Hoy.
  */
-export function OptionsPanel({ onEditSelection, onClear }: OptionsPanelProps) {
+export function OptionsPanel({
+  onEditSelection,
+  onClear,
+  deviceVoiceOnly,
+  onToggleDeviceVoice,
+}: OptionsPanelProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,6 +38,26 @@ export function OptionsPanel({ onEditSelection, onClear }: OptionsPanelProps) {
       {open ? (
         <View style={styles.body} testID="options-body">
           <Text style={styles.hint}>Ajustes del dispositivo. No afectan a tu día de hoy.</Text>
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityState={{ checked: deviceVoiceOnly }}
+            accessibilityHint="Si está activo, Escuchar usa la voz del teléfono y no envía texto al servidor."
+            onPress={onToggleDeviceVoice}
+            style={({ pressed }) => [styles.switchRow, pressed && styles.togglePressed]}
+            testID="voice-device-only"
+          >
+            <View style={styles.switchText}>
+              <Text style={styles.switchLabel}>Usar solo la voz del teléfono</Text>
+              <Text style={styles.hint}>
+                {deviceVoiceOnly
+                  ? "Activo: Escuchar no envía texto al servidor."
+                  : "Inactivo: la voz natural envía el texto al servidor de Blu."}
+              </Text>
+            </View>
+            <View style={[styles.switchTrack, deviceVoiceOnly && styles.switchTrackOn]}>
+              <View style={[styles.switchThumb, deviceVoiceOnly && styles.switchThumbOn]} />
+            </View>
+          </Pressable>
           <ActionButton
             label="Cambiar temas"
             variant="outline"
@@ -85,6 +113,41 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cardSolid,
     borderWidth: 1,
     borderColor: colors.cardBorder,
+  },
+  switchRow: {
+    minHeight: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  switchText: {
+    flex: 1,
+    gap: 2,
+  },
+  switchLabel: {
+    fontSize: typeScale.body,
+    fontFamily: fonts.bodySemi,
+    color: colors.ink,
+  },
+  switchTrack: {
+    width: 52,
+    height: 32,
+    borderRadius: 16,
+    padding: 3,
+    backgroundColor: colors.muted,
+    justifyContent: "center",
+  },
+  switchTrackOn: {
+    backgroundColor: colors.cta,
+  },
+  switchThumb: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: colors.cardSolid,
+  },
+  switchThumbOn: {
+    alignSelf: "flex-end",
   },
   hint: {
     fontSize: typeScale.tiny,

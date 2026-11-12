@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-12
 
-**Status**: Implemented (v0.4.2 — documentación retroactiva + aviso en contexto)
+**Status**: Implemented (v0.4.3 — documentación retroactiva + aviso en contexto)
 
 **Input**: La app móvil conversa con Blu reutilizando el BFF de producción (`/api/assistant`, specs/016), sin lógica de asistente ni secretos en el dispositivo.
 
@@ -29,6 +29,7 @@
 - **FR-001**: Red exclusivamente vía `httpJson` (XMLHttpRequest) hacia `BLU_API_BASE` https; prohibido `fetch` directo (Hermes/SharedArrayBuffer).
 - **FR-002**: La conversación vive solo en memoria de la pantalla; nada se persiste en AsyncStorage (memoria opt-in sigue gated en BLU-1003).
 - **FR-003**: Guardián de entrada/salida, rate limit y selección de proveedor ocurren en el BFF (specs/016); el cliente no decide seguridad.
+- **FR-005**: Cada respuesta indica su origen según `meta.providerId` del BFF (`remote` → modelo de lenguaje; `local-rules` → reglas sencillas); origen desconocido no se etiqueta.
 - **FR-004**: Sin credenciales en el binario. `BLU_API_TOKEN` del BFF no se usa desde móvil (endpoint público con rate limit).
 
 ## Success Criteria
@@ -38,5 +39,4 @@
 
 ## Pendiente / riesgos
 
-- Mostrar el modo de respuesta (remoto/local) como hace la web (`meta.providerId`).
 - Atestación de app o token por instalación si el abuso del endpoint público lo exige.
