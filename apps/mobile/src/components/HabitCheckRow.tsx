@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { Barrier } from "blu-core/blu";
+import type { WhyNote } from "../content/why";
 import { colors, fonts, space, type as typeScale } from "../theme";
 
 export interface HabitCheckRowProps {
@@ -12,6 +13,9 @@ export interface HabitCheckRowProps {
   onSimplify?: (barrier: Barrier) => void;
   /** Presente si la persona ya ajustó este hábito y puede volver atrás. */
   onUndo?: () => void;
+  /** «¿Por qué este paso?»: notas breves con fuente honesta. */
+  why?: WhyNote[];
+  whyDisclaimer?: string;
   testID?: string;
 }
 
@@ -33,9 +37,14 @@ export function HabitCheckRow({
   onToggle,
   onSimplify,
   onUndo,
+  why,
+  whyDisclaimer,
   testID,
 }: HabitCheckRowProps) {
   const [asking, setAsking] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
+  const canAdapt = !done && Boolean(onSimplify || onUndo);
+  const hasWhy = Boolean(why && why.length);
 
   return (
     <View style={[styles.row, done && styles.rowDone]}>
@@ -57,9 +66,9 @@ export function HabitCheckRow({
         </View>
       </Pressable>
 
-      {!done && (onSimplify || onUndo) ? (
+      {canAdapt || hasWhy ? (
         <View style={styles.adapt}>
-          {asking && onSimplify ? (
+          {asking && onSimplify && canAdapt ? (
             <View style={styles.ask} testID={testID ? `${testID}-barriers` : undefined}>
               <Text style={styles.askTitle}>¿Qué lo hizo difícil? Probamos algo más pequeño.</Text>
               {BARRIERS.map((b) => (
@@ -86,7 +95,18 @@ export function HabitCheckRow({
             </View>
           ) : (
             <View style={styles.links}>
-              {onSimplify ? (
+              {hasWhy ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: showWhy }}
+                  onPress={() => setShowWhy((v) => !v)}
+                  style={styles.link}
+                  testID={testID ? `${testID}-why` : undefined}
+                >
+                  <Text style={styles.linkText}>¿Por qué este paso?</Text>
+                </Pressable>
+              ) : null}
+              {canAdapt && onSimplify ? (
                 <Pressable
                   accessibilityRole="button"
                   accessibilityHint="Te propongo una versión más pequeña de este paso"
@@ -97,7 +117,7 @@ export function HabitCheckRow({
                   <Text style={styles.linkText}>Se me hace difícil</Text>
                 </Pressable>
               ) : null}
-              {onUndo ? (
+              {canAdapt && onUndo ? (
                 <Pressable
                   accessibilityRole="button"
                   onPress={onUndo}
@@ -109,6 +129,18 @@ export function HabitCheckRow({
               ) : null}
             </View>
           )}
+          {showWhy && hasWhy ? (
+            <View style={styles.why} testID={testID ? `${testID}-why-notes` : undefined}>
+              {why!.map((note) => (
+                <View key={note.id} style={styles.whyNote}>
+                  <Text style={styles.whyTitle}>{note.title}</Text>
+                  <Text style={styles.whyText}>{note.text}</Text>
+                  <Text style={styles.whySource}>{note.sourceLine}</Text>
+                </View>
+              ))}
+              {whyDisclaimer ? <Text style={styles.whySource}>{whyDisclaimer}</Text> : null}
+            </View>
+          ) : null}
         </View>
       ) : null}
     </View>
@@ -201,6 +233,31 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemi,
     color: colors.ctaDeep,
     textDecorationLine: "underline",
+  },
+  why: {
+    gap: 12,
+    paddingTop: 4,
+    paddingBottom: 10,
+  },
+  whyNote: {
+    gap: 4,
+  },
+  whyTitle: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodyBold,
+    color: colors.ink,
+  },
+  whyText: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    lineHeight: 24,
+  },
+  whySource: {
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.body,
+    color: colors.muted,
+    lineHeight: 20,
   },
   ask: {
     gap: 8,

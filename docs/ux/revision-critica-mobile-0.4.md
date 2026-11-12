@@ -86,8 +86,8 @@ a Blu amable de verdad: **«esto me cuesta → probemos algo más pequeño»**.
 | Capacidad web | Móvil | Ola | Nota |
 |---|:-:|:-:|---|
 | Probar más pequeño + motivo + deshacer (BLU-1102) | ✅ ola A | A | `blu-core/adapt` |
-| «¿Por qué me lo sugiere?» + trazabilidad (BLU-1304) | ❌ | A | Confianza; datos ya en `blu-core` |
-| Exportar datos / retirar consentimiento por propósito | ❌ (solo borrar) | A | Confianza y ARCO |
+| «¿Por qué me lo sugiere?» + trazabilidad (BLU-1304) | ✅ ola A | A | «¿Por qué este paso?»; deny-by-default: sin registro de evidencia en el teléfono, nada se rotula como verificado |
+| Exportar datos / retirar consentimiento por propósito | ◐ ola A | A | «Mis datos»: qué se guarda + copia compartible (mismo formato 1.0.0 que la web). En móvil solo existe el propósito operativo: retirarlo equivale a «Borrar mis datos» |
 | Revisión semanal: «¿cómo te sentiste?» → mantener o ajustar (BLU-1202) | ❌ | B | El mejor «volver mañana» sin presión; `review.ts` usa localStorage, hay que moverlo a `blu-core` |
 | Otras versiones del catálogo de microhábitos | ❌ | B | `blu-core/habit-catalog` ya existe |
 | Recordatorio opt-in, máximo 1 al día (BLU-1502) | ❌ | B | Requiere `expo-notifications` y permiso: ADR antes |
@@ -107,9 +107,9 @@ almacenamiento como adaptador. Si no, la web y la app volverán a divergir.
 
 **A — Confianza emocional (reparar el vínculo).**
 1. ✅ Jerarquía de Hoy · ✅ «Se me hace difícil» · ✅ el cero sin reproche · ✅ contraste.
-2. «¿Por qué?» por hábito (nota breve + fuente).
-3. Copy del aviso inicial y versión de consentimiento (H5, requiere decisión).
-4. «Mis datos»: exportar y retirar consentimientos.
+2. ✅ «¿Por qué este paso?» por hábito (nota breve + fuente honesta).
+3. Copy del aviso inicial y versión de consentimiento (H5, **pendiente de decisión**).
+4. ✅ «Mis datos»: qué guarda Blu + compartir una copia.
 
 **B — Claridad de uso (volver sin presión).**
 1. Revisión semanal mínima: 1 pregunta y 2 decisiones, que se pueden saltar.

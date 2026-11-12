@@ -9,6 +9,9 @@ export interface OptionsPanelProps {
   /** true = solo voz del teléfono: el texto nunca va a /api/voice (specs/026 FR-005). */
   deviceVoiceOnly: boolean;
   onToggleDeviceVoice: () => void;
+  /** «Mis datos»: qué guarda Blu, en llano. */
+  storedLines: string[];
+  onExport: () => void;
 }
 
 /**
@@ -19,6 +22,8 @@ export function OptionsPanel({
   onClear,
   deviceVoiceOnly,
   onToggleDeviceVoice,
+  storedLines,
+  onExport,
 }: OptionsPanelProps) {
   const [open, setOpen] = useState(false);
 
@@ -58,6 +63,24 @@ export function OptionsPanel({
               <View style={[styles.switchThumb, deviceVoiceOnly && styles.switchThumbOn]} />
             </View>
           </Pressable>
+          <View style={styles.data} testID="my-data">
+            <Text style={styles.dataTitle}>Mis datos</Text>
+            <Text style={styles.hint}>Esto es lo que Blu guarda en este teléfono:</Text>
+            {storedLines.map((line) => (
+              <Text key={line} style={styles.dataLine}>
+                · {line}
+              </Text>
+            ))}
+            <ActionButton
+              label="Compartir una copia de mis datos"
+              variant="outline"
+              onPress={onExport}
+              testID="export-data"
+            />
+            <Text style={styles.hint}>
+              Tú eliges a dónde enviarla. Blu no la sube a ningún servidor.
+            </Text>
+          </View>
           <ActionButton
             label="Cambiar temas"
             variant="outline"
@@ -113,6 +136,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cardSolid,
     borderWidth: 1,
     borderColor: colors.cardBorder,
+  },
+  data: {
+    gap: 6,
+    paddingVertical: 4,
+  },
+  dataTitle: {
+    fontSize: typeScale.body,
+    fontFamily: fonts.bodySemi,
+    color: colors.ink,
+  },
+  dataLine: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    lineHeight: 24,
   },
   switchRow: {
     minHeight: 56,

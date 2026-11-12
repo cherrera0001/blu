@@ -28,6 +28,9 @@ appId: cl.blu.app
 - tapOn:
     id: "checkin-movement-undo"
 - assertVisible: "Elegir una pausa breve para moverte."
+- tapOn:
+    id: "checkin-movement-why"
+- assertVisible: ".*sin evidencia verificada.*"
 - scrollUntilVisible:
     element:
       id: "speak-today"
@@ -45,5 +48,12 @@ appId: cl.blu.app
       id: "options-toggle"
 - tapOn:
     id: "options-toggle"
+- scrollUntilVisible:
+    element:
+      id: "my-data"
+- assertVisible: ".*Las conversaciones con Blu no se guardan.*"
 - assertVisible:
-    id: "edit-selection"
+    id: "export-data"
+- scrollUntilVisible:
+    element:
+      id: "edit-selection"

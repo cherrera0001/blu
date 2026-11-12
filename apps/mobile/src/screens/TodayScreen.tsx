@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Share, StyleSheet, Text, View } from "react-native";
 import {
   HABITS,
   currentAction,
@@ -16,6 +16,8 @@ import { BluCompanion } from "../components/BluCompanion";
 import { HabitCheckRow } from "../components/HabitCheckRow";
 import { OptionsPanel } from "../components/OptionsPanel";
 import { ScreenShell } from "../components/ScreenShell";
+import { WHY_DISCLAIMER, whyNotes } from "../content/why";
+import { buildMobileExport, exportMessage, storedSummary } from "../export";
 import { SpeakButton } from "../components/SpeakButton";
 import { WeekBars } from "../components/WeekBars";
 import { colors, fonts, space, type as typeScale } from "../theme";
@@ -75,6 +77,18 @@ export function TodayScreen({
         [todayKey]: nextIds,
       },
     });
+  }
+
+  async function exportData() {
+    // Solo por acción de la persona; el sistema muestra a dónde enviarla.
+    try {
+      await Share.share({
+        title: "Mis datos de Blu",
+        message: exportMessage(buildMobileExport(state, new Date())),
+      });
+    } catch {
+      Alert.alert("Mis datos", "No pude preparar la copia. Inténtalo otra vez.");
+    }
   }
 
   function confirmClear() {
@@ -137,6 +151,8 @@ export function TodayScreen({
                   ? () => onChange(undoLastAdaptation(state, habitId))
                   : undefined
               }
+              why={whyNotes(habitId)}
+              whyDisclaimer={WHY_DISCLAIMER}
               testID={`checkin-${habitId}`}
             />
           );
@@ -177,6 +193,8 @@ export function TodayScreen({
       <OptionsPanel
         onEditSelection={onEditSelection}
         onClear={confirmClear}
+        storedLines={storedSummary(state)}
+        onExport={exportData}
         deviceVoiceOnly={state.voicePreference === "device"}
         onToggleDeviceVoice={() =>
           onChange({
