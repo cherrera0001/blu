@@ -41,19 +41,27 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # El paquete legacy `tools` ya no existe en sdkmanager reciente.
+          packages: platform-tools platforms;android-35 build-tools;35.0.0
 
       - name: Instalar dependencias del monorepo
         run: npm ci
 
       - name: Prebuild nativo Android (Expo)
         working-directory: apps/mobile
+        env:
+          EXPO_NO_TELEMETRY: 1
+          CI: 1
         run: npx expo prebuild --platform android --clean --no-install
 
       - name: Compilar APK (debug firmado, instalable)
         working-directory: apps/mobile/android
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
 
       - name: Nombrar artefacto
         id: apk
