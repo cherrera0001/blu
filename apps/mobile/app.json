@@ -2,7 +2,7 @@
   "expo": {
     "name": "Blu",
     "slug": "blu",
-    "version": "0.4.3",
+    "version": "0.5.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "cl.blu.app",
-      "versionCode": 9,
+      "versionCode": 10,
       "allowBackup": false,
       "usesCleartextTraffic": false,
       "adaptiveIcon": {
