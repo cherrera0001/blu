@@ -9,5 +9,7 @@
 - [x] Hoy: check-in, resumen 7 días, cambiar temas, borrado
 - [x] Tests: selección + persistencia (`apps/mobile/src/*.test.ts`)
 - [x] Scripts raíz: `mobile`, `test:mobile`, `sync:data`
-- [ ] Smoke en emulador/dispositivo (manual)
+- [x] Release APK vía GitHub Actions (`mobile-apk.yml`) + tag v0.3.0
+- [ ] Smoke en emulador/dispositivo (manual tras instalar APK)
 - [ ] Chat/voz (025/026)
+- [ ] Firma de producción / EAS credentials (post-preview)

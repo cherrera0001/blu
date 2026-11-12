@@ -2,22 +2,32 @@
   "expo": {
     "name": "Blu",
     "slug": "blu",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "scheme": "blu",
     "splash": {
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#F4F7FB"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "cl.blu.app"
+      "bundleIdentifier": "cl.blu.app",
+      "buildNumber": "3"
     },
     "android": {
+      "package": "cl.blu.app",
+      "versionCode": 3,
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F4F7FB"
       },
-      "package": "cl.blu.app"
+      "permissions": []
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "plugins": []
   }

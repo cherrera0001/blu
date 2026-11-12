@@ -14,6 +14,7 @@ import {
 } from "blu-core/blu";
 import { acceptPurpose, emptyConsent } from "blu-core/consent";
 import { toggleHabitSelection } from "../selection";
+import { APP_VERSION } from "../version";
 
 export interface OnboardingScreenProps {
   state: BluState;
@@ -127,6 +128,10 @@ export function OnboardingScreen({ state, onComplete }: OnboardingScreenProps) {
       >
         <Text style={styles.ctaText}>Continuar con lo que elegí</Text>
       </Pressable>
+
+      <Text style={styles.version} testID="app-version">
+        Blu {APP_VERSION}
+      </Text>
     </ScrollView>
   );
 }
@@ -238,5 +243,11 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "600",
+  },
+  version: {
+    marginTop: 16,
+    textAlign: "center",
+    fontSize: 14,
+    color: "#7A909C",
   },
 });

@@ -15,6 +15,7 @@ import {
   type BluState,
   type HabitId,
 } from "blu-core/blu";
+import { APP_VERSION } from "../version";
 
 export interface TodayScreenProps {
   state: BluState;
@@ -127,6 +128,10 @@ export function TodayScreen({
       >
         <Text style={styles.dangerText}>Borrar mis datos</Text>
       </Pressable>
+
+      <Text style={styles.version} testID="app-version">
+        Blu {APP_VERSION} · datos solo en este dispositivo
+      </Text>
     </ScrollView>
   );
 }
@@ -216,5 +221,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: "#8B2E2E",
     fontWeight: "500",
+  },
+  version: {
+    marginTop: 8,
+    textAlign: "center",
+    fontSize: 14,
+    color: "#7A90A0",
   },
 });
