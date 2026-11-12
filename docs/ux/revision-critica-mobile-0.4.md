@@ -90,7 +90,7 @@ a Blu amable de verdad: **«esto me cuesta → probemos algo más pequeño»**.
 | Exportar datos / retirar consentimiento por propósito | ◐ ola A | A | «Mis datos»: qué se guarda + copia compartible (mismo formato 1.0.0 que la web). En móvil solo existe el propósito operativo: retirarlo equivale a «Borrar mis datos» |
 | Revisión semanal: «¿cómo te sentiste?» → mantener o ajustar (BLU-1202) | ✅ ola B | B | Dominio en `blu-core/review`, compartido con la web; viernes a domingo, se puede saltar |
 | Otras versiones del catálogo de microhábitos | ✅ ola B | B | Dentro de «Se me hace difícil»: hasta 3 según el motivo |
-| Recordatorio opt-in, máximo 1 al día (BLU-1502) | ⏸ | B | ADR-0010 PROPUESTO: notificación local, sin push; espera firma |
+| Recordatorio opt-in, máximo 1 al día (BLU-1502) | ✅ 0.6.0 | B | ADR-0010 ACEPTADO: notificación local programada, sin push ni token; pregunta única tras 3 días ignorado |
 | «¿Te sirvió?» (BLU-1104) | — | C | La web tiene la lógica pero no la muestra; además requiere el consentimiento «mejora», que la app no ofrece. No es una pérdida |
 | Plan semanal con intenciones (BLU-1103) | ❌ | C | Riesgo de carga cognitiva: validar antes |
 | Cuestionario inicial + objetivos sugeridos + retrato | ❌ | C | En móvil puede ser una barrera de entrada: preferir progresivo |

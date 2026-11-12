@@ -1,7 +1,8 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { hasEntry, LOCALES, type Locale } from "blu-core/i18n";
+import { REMINDER_BODY } from "blu-core/reminder";
 import { describeReplySource } from "./chat/source";
 import { OPERATIVE_NOTICE } from "./content/notice";
 import { WHY_DISCLAIMER } from "./content/why";
@@ -13,10 +14,10 @@ const TARGETS = LOCALES.filter((l): l is Exclude<Locale, "es"> => l !== "es");
 function sourceFiles(): string[] {
   const out: string[] = [join(mobileRoot, "App.tsx")];
   (function walk(dir: string) {
-    for (const name of readdirSync(dir)) {
-      const path = join(dir, name);
-      if (statSync(path).isDirectory()) walk(path);
-      else if (/\.tsx?$/.test(name) && !/\.test\./.test(name)) out.push(path);
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (/\.tsx?$/.test(entry.name) && !/\.test\./.test(entry.name)) out.push(path);
     }
   })(join(mobileRoot, "src"));
   return out;
@@ -33,6 +34,7 @@ function visibleKeys(): string[] {
   const keys = new Set<string>([
     OPERATIVE_NOTICE,
     WHY_DISCLAIMER,
+    REMINDER_BODY,
     describeReplySource("remote")!,
     describeReplySource("local-rules")!,
   ]);
