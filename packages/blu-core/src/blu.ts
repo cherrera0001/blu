@@ -1,4 +1,5 @@
 import { emptyConsent, isConsentState, migrateLegacy, type ConsentState } from "./consent";
+import { isLocale, type Locale } from "./i18n";
 import { decodeReview, MAX_REVIEWS, type WeeklyReview } from "./review";
 
 export const HABITS = [
@@ -87,6 +88,8 @@ export interface BluState {
   voicePreference?: VoicePreference;
   /** Opcional (móvil): revisiones semanales; la web las guarda aparte (blu.review.v1). */
   weeklyReviews?: WeeklyReview[];
+  /** Opcional (móvil): idioma elegido; ausente = idioma del teléfono (BLU-1504). */
+  locale?: Locale;
 }
 
 export interface WeeklySummary {
@@ -180,6 +183,7 @@ export function decodeState(raw: string | null): BluState {
     // Valores desconocidos se ignoran: una preferencia nunca invalida los datos.
     ...(voice === "natural" || voice === "device" ? { voicePreference: voice } : {}),
     ...(reviews ? { weeklyReviews: reviews } : {}),
+    ...(isLocale(value.locale) ? { locale: value.locale } : {}),
   };
 }
 

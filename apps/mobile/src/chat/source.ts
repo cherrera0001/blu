@@ -12,6 +12,7 @@ export function parseReplySource(body: unknown): ReplySource {
   return id === "remote" || id === "local-rules" ? id : "unknown";
 }
 
+/** Devuelve la clave en castellano; la pantalla la traduce. */
 export function describeReplySource(source: ReplySource): string | null {
   switch (source) {
     case "remote":

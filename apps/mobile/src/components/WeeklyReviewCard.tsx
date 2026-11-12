@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { Felt, ReviewDecision, ReviewInput } from "blu-core/review";
+import { useI18n } from "../i18n";
 import { colors, fonts, type as typeScale } from "../theme";
 
 const FEELS: { value: Felt; label: string }[] = [
@@ -25,12 +26,13 @@ export interface WeeklyReviewCardProps {
  * opcional. Solo aparece de viernes a domingo y desaparece al responder o saltar.
  */
 export function WeeklyReviewCard({ onSave, savedReply }: WeeklyReviewCardProps) {
+  const { t } = useI18n();
   const [felt, setFelt] = useState<Felt | null>(null);
 
   if (savedReply) {
     return (
       <View style={styles.card} testID="weekly-review-saved" accessibilityLiveRegion="polite">
-        <Text style={styles.title}>Tu semana</Text>
+        <Text style={styles.title}>{t("Tu semana")}</Text>
         <Text style={styles.text}>{savedReply}</Text>
       </View>
     );
@@ -38,10 +40,10 @@ export function WeeklyReviewCard({ onSave, savedReply }: WeeklyReviewCardProps) 
 
   return (
     <View style={styles.card} testID="weekly-review">
-      <Text style={styles.title}>Tu semana</Text>
+      <Text style={styles.title}>{t("Tu semana")}</Text>
       {felt === null ? (
         <>
-          <Text style={styles.text}>Si quieres, cuéntame cómo te fue. Puedes saltarlo.</Text>
+          <Text style={styles.text}>{t("Si quieres, cuéntame cómo te fue. Puedes saltarlo.")}</Text>
           {FEELS.map((f) => (
             <Pressable
               key={f.value}
@@ -50,13 +52,13 @@ export function WeeklyReviewCard({ onSave, savedReply }: WeeklyReviewCardProps) 
               style={({ pressed }) => [styles.choice, pressed && styles.pressed]}
               testID={`review-felt-${f.value}`}
             >
-              <Text style={styles.choiceText}>{f.label}</Text>
+              <Text style={styles.choiceText}>{t(f.label)}</Text>
             </Pressable>
           ))}
         </>
       ) : (
         <>
-          <Text style={styles.text}>¿Qué prefieres para la próxima semana?</Text>
+          <Text style={styles.text}>{t("¿Qué prefieres para la próxima semana?")}</Text>
           {DECISIONS.map((d) => (
             <Pressable
               key={d.value}
@@ -65,7 +67,7 @@ export function WeeklyReviewCard({ onSave, savedReply }: WeeklyReviewCardProps) 
               style={({ pressed }) => [styles.choice, pressed && styles.pressed]}
               testID={`review-decision-${d.value}`}
             >
-              <Text style={styles.choiceText}>{d.label}</Text>
+              <Text style={styles.choiceText}>{t(d.label)}</Text>
             </Pressable>
           ))}
           <Pressable
@@ -74,7 +76,7 @@ export function WeeklyReviewCard({ onSave, savedReply }: WeeklyReviewCardProps) 
             style={styles.link}
             testID="review-only-felt"
           >
-            <Text style={styles.linkText}>Guardar solo cómo me sentí</Text>
+            <Text style={styles.linkText}>{t("Guardar solo cómo me sentí")}</Text>
           </Pressable>
         </>
       )}
@@ -84,9 +86,9 @@ export function WeeklyReviewCard({ onSave, savedReply }: WeeklyReviewCardProps) 
         style={styles.link}
         testID="review-skip"
       >
-        <Text style={styles.linkText}>Prefiero no responder</Text>
+        <Text style={styles.linkText}>{t("Prefiero no responder")}</Text>
       </Pressable>
-      <Text style={styles.note}>Es un registro tuyo, no una medida de salud.</Text>
+      <Text style={styles.note}>{t("Es un registro tuyo, no una medida de salud.")}</Text>
     </View>
   );
 }

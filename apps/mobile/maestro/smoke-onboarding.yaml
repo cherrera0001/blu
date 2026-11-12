@@ -2,6 +2,8 @@
 # Requiere dispositivo/emulador con el APK instalado:
 #   adb install -r blu-android-X.Y.Z.apk
 #   maestro test apps/mobile/maestro/smoke-onboarding.yaml
+# Los textos están en castellano: usar un emulador con idioma es-* (la app
+# arranca en el idioma del teléfono, BLU-1504). Ver smoke-idioma.yaml.
 appId: cl.blu.app
 ---
 - launchApp

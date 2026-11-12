@@ -96,6 +96,7 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     const chat = readFileSync(join(mobileRoot, "src/screens/ChatScreen.tsx"), "utf8");
     expect(chat).toContain('testID="chat-privacy-notice"');
     expect(chat).toMatch(/servidor de Blu[^"]*no se guardan/);
+    expect(chat).toContain("{t(CHAT_PRIVACY_NOTICE)}");
     const speak = readFileSync(join(mobileRoot, "src/components/SpeakButton.tsx"), "utf8");
     expect(speak).toMatch(/envía este texto al servidor de Blu; no se guarda/);
   });
@@ -112,15 +113,16 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     expect(speak.indexOf("httpJson(")).toBeGreaterThan(gate);
   });
 
-  it("consentimiento 2.1.0 (H5): el aviso inicial declara qué pasa por el servidor y se renueva sin bloquear", async () => {
+  it("consentimiento 2.2.0 (H5, BLU-1504): el aviso inicial declara qué pasa por el servidor y se renueva sin bloquear", async () => {
     const { CONSENT_VERSION } = await import("blu-core/consent");
     const { OPERATIVE_NOTICE } = await import("./content/notice");
-    expect(CONSENT_VERSION).toBe("2.1.0");
+    expect(CONSENT_VERSION).toBe("2.2.0");
+    expect(OPERATIVE_NOTICE).toMatch(/chat también envía tu idioma y qué temas elegiste/);
     expect(OPERATIVE_NOTICE).toMatch(/solo en este teléfono/);
     expect(OPERATIVE_NOTICE).toMatch(/chat o la voz natural.*servidor de Blu y no se guarda/);
     expect(OPERATIVE_NOTICE).toMatch(/no es un servicio médico/);
     const onboarding = readFileSync(join(mobileRoot, "src/screens/OnboardingScreen.tsx"), "utf8");
-    expect(onboarding).toContain("{OPERATIVE_NOTICE}");
+    expect(onboarding).toContain("{t(OPERATIVE_NOTICE)}");
     expect(onboarding).toMatch(/!needsReconsent\(state\.consent\)/);
     const today = readFileSync(join(mobileRoot, "src/screens/TodayScreen.tsx"), "utf8");
     expect(today).toContain('testID="consent-renew"');

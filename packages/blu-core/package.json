@@ -10,6 +10,7 @@
     "./blu": "./src/blu.ts",
     "./adapt": "./src/adapt.ts",
     "./review": "./src/review.ts",
+    "./i18n": "./src/i18n.ts",
     "./consent": "./src/consent.ts",
     "./companion": "./src/companion.ts",
     "./history": "./src/history.ts",

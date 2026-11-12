@@ -20,7 +20,7 @@ describe("toggleHabitSelection", () => {
     const blocked = toggleHabitSelection(draft, HABITS[4].id);
     expect(blocked.blocked).toBe(true);
     expect(blocked.next).toEqual(draft);
-    expect(blocked.message).toMatch(/hasta 4/);
+    expect(blocked.message).toMatch(/hasta \{max\} temas/);
   });
 
   it("quita un tema al volver a marcarlo", () => {

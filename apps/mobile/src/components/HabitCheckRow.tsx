@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { SmallerOption } from "blu-core/adapt";
 import type { Barrier } from "blu-core/blu";
 import type { WhyNote } from "../content/why";
+import { useI18n } from "../i18n";
 import { colors, fonts, space, type as typeScale } from "../theme";
 
 export interface HabitCheckRowProps {
@@ -44,6 +45,7 @@ export function HabitCheckRow({
   whyDisclaimer,
   testID,
 }: HabitCheckRowProps) {
+  const { t } = useI18n();
   const [asking, setAsking] = useState(false);
   const [barrier, setBarrier] = useState<Barrier | null>(null);
   const options = barrier && getOptions ? getOptions(barrier) : [];
@@ -60,7 +62,7 @@ export function HabitCheckRow({
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: done }}
-        accessibilityLabel={`${title}. ${done ? "Marcado" : "Pendiente"}. ${action}`}
+        accessibilityLabel={`${title}. ${done ? t("Marcado") : t("Pendiente")}. ${action}`}
         onPress={onToggle}
         style={({ pressed }) => [styles.check, pressed && styles.pressed]}
         testID={testID}
@@ -71,7 +73,7 @@ export function HabitCheckRow({
         <View style={styles.copy}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.action}>{action}</Text>
-          <Text style={styles.status}>{done ? "Hecho hoy" : "Toca para marcar"}</Text>
+          <Text style={styles.status}>{done ? t("Hecho hoy") : t("Toca para marcar")}</Text>
         </View>
       </Pressable>
 
@@ -81,7 +83,7 @@ export function HabitCheckRow({
             <View style={styles.ask} testID={testID ? `${testID}-barriers` : undefined}>
               {barrier === null ? (
                 <>
-                  <Text style={styles.askTitle}>¿Qué lo hizo difícil? Probamos algo más pequeño.</Text>
+                  <Text style={styles.askTitle}>{t("¿Qué lo hizo difícil? Probamos algo más pequeño.")}</Text>
                   {BARRIERS.map((b) => (
                     <Pressable
                       key={b.id}
@@ -90,18 +92,18 @@ export function HabitCheckRow({
                       style={({ pressed }) => [styles.barrier, pressed && styles.pressed]}
                       testID={testID ? `${testID}-barrier-${b.id}` : undefined}
                     >
-                      <Text style={styles.barrierText}>{b.label}</Text>
+                      <Text style={styles.barrierText}>{t(b.label)}</Text>
                     </Pressable>
                   ))}
                 </>
               ) : (
                 <>
-                  <Text style={styles.askTitle}>Elige la que te parezca posible hoy:</Text>
+                  <Text style={styles.askTitle}>{t("Elige la que te parezca posible hoy:")}</Text>
                   {options.map((option, index) => (
                     <Pressable
                       key={option.id}
                       accessibilityRole="button"
-                      accessibilityLabel={`${option.title}. ${option.text}`}
+                      accessibilityLabel={`${t(option.title)}. ${t(option.text)}`}
                       onPress={() => {
                         onSimplify(barrier, option.text);
                         closeAsk();
@@ -109,11 +111,11 @@ export function HabitCheckRow({
                       style={({ pressed }) => [styles.barrier, pressed && styles.pressed]}
                       testID={testID ? `${testID}-option-${index}` : undefined}
                     >
-                      <Text style={styles.optionTitle}>{option.title}</Text>
-                      <Text style={styles.barrierText}>{option.text}</Text>
+                      <Text style={styles.optionTitle}>{t(option.title)}</Text>
+                      <Text style={styles.barrierText}>{t(option.text)}</Text>
                     </Pressable>
                   ))}
-                  <Text style={styles.whySource}>Puedes volver a la versión anterior cuando quieras.</Text>
+                  <Text style={styles.whySource}>{t("Puedes volver a la versión anterior cuando quieras.")}</Text>
                 </>
               )}
               <Pressable
@@ -121,7 +123,7 @@ export function HabitCheckRow({
                 onPress={closeAsk}
                 style={styles.link}
               >
-                <Text style={styles.linkText}>Ahora no</Text>
+                <Text style={styles.linkText}>{t("Ahora no")}</Text>
               </Pressable>
             </View>
           ) : (
@@ -134,18 +136,18 @@ export function HabitCheckRow({
                   style={styles.link}
                   testID={testID ? `${testID}-why` : undefined}
                 >
-                  <Text style={styles.linkText}>¿Por qué este paso?</Text>
+                  <Text style={styles.linkText}>{t("¿Por qué este paso?")}</Text>
                 </Pressable>
               ) : null}
               {canAdapt && onSimplify ? (
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityHint="Te propongo una versión más pequeña de este paso"
+                  accessibilityHint={t("Te propongo una versión más pequeña de este paso")}
                   onPress={() => setAsking(true)}
                   style={styles.link}
                   testID={testID ? `${testID}-simplify` : undefined}
                 >
-                  <Text style={styles.linkText}>Se me hace difícil</Text>
+                  <Text style={styles.linkText}>{t("Se me hace difícil")}</Text>
                 </Pressable>
               ) : null}
               {canAdapt && onUndo ? (
@@ -155,7 +157,7 @@ export function HabitCheckRow({
                   style={styles.link}
                   testID={testID ? `${testID}-undo` : undefined}
                 >
-                  <Text style={styles.linkText}>Volver a la versión anterior</Text>
+                  <Text style={styles.linkText}>{t("Volver a la versión anterior")}</Text>
                 </Pressable>
               ) : null}
             </View>

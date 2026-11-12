@@ -15,6 +15,7 @@ import { ScreenShell } from "../components/ScreenShell";
 import { SpeakButton } from "../components/SpeakButton";
 import { toggleHabitSelection } from "../selection";
 import { colors, fonts, space, type as typeScale } from "../theme";
+import { useI18n } from "../i18n";
 import { APP_VERSION } from "../version";
 
 export interface OnboardingScreenProps {
@@ -28,20 +29,27 @@ export function OnboardingScreen({
   naturalAvailable,
   onComplete,
 }: OnboardingScreenProps) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState<HabitId[]>(state.selectedHabitIds);
   // Con un aviso nuevo (otra versión), hay que volver a marcarlo.
   const [noticeAccepted, setNoticeAccepted] = useState(
     Boolean(state.consentAcceptedAt) && !needsReconsent(state.consent),
   );
   const [message, setMessage] = useState("");
+  // `message` guarda la clave en castellano; se traduce al mostrar.
+  const shownMessage = message ? t(message, { max: MAX_SELECTED_HABITS }) : "";
   const companion = useMemo(
     () => readCompanion({ ...state, selectedHabitIds: draft }, new Date()),
     [state, draft],
   );
 
   const listenText = useMemo(() => {
-    return `Blu. ${companion.line} Hay ${HABITS.length} temas. Elige hasta ${MAX_SELECTED_HABITS}. ${message || "Cuando termines, continúa con lo que elegiste."}`;
-  }, [companion.line, message]);
+    return [
+      `Blu. ${t(companion.line)}`,
+      t("Hay {n} temas. Elige hasta {max}.", { n: HABITS.length, max: MAX_SELECTED_HABITS }),
+      shownMessage || t("Cuando termines, continúa con lo que elegiste."),
+    ].join(" ");
+  }, [companion.line, shownMessage, t]);
 
   function onToggle(habitId: HabitId) {
     const result = toggleHabitSelection(draft, habitId);
@@ -80,19 +88,23 @@ export function OnboardingScreen({
       <BluCompanion view={companion} size="lg" />
       <SpeakButton
         text={listenText}
-        label="Escuchar a Blu"
+        label={t("Escuchar a Blu")}
         naturalAvailable={naturalAvailable}
         variant="soft"
         testID="speak-onboarding"
       />
 
       <View style={styles.section}>
-        <Text style={styles.title}>Elige hasta 4 temas</Text>
+        <Text style={styles.title}>{t("Elige hasta {max} temas", { max: MAX_SELECTED_HABITS })}</Text>
         <Text style={styles.lead}>
-          Un toque para elegir. Después, cada día marcas solo lo que pudiste hacer.
+          {t("Un toque para elegir. Después, cada día marcas solo lo que pudiste hacer.")}
         </Text>
         <Text style={styles.count} testID="topics-available-count">
-          Hay {HABITS.length} temas · elegidos {draft.length} de {MAX_SELECTED_HABITS}
+          {t("Hay {n} temas · elegidos {done} de {max}", {
+            n: HABITS.length,
+            done: draft.length,
+            max: MAX_SELECTED_HABITS,
+          })}
         </Text>
       </View>
 
@@ -114,12 +126,12 @@ export function OnboardingScreen({
             >
               <View style={[styles.chip, selected && styles.chipOn]}>
                 <Text style={[styles.chipText, selected && styles.chipTextOn]}>
-                  {selected ? "Elegido" : "Elegir"}
+                  {selected ? t("Elegido") : t("Elegir")}
                 </Text>
               </View>
               <View style={styles.optionCopy}>
-                <Text style={styles.optionTitle}>{habit.title}</Text>
-                <Text style={styles.optionDesc}>{habit.description}</Text>
+                <Text style={styles.optionTitle}>{t(habit.title)}</Text>
+                <Text style={styles.optionDesc}>{t(habit.description)}</Text>
               </View>
             </Pressable>
           );
@@ -136,17 +148,17 @@ export function OnboardingScreen({
         <View style={[styles.consentBox, noticeAccepted && styles.consentBoxOn]}>
           <Text style={styles.consentMark}>{noticeAccepted ? "✓" : ""}</Text>
         </View>
-        <Text style={styles.consentLabel}>{OPERATIVE_NOTICE}</Text>
+        <Text style={styles.consentLabel}>{t(OPERATIVE_NOTICE)}</Text>
       </Pressable>
 
       {message ? (
         <Text role="status" style={styles.message} testID="onboarding-message">
-          {message}
+          {shownMessage}
         </Text>
       ) : null}
 
       <ActionButton
-        label="Continuar con lo que elegí"
+        label={t("Continuar con lo que elegí")}
         variant="primary"
         disabled={!canContinue}
         onPress={onContinue}

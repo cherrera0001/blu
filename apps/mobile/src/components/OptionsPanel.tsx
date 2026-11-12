@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { LOCALES, LOCALE_NATIVE_NAMES, type Locale } from "blu-core/i18n";
 import { ActionButton } from "./ActionButton";
+import { useI18n } from "../i18n";
 import { colors, fonts, space, type as typeScale } from "../theme";
 
 export interface OptionsPanelProps {
@@ -12,6 +14,8 @@ export interface OptionsPanelProps {
   /** «Mis datos»: qué guarda Blu, en llano. */
   storedLines: string[];
   onExport: () => void;
+  locale: Locale;
+  onChangeLocale: (locale: Locale) => void;
 }
 
 /**
@@ -24,7 +28,10 @@ export function OptionsPanel({
   onToggleDeviceVoice,
   storedLines,
   onExport,
+  locale,
+  onChangeLocale,
 }: OptionsPanelProps) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,27 +43,51 @@ export function OptionsPanel({
         style={({ pressed }) => [styles.toggle, pressed && styles.togglePressed]}
         testID="options-toggle"
       >
-        <Text style={styles.toggleLabel}>Opciones</Text>
+        <Text style={styles.toggleLabel}>{t("Opciones")}</Text>
         <Text style={styles.chevron}>{open ? "▾" : "▸"}</Text>
       </Pressable>
 
       {open ? (
         <View style={styles.body} testID="options-body">
-          <Text style={styles.hint}>Ajustes del dispositivo. No afectan a tu día de hoy.</Text>
+          <Text style={styles.hint}>{t("Ajustes del dispositivo. No afectan a tu día de hoy.")}</Text>
+          <View accessibilityRole="radiogroup" style={styles.data} testID="language-picker">
+            <Text style={styles.dataTitle}>{t("Idioma")}</Text>
+            {LOCALES.map((code) => {
+              const selected = code === locale;
+              return (
+                <Pressable
+                  key={code}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  accessibilityLanguage={code}
+                  onPress={() => onChangeLocale(code)}
+                  style={({ pressed }) => [
+                    styles.langRow,
+                    selected && styles.langRowOn,
+                    pressed && styles.togglePressed,
+                  ]}
+                  testID={`locale-${code}`}
+                >
+                  <Text style={styles.switchLabel}>{LOCALE_NATIVE_NAMES[code]}</Text>
+                  <Text style={styles.chevron}>{selected ? "✓" : ""}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
           <Pressable
             accessibilityRole="switch"
             accessibilityState={{ checked: deviceVoiceOnly }}
-            accessibilityHint="Si está activo, Escuchar usa la voz del teléfono y no envía texto al servidor."
+            accessibilityHint={t("Si está activo, Escuchar usa la voz del teléfono y no envía texto al servidor.")}
             onPress={onToggleDeviceVoice}
             style={({ pressed }) => [styles.switchRow, pressed && styles.togglePressed]}
             testID="voice-device-only"
           >
             <View style={styles.switchText}>
-              <Text style={styles.switchLabel}>Usar solo la voz del teléfono</Text>
+              <Text style={styles.switchLabel}>{t("Usar solo la voz del teléfono")}</Text>
               <Text style={styles.hint}>
                 {deviceVoiceOnly
-                  ? "Activo: Escuchar no envía texto al servidor."
-                  : "Inactivo: la voz natural envía el texto al servidor de Blu."}
+                  ? t("Activo: Escuchar no envía texto al servidor.")
+                  : t("Inactivo: la voz natural envía el texto al servidor de Blu.")}
               </Text>
             </View>
             <View style={[styles.switchTrack, deviceVoiceOnly && styles.switchTrackOn]}>
@@ -64,31 +95,31 @@ export function OptionsPanel({
             </View>
           </Pressable>
           <View style={styles.data} testID="my-data">
-            <Text style={styles.dataTitle}>Mis datos</Text>
-            <Text style={styles.hint}>Esto es lo que Blu guarda en este teléfono:</Text>
+            <Text style={styles.dataTitle}>{t("Mis datos")}</Text>
+            <Text style={styles.hint}>{t("Esto es lo que Blu guarda en este teléfono:")}</Text>
             {storedLines.map((line) => (
               <Text key={line} style={styles.dataLine}>
                 · {line}
               </Text>
             ))}
             <ActionButton
-              label="Compartir una copia de mis datos"
+              label={t("Compartir una copia de mis datos")}
               variant="outline"
               onPress={onExport}
               testID="export-data"
             />
             <Text style={styles.hint}>
-              Tú eliges a dónde enviarla. Blu no la sube a ningún servidor.
+              {t("Tú eliges a dónde enviarla. Blu no la sube a ningún servidor.")}
             </Text>
           </View>
           <ActionButton
-            label="Cambiar temas"
+            label={t("Cambiar temas")}
             variant="outline"
             onPress={onEditSelection}
             testID="edit-selection"
           />
           <ActionButton
-            label="Borrar mis datos"
+            label={t("Borrar mis datos")}
             variant="danger"
             onPress={onClear}
             testID="clear-data"
@@ -151,6 +182,20 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     color: colors.inkSoft,
     lineHeight: 24,
+  },
+  langRow: {
+    minHeight: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: colors.softBorder,
+  },
+  langRowOn: {
+    borderColor: colors.ctaDeep,
+    backgroundColor: colors.soft,
   },
   switchRow: {
     minHeight: 56,

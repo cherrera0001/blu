@@ -1,5 +1,8 @@
-/** 2.1.0 (2026-11-12): el aviso operativo declara que chat y voz natural pasan por el servidor. */
-export const CONSENT_VERSION = "2.1.0";
+/**
+ * 2.1.0 (2026-11-12): el aviso operativo declara que chat y voz natural pasan por el servidor.
+ * 2.2.0 (2026-11-12): además declara que el chat envía idioma y temas elegidos (BLU-1504).
+ */
+export const CONSENT_VERSION = "2.2.0";
 
 export type PurposeId = "operativo" | "mejora" | "investigacion";
 

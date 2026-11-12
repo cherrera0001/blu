@@ -95,7 +95,7 @@ a Blu amable de verdad: **«esto me cuesta → probemos algo más pequeño»**.
 | Plan semanal con intenciones (BLU-1103) | ❌ | C | Riesgo de carga cognitiva: validar antes |
 | Cuestionario inicial + objetivos sugeridos + retrato | ❌ | C | En móvil puede ser una barrera de entrada: preferir progresivo |
 | Apodo | ❌ | C | |
-| Portugués (i18n) | ❌ | C | |
+| Idiomas: en-US, pt-BR, pt-PT, zh-CN (i18n, BLU-1504 #126) | ✅ ola C | C | Diccionario compartido en `blu-core/i18n`; selector en Opciones; idioma del teléfono por defecto; chat y voz responden en el idioma elegido |
 | Origen de la respuesta del chat | ✅ 0.4.3 | — | |
 | Lectura en voz alta | ✅ | — | |
 

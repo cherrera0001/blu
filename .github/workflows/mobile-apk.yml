@@ -9,7 +9,7 @@ on:
       tag_name:
         description: "Nombre del release (ej. v0.3.0)"
         required: true
-        default: "v0.4.3"
+        default: "v0.5.0"
 
 permissions:
   contents: write
@@ -132,10 +132,12 @@ jobs:
 
             ### Qué incluye
             - Onboarding: 7 temas, máximo 4
-            - Check-in diario y resumen de 7 días
-            - Borrado local de datos
+            - Check-in diario, resumen de 7 días y revisión semanal
+            - Chat y voz natural vía BFF (con aviso: no es servicio médico)
+            - Borrado local de datos y pantalla «Mis datos»
+            - Idiomas: español, English (US), português (Brasil e Portugal), 中文（简体）
             - `allowBackup=false`, sin cleartext
-            - Sin cuentas ni chat/voz (aún)
+            - Gate MASTG: Vitest + Semgrep + aapt2/apksigner
 
             ### Probar
             ```bash

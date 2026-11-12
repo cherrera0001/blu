@@ -17,6 +17,9 @@ import { Nunito_700Bold } from "@expo-google-fonts/nunito/700Bold";
 import { createInitialState, type BluState } from "blu-core/blu";
 import { ErrorBoundary } from "./src/ErrorBoundary";
 import { BLU_HERMES_HARDENED } from "./src/polyfill";
+import { pickLocale } from "blu-core/i18n";
+import { deviceLocaleTag, makeT } from "./src/i18n-core";
+import { I18nProvider } from "./src/i18n";
 import { ChatScreen } from "./src/screens/ChatScreen";
 import { OnboardingScreen } from "./src/screens/OnboardingScreen";
 import { TodayScreen } from "./src/screens/TodayScreen";
@@ -47,6 +50,9 @@ export default function App() {
   // ElevenLabs vía BFF de producción salvo que la persona elija solo voz del teléfono.
   // No sondear en el arranque (evita crash Hermes/fetch).
   const naturalAvailable = state.voicePreference !== "device";
+  // Idioma: el elegido en Opciones; si no, el del teléfono (o castellano).
+  const locale = state.locale ?? pickLocale(deviceLocaleTag());
+  const t = makeT(locale);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,7 +83,7 @@ export default function App() {
       <SafeAreaView style={styles.safe}>
         <View style={styles.loading}>
           <ActivityIndicator color={colors.cta} size="large" />
-          <Text style={styles.loadingText}>Cargando Blu…</Text>
+          <Text style={styles.loadingText}>{t("Cargando Blu…")}</Text>
         </View>
       </SafeAreaView>
     );
@@ -90,12 +96,13 @@ export default function App() {
     state.selectedHabitIds.length === 0;
 
   return (
+    <I18nProvider locale={locale}>
     <ErrorBoundary>
       <SafeAreaView style={styles.safe}>
         <StatusBar style="dark" />
         {error ? (
           <Text style={styles.error} testID="storage-error">
-            {error}
+            {t(error)}
           </Text>
         ) : null}
         {screen === "chat" && !showOnboarding ? (
@@ -130,10 +137,14 @@ export default function App() {
             }}
             onEditSelection={() => setEditing(true)}
             onOpenChat={() => setScreen("chat")}
+            onChangeLocale={async (next) => {
+              await persist({ ...state, locale: next });
+            }}
           />
         )}
       </SafeAreaView>
     </ErrorBoundary>
+    </I18nProvider>
   );
 }
 
