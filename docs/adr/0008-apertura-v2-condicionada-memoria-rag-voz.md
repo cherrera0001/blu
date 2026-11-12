@@ -32,6 +32,16 @@ Este ADR propone abrir su **construcción** con el mismo patrón ya validado en 
 - Comportamiento fail-closed: sin evidencia recuperada sobre umbral, el asistente declara incertidumbre en vez de afirmar (segundo escenario Gherkin del issue).
 - DoR cubierto: infra aprobada por este ADR + set de evaluación definido en `docs/research/rag-set-evaluacion.md`.
 
+**Estado de construcción (2026-11-12):** implementado y apagado por configuración (`BLU_RAG_ENABLED`). Incluye:
+- migración `0004_evidence_embeddings.sql`: pgvector; la tabla no se lee directo; `match_evidence` vuelve a filtrar por estado aprobado y fija un umbral mínimo de 0,5 y un máximo de 5 resultados;
+- `src/lib/rag`: corpus solo con fuentes de cita publicable, `ground()` fail-closed que corta las afirmaciones clínicas antes de buscar, y recuperador pgvector;
+- el BFF agrega la evidencia al prompt remoto, y lo que el guardián frena no sale hacia el proveedor de embeddings;
+- el set de 70 casos ejecutable en CI. La línea base léxica está en `docs/research/rag-eval-resultados.md`; **no firma D3**.
+
+Pendiente antes de activar:
+- un script de indexación con el rol reviewer;
+- la corrida D3 con el recuperador real y anotación independiente.
+
 ### D-3 · #82 — Entrada por voz local (pospuesta)
 
 - Se pospone a post-piloto: la voz no alimenta la hipótesis H1 y el micrófono es superficie sensible.

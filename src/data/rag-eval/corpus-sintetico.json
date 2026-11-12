@@ -1,0 +1,385 @@
+{
+  "_aviso": "CORPUS SINTÉTICO para la evaluación de recuperación (docs/research/rag-set-evaluacion.md). No es evidencia real y nunca se indexa en producción.",
+  "pillarBySource": {
+    "ev-2099-001": "movement",
+    "ev-2099-002": "movement",
+    "ev-2099-003": "nourishment",
+    "ev-2099-004": "nourishment",
+    "ev-2099-005": "rest",
+    "ev-2099-006": "rest",
+    "ev-2099-007": "family",
+    "ev-2099-008": "family",
+    "ev-2099-009": "community",
+    "ev-2099-010": "community",
+    "ev-2099-011": "nature",
+    "ev-2099-012": "nature",
+    "ev-2099-013": "purpose",
+    "ev-2099-014": "purpose"
+  },
+  "sources": [
+    {
+      "id": "ev-2099-001",
+      "claim": "Interrumpir el tiempo sentado con pausas breves de movimiento se asocia a menos rigidez percibida.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-001",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Menos rigidez y molestias percibidas al hacer pausas activas durante largos periodos sentado.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-002",
+      "claim": "Caminar a paso cómodo unos minutos al día es una forma accesible de sumar actividad física.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-002",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Más minutos de actividad física diaria con caminatas cortas.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-003",
+      "claim": "Tomar agua antes de las comidas ayuda a mantener una hidratación regular.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-003",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Mayor consumo de agua e hidratación diaria.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-004",
+      "claim": "Comer sin pantallas favorece prestar atención a las señales de saciedad.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-004",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Más atención a la saciedad al comer sin televisión ni celular.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-005",
+      "claim": "Mantener un horario regular para acostarse se asocia a un sueño más estable.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-005",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Sueño más estable con hora fija de acostarse y levantarse.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-006",
+      "claim": "Reducir el uso de pantallas antes de dormir facilita conciliar el sueño.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-006",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Menos tiempo para quedarse dormido al dejar el celular antes de dormir.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-007",
+      "claim": "Compartir comidas en familia se asocia a mayor sensación de cercanía.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-007",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Más cercanía y conversación familiar en las comidas compartidas.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-008",
+      "claim": "Expresar gratitud a personas cercanas fortalece el vínculo percibido.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-008",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Vínculo más fuerte al agradecer a familiares y amistades.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-009",
+      "claim": "Participar en actividades grupales del barrio se asocia a menor sensación de soledad.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-009",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Menos soledad al participar en grupos, talleres o juntas vecinales.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-010",
+      "claim": "Saludar a vecinos y vecinas aumenta la sensación de pertenencia al barrio.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-010",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Más pertenencia al barrio con saludos cotidianos al vecindario.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-011",
+      "claim": "Pasar tiempo en parques o áreas verdes se asocia a menor estrés percibido.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-011",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Menos estrés percibido tras visitar parques, plazas y áreas verdes.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-012",
+      "claim": "Exponerse a la luz natural por la mañana ayuda a regular el ritmo diario.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-012",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Ritmo diario más regular con luz del sol por la mañana.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-013",
+      "claim": "Hacer voluntariado se asocia a mayor sentido de propósito.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-013",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Más sentido de propósito al ayudar como voluntario o voluntaria.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    },
+    {
+      "id": "ev-2099-014",
+      "claim": "Escribir los propios valores ayuda a orientar decisiones cotidianas.",
+      "referenceType": "url",
+      "referenceValue": "https://ejemplo.invalid/sintetico/ev-2099-014",
+      "searchedAt": "2026-11-12",
+      "studyType": "SINTÉTICO (solo evaluación)",
+      "population": "Personas adultas (sintético)",
+      "design": "Sintético, sin estudio real",
+      "outcomes": "Decisiones diarias más coherentes al escribir qué valores importan.",
+      "magnitude": "No aplica (sintético)",
+      "limitations": "Fuente ficticia para evaluar la recuperación; no es evidencia.",
+      "applicabilityCL": "No aplica",
+      "reviewedAt": "2026-11-12T00:00:00Z",
+      "reviewer": "Revisor sintético",
+      "status": "aprobada",
+      "version": 1,
+      "transitionLog": [
+        {
+          "from": "pendiente",
+          "to": "aprobada",
+          "at": "2026-11-12T00:00:00Z",
+          "by": "Revisor sintético"
+        }
+      ]
+    }
+  ]
+}

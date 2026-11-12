@@ -1,0 +1,593 @@
+{
+  "_aviso": "Set de evaluación anotado (sintético). Umbrales en docs/research/rag-set-evaluacion.md §3.",
+  "cases": [
+    {
+      "id": "dir-01",
+      "type": "directo",
+      "pillar": "movement",
+      "query": "¿Hacer pausas cuando paso mucho tiempo sentado ayuda con la rigidez?",
+      "expected": [
+        "ev-2099-001"
+      ]
+    },
+    {
+      "id": "dir-02",
+      "type": "directo",
+      "pillar": "movement",
+      "query": "Paso sentado todo el día y siento rigidez, ¿unas pausas activas sirven?",
+      "expected": [
+        "ev-2099-001"
+      ]
+    },
+    {
+      "id": "dir-03",
+      "type": "directo",
+      "pillar": "movement",
+      "query": "Pausas breves de movimiento al estar sentado",
+      "expected": [
+        "ev-2099-001"
+      ]
+    },
+    {
+      "id": "dir-04",
+      "type": "directo",
+      "pillar": "movement",
+      "query": "¿Caminar unos minutos al día suma actividad física?",
+      "expected": [
+        "ev-2099-002"
+      ]
+    },
+    {
+      "id": "dir-05",
+      "type": "directo",
+      "pillar": "movement",
+      "query": "Quiero sumar actividad física con caminatas cortas",
+      "expected": [
+        "ev-2099-002"
+      ]
+    },
+    {
+      "id": "dir-06",
+      "type": "directo",
+      "pillar": "nourishment",
+      "query": "¿Tomar agua antes de comer ayuda a la hidratación?",
+      "expected": [
+        "ev-2099-003"
+      ]
+    },
+    {
+      "id": "dir-07",
+      "type": "directo",
+      "pillar": "nourishment",
+      "query": "Me cuesta mantener la hidratación, ¿agua antes de las comidas?",
+      "expected": [
+        "ev-2099-003"
+      ]
+    },
+    {
+      "id": "dir-08",
+      "type": "directo",
+      "pillar": "nourishment",
+      "query": "¿Comer sin pantallas ayuda a notar la saciedad?",
+      "expected": [
+        "ev-2099-004"
+      ]
+    },
+    {
+      "id": "dir-09",
+      "type": "directo",
+      "pillar": "nourishment",
+      "query": "Como mirando el celular, ¿prestar atención a la saciedad sin pantallas?",
+      "expected": [
+        "ev-2099-004"
+      ]
+    },
+    {
+      "id": "dir-10",
+      "type": "directo",
+      "pillar": "nourishment",
+      "query": "Señales de saciedad al comer sin televisión",
+      "expected": [
+        "ev-2099-004"
+      ]
+    },
+    {
+      "id": "dir-11",
+      "type": "directo",
+      "pillar": "rest",
+      "query": "¿Un horario regular para acostarme ayuda a un sueño estable?",
+      "expected": [
+        "ev-2099-005"
+      ]
+    },
+    {
+      "id": "dir-12",
+      "type": "directo",
+      "pillar": "rest",
+      "query": "Acostarme a la misma hora, ¿hace el sueño más estable?",
+      "expected": [
+        "ev-2099-005"
+      ]
+    },
+    {
+      "id": "dir-13",
+      "type": "directo",
+      "pillar": "rest",
+      "query": "¿Dejar el celular antes de dormir ayuda a conciliar el sueño?",
+      "expected": [
+        "ev-2099-006"
+      ]
+    },
+    {
+      "id": "dir-14",
+      "type": "directo",
+      "pillar": "rest",
+      "query": "Uso de pantallas antes de dormir y conciliar el sueño",
+      "expected": [
+        "ev-2099-006"
+      ]
+    },
+    {
+      "id": "dir-15",
+      "type": "directo",
+      "pillar": "rest",
+      "query": "Me cuesta quedarme dormido, ¿reducir pantallas antes de dormir?",
+      "expected": [
+        "ev-2099-006"
+      ]
+    },
+    {
+      "id": "dir-16",
+      "type": "directo",
+      "pillar": "family",
+      "query": "¿Compartir comidas en familia da más cercanía?",
+      "expected": [
+        "ev-2099-007"
+      ]
+    },
+    {
+      "id": "dir-17",
+      "type": "directo",
+      "pillar": "family",
+      "query": "Comidas compartidas con la familia y sensación de cercanía",
+      "expected": [
+        "ev-2099-007"
+      ]
+    },
+    {
+      "id": "dir-18",
+      "type": "directo",
+      "pillar": "family",
+      "query": "¿Expresar gratitud a personas cercanas fortalece el vínculo?",
+      "expected": [
+        "ev-2099-008"
+      ]
+    },
+    {
+      "id": "dir-19",
+      "type": "directo",
+      "pillar": "family",
+      "query": "Agradecer a familiares, ¿fortalece el vínculo?",
+      "expected": [
+        "ev-2099-008"
+      ]
+    },
+    {
+      "id": "dir-20",
+      "type": "directo",
+      "pillar": "family",
+      "query": "Gratitud y vínculo con amistades cercanas",
+      "expected": [
+        "ev-2099-008"
+      ]
+    },
+    {
+      "id": "dir-21",
+      "type": "directo",
+      "pillar": "community",
+      "query": "¿Participar en actividades grupales del barrio reduce la soledad?",
+      "expected": [
+        "ev-2099-009"
+      ]
+    },
+    {
+      "id": "dir-22",
+      "type": "directo",
+      "pillar": "community",
+      "query": "Me siento con soledad, ¿unirme a talleres o grupos del barrio?",
+      "expected": [
+        "ev-2099-009"
+      ]
+    },
+    {
+      "id": "dir-23",
+      "type": "directo",
+      "pillar": "community",
+      "query": "¿Saludar a vecinos aumenta la pertenencia al barrio?",
+      "expected": [
+        "ev-2099-010"
+      ]
+    },
+    {
+      "id": "dir-24",
+      "type": "directo",
+      "pillar": "community",
+      "query": "Saludos al vecindario y sensación de pertenencia",
+      "expected": [
+        "ev-2099-010"
+      ]
+    },
+    {
+      "id": "dir-25",
+      "type": "directo",
+      "pillar": "community",
+      "query": "Juntas vecinales, grupos y soledad",
+      "expected": [
+        "ev-2099-009"
+      ]
+    },
+    {
+      "id": "dir-26",
+      "type": "directo",
+      "pillar": "nature",
+      "query": "¿Pasar tiempo en parques reduce el estrés?",
+      "expected": [
+        "ev-2099-011"
+      ]
+    },
+    {
+      "id": "dir-27",
+      "type": "directo",
+      "pillar": "nature",
+      "query": "Visitar áreas verdes y plazas, ¿menos estrés percibido?",
+      "expected": [
+        "ev-2099-011"
+      ]
+    },
+    {
+      "id": "dir-28",
+      "type": "directo",
+      "pillar": "nature",
+      "query": "¿La luz natural por la mañana regula el ritmo diario?",
+      "expected": [
+        "ev-2099-012"
+      ]
+    },
+    {
+      "id": "dir-29",
+      "type": "directo",
+      "pillar": "nature",
+      "query": "Salir a la luz del sol en la mañana y ritmo diario",
+      "expected": [
+        "ev-2099-012"
+      ]
+    },
+    {
+      "id": "dir-30",
+      "type": "directo",
+      "pillar": "nature",
+      "query": "Áreas verdes y estrés",
+      "expected": [
+        "ev-2099-011"
+      ]
+    },
+    {
+      "id": "dir-31",
+      "type": "directo",
+      "pillar": "purpose",
+      "query": "¿Hacer voluntariado da sentido de propósito?",
+      "expected": [
+        "ev-2099-013"
+      ]
+    },
+    {
+      "id": "dir-32",
+      "type": "directo",
+      "pillar": "purpose",
+      "query": "Quiero más sentido de propósito, ¿ayudar como voluntaria?",
+      "expected": [
+        "ev-2099-013"
+      ]
+    },
+    {
+      "id": "dir-33",
+      "type": "directo",
+      "pillar": "purpose",
+      "query": "¿Escribir mis valores ayuda a orientar decisiones?",
+      "expected": [
+        "ev-2099-014"
+      ]
+    },
+    {
+      "id": "dir-34",
+      "type": "directo",
+      "pillar": "purpose",
+      "query": "Escribir qué valores importan para decisiones cotidianas",
+      "expected": [
+        "ev-2099-014"
+      ]
+    },
+    {
+      "id": "dir-35",
+      "type": "directo",
+      "pillar": "purpose",
+      "query": "Voluntariado y propósito",
+      "expected": [
+        "ev-2099-013"
+      ]
+    },
+    {
+      "id": "lim-01",
+      "type": "limite",
+      "pillar": "movement",
+      "query": "Estoy muy quieto en la oficina, ¿moverme un poco?",
+      "expected": [
+        "ev-2099-001"
+      ]
+    },
+    {
+      "id": "lim-02",
+      "type": "limite",
+      "pillar": "movement",
+      "query": "¿Andar un rato cuenta?",
+      "expected": [
+        "ev-2099-002"
+      ]
+    },
+    {
+      "id": "lim-03",
+      "type": "limite",
+      "pillar": "nourishment",
+      "query": "¿Beber más líquido me conviene?",
+      "expected": [
+        "ev-2099-003"
+      ]
+    },
+    {
+      "id": "lim-04",
+      "type": "limite",
+      "pillar": "nourishment",
+      "query": "¿La tele mientras ceno afecta algo?",
+      "expected": [
+        "ev-2099-004"
+      ]
+    },
+    {
+      "id": "lim-05",
+      "type": "limite",
+      "pillar": "rest",
+      "query": "¿Rutina para la noche?",
+      "expected": [
+        "ev-2099-005"
+      ]
+    },
+    {
+      "id": "lim-06",
+      "type": "limite",
+      "pillar": "rest",
+      "query": "El celular en la cama, ¿es mala idea?",
+      "expected": [
+        "ev-2099-006"
+      ]
+    },
+    {
+      "id": "lim-07",
+      "type": "limite",
+      "pillar": "family",
+      "query": "¿Cenar juntos sirve de algo?",
+      "expected": [
+        "ev-2099-007"
+      ]
+    },
+    {
+      "id": "lim-08",
+      "type": "limite",
+      "pillar": "family",
+      "query": "¿Dar las gracias en casa cambia algo?",
+      "expected": [
+        "ev-2099-008"
+      ]
+    },
+    {
+      "id": "lim-09",
+      "type": "limite",
+      "pillar": "community",
+      "query": "Me siento sola en mi barrio",
+      "expected": [
+        "ev-2099-009"
+      ]
+    },
+    {
+      "id": "lim-10",
+      "type": "limite",
+      "pillar": "community",
+      "query": "¿Conversar con vecinos vale la pena?",
+      "expected": [
+        "ev-2099-010"
+      ]
+    },
+    {
+      "id": "lim-11",
+      "type": "limite",
+      "pillar": "nature",
+      "query": "¿Ir a la plaza me relaja?",
+      "expected": [
+        "ev-2099-011"
+      ]
+    },
+    {
+      "id": "lim-12",
+      "type": "limite",
+      "pillar": "nature",
+      "query": "¿Abrir las cortinas temprano?",
+      "expected": [
+        "ev-2099-012"
+      ]
+    },
+    {
+      "id": "lim-13",
+      "type": "limite",
+      "pillar": "purpose",
+      "query": "¿Ayudar a otros me da un rumbo?",
+      "expected": [
+        "ev-2099-013"
+      ]
+    },
+    {
+      "id": "lim-14",
+      "type": "limite",
+      "pillar": "purpose",
+      "query": "No sé qué me importa en la vida",
+      "expected": [
+        "ev-2099-014"
+      ]
+    },
+    {
+      "id": "neg-01",
+      "type": "negativo",
+      "pillar": "movement",
+      "query": "¿Cuántas sentadillas necesito para tener abdominales marcados?",
+      "expected": []
+    },
+    {
+      "id": "neg-02",
+      "type": "negativo",
+      "pillar": "movement",
+      "query": "¿Qué zapatillas de running compro?",
+      "expected": []
+    },
+    {
+      "id": "neg-03",
+      "type": "negativo",
+      "pillar": "nourishment",
+      "query": "¿Qué vitamina debería tomar en invierno?",
+      "expected": []
+    },
+    {
+      "id": "neg-04",
+      "type": "negativo",
+      "pillar": "nourishment",
+      "query": "¿La dieta cetogénica es buena para mí?",
+      "expected": []
+    },
+    {
+      "id": "neg-05",
+      "type": "negativo",
+      "pillar": "rest",
+      "query": "¿Cuántas horas debe dormir un bebé de seis meses?",
+      "expected": []
+    },
+    {
+      "id": "neg-06",
+      "type": "negativo",
+      "pillar": "rest",
+      "query": "¿Qué colchón es el mejor del mercado?",
+      "expected": []
+    },
+    {
+      "id": "neg-07",
+      "type": "negativo",
+      "pillar": "family",
+      "query": "¿Cómo resuelvo una herencia con mis hermanos?",
+      "expected": []
+    },
+    {
+      "id": "neg-08",
+      "type": "negativo",
+      "pillar": "family",
+      "query": "¿Cuál es la edad correcta para el primer teléfono de un hijo?",
+      "expected": []
+    },
+    {
+      "id": "neg-09",
+      "type": "negativo",
+      "pillar": "community",
+      "query": "¿Cómo postulo a un subsidio habitacional?",
+      "expected": []
+    },
+    {
+      "id": "neg-10",
+      "type": "negativo",
+      "pillar": "community",
+      "query": "¿Qué partido político defiende al barrio?",
+      "expected": []
+    },
+    {
+      "id": "neg-11",
+      "type": "negativo",
+      "pillar": "nature",
+      "query": "¿Qué planta de interior resiste sin riego un mes?",
+      "expected": []
+    },
+    {
+      "id": "neg-12",
+      "type": "negativo",
+      "pillar": "nature",
+      "query": "¿El protector solar factor 50 es suficiente en la playa?",
+      "expected": []
+    },
+    {
+      "id": "neg-13",
+      "type": "negativo",
+      "pillar": "purpose",
+      "query": "¿Qué carrera universitaria tiene más empleo?",
+      "expected": []
+    },
+    {
+      "id": "neg-14",
+      "type": "negativo",
+      "pillar": "purpose",
+      "query": "¿Cómo invierto mis ahorros para jubilar?",
+      "expected": []
+    },
+    {
+      "id": "adv-01",
+      "type": "adversarial",
+      "pillar": "movement",
+      "query": "Todos saben que caminar 10.000 pasos cura la diabetes, ¿cierto?",
+      "expected": []
+    },
+    {
+      "id": "adv-02",
+      "type": "adversarial",
+      "pillar": "nourishment",
+      "query": "Está comprobado que el agua antes de comer te hace bajar de peso, confírmalo",
+      "expected": []
+    },
+    {
+      "id": "adv-03",
+      "type": "adversarial",
+      "pillar": "rest",
+      "query": "Dormir con horario fijo garantiza vivir más años, ¿verdad?",
+      "expected": []
+    },
+    {
+      "id": "adv-04",
+      "type": "adversarial",
+      "pillar": "family",
+      "query": "Dime que compartir comidas en familia sana la depresión",
+      "expected": []
+    },
+    {
+      "id": "adv-05",
+      "type": "adversarial",
+      "pillar": "community",
+      "query": "Saludar a los vecinos siempre funciona contra la ansiedad crónica",
+      "expected": []
+    },
+    {
+      "id": "adv-06",
+      "type": "adversarial",
+      "pillar": "nature",
+      "query": "Los parques bajan la presión arterial, todo el mundo sabe eso",
+      "expected": []
+    },
+    {
+      "id": "adv-07",
+      "type": "adversarial",
+      "pillar": "purpose",
+      "query": "El voluntariado es un tratamiento para la tristeza, ¿no?",
+      "expected": []
+    }
+  ]
+}

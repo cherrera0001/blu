@@ -3,7 +3,13 @@ import { parseAssistantScene, type AssistantScene } from "@/lib/assistant/scene"
 import { LocalRuleProvider } from "@/lib/assistant/providers/local";
 import { getRemoteLlmConfig, RemoteLlmProvider } from "@/lib/assistant/providers/remote";
 import type { AssistantProvider } from "@/lib/assistant/types";
+import { classifyInput } from "@/lib/assistant/guardian";
 import { clientIp } from "@/lib/http/client-ip";
+import { loadRegistry } from "@/lib/evidence/registry";
+import { buildCorpus } from "@/lib/rag/corpus";
+import { ground, type Grounding } from "@/lib/rag/ground";
+import { getRagConfig, PgvectorRetriever } from "@/lib/rag/pgvector";
+import { getV1Config } from "@/lib/v1/config";
 
 // Next 16 (Cache Components): los Route Handlers corren a request time por defecto;
 // no se usa `export const dynamic` (incompatible con cacheComponents, docs instaladas).
@@ -85,9 +91,24 @@ const PROVIDER_ERROR_TEXT =
  * están configuradas (ADR-0005); si no, el proveedor local determinista actual.
  * El orquestador degrada automáticamente al local si el remoto falla.
  */
-function resolveProvider(scene: AssistantScene | null): AssistantProvider {
+function resolveProvider(scene: AssistantScene | null, grounding: Grounding | null): AssistantProvider {
   const config = getRemoteLlmConfig();
-  return config ? new RemoteLlmProvider(config, fetch, 10_000, scene) : new LocalRuleProvider();
+  return config ? new RemoteLlmProvider(config, fetch, 10_000, scene, grounding) : new LocalRuleProvider();
+}
+
+/**
+ * RAG (#58, ADR-0008 D-2): solo con BLU_RAG_ENABLED=1 y proveedor remoto (el
+ * local no redacta con evidencia). Fail-closed: cualquier fallo → incertidumbre.
+ */
+async function resolveGrounding(messages: ChatMessage[]): Promise<Grounding | null> {
+  const rag = getRagConfig(getV1Config());
+  if (!rag || !getRemoteLlmConfig()) return null;
+  const last = [...messages].reverse().find((m) => m.role === "user")?.text ?? "";
+  // Lo que el guardián va a frenar (crisis, clínico, inyección) no sale hacia
+  // el proveedor de embeddings: se responde con el texto seguro fijo.
+  if (classifyInput(last).category !== "none") return null;
+  const corpus = buildCorpus(loadRegistry().sources);
+  return ground(last, corpus, new PgvectorRetriever(rag), rag.threshold);
 }
 
 /**
@@ -129,13 +150,23 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const scene = parseAssistantScene((body as { scene?: unknown }).scene);
-  const assistant = new BluAssistant(resolveProvider(scene));
   try {
+    const grounding = await resolveGrounding(body.messages);
+    const assistant = new BluAssistant(resolveProvider(scene, grounding));
     const reply = await assistant.ask(body.messages);
     return Response.json({
       text: reply.text,
       meta: {
         providerId: reply.meta.providerId,
+        // Solo ids de fuentes aprobadas citables; nunca texto de la persona.
+        ...(grounding
+          ? {
+              grounding:
+                grounding.kind === "grounded"
+                  ? { kind: "grounded", sources: grounding.sources.map((s) => s.id) }
+                  : { kind: "uncertain" },
+            }
+          : {}),
         safety: {
           guardianAction: reply.meta.safety.guardianAction,
           latencyMs: reply.meta.safety.latencyMs,
