@@ -124,10 +124,6 @@ export function OnboardingScreen({
         })}
       </View>
 
-      <Text style={styles.selection} testID="selection-count">
-        Elegidos: {draft.length} de {MAX_SELECTED_HABITS}
-      </Text>
-
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: noticeAccepted }}

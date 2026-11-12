@@ -18,17 +18,31 @@ appId: cl.blu.app
 - assertVisible: "Hoy"
 - assertVisible:
     id: "blu-companion"
+- tapOn:
+    id: "checkin-movement-simplify"
+- tapOn:
+    id: "checkin-movement-barrier-energy"
+- assertVisible: "Hacer una pausa de dos minutos para cambiar de postura."
 - assertVisible:
-    id: "weekly-summary"
-- assertVisible:
-    id: "week-bars"
-- assertVisible:
-    id: "speak-today"
-- assertVisible: "Escuchar a Blu"
-- assertVisible:
-    id: "open-chat"
-- assertVisible:
-    id: "options-toggle"
+    id: "checkin-movement-undo"
+- tapOn:
+    id: "checkin-movement-undo"
+- assertVisible: "Elegir una pausa breve para moverte."
+- scrollUntilVisible:
+    element:
+      id: "speak-today"
+- scrollUntilVisible:
+    element:
+      id: "open-chat"
+- scrollUntilVisible:
+    element:
+      id: "weekly-summary"
+- scrollUntilVisible:
+    element:
+      id: "week-bars"
+- scrollUntilVisible:
+    element:
+      id: "options-toggle"
 - tapOn:
     id: "options-toggle"
 - assertVisible:

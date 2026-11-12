@@ -33,9 +33,9 @@ export function BluCompanion({
   size = "lg",
 }: {
   view: CompanionView;
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
 }) {
-  const dim = size === "lg" ? 260 : 120;
+  const dim = size === "lg" ? 260 : size === "md" ? 170 : 120;
   const [breathe] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -75,7 +75,10 @@ export function BluCompanion({
       style={[styles.wrap, size === "lg" && styles.wrapHero]}
       testID="blu-companion"
     >
-      <View style={[styles.stage, size === "lg" && styles.stageHero]} accessibilityElementsHidden>
+      <View
+        style={[styles.stage, size === "lg" && styles.stageHero, size === "md" && styles.stageMid]}
+        accessibilityElementsHidden
+      >
         <View style={[styles.glow, { width: dim * 0.92, height: dim * 0.28 }]} />
         <Animated.View
           style={{ transform: [{ translateY: lift }, { scale }] }}
@@ -89,7 +92,7 @@ export function BluCompanion({
           />
         </Animated.View>
       </View>
-      <Text style={[styles.line, size === "lg" && styles.lineHero]} testID="companion-line">
+      <Text style={[styles.line, size !== "sm" && styles.lineHero]} testID="companion-line">
         {view.line}
       </Text>
     </View>
@@ -113,6 +116,9 @@ const styles = StyleSheet.create({
   },
   stageHero: {
     minHeight: 280,
+  },
+  stageMid: {
+    minHeight: 185,
   },
   glow: {
     position: "absolute",

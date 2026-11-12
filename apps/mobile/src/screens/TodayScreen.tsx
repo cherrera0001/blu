@@ -8,6 +8,7 @@ import {
   type BluState,
   type HabitId,
 } from "blu-core/blu";
+import { canSimplify, isAdapted, simplifyHabit, undoLastAdaptation } from "blu-core/adapt";
 import { readCompanion } from "blu-core/companion";
 import { summarizeDays } from "blu-core/history";
 import { ActionButton } from "../components/ActionButton";
@@ -101,16 +102,7 @@ export function TodayScreen({
 
   return (
     <ScreenShell testID="today-screen">
-      <Text style={styles.brand}>Blu</Text>
-      <BluCompanion view={companion} size="lg" />
-
-      <SpeakButton
-        text={listenText}
-        label="Escuchar a Blu"
-        naturalAvailable={naturalAvailable}
-        variant="soft"
-        testID="speak-today"
-      />
+      <BluCompanion view={companion} size="md" />
 
       <View style={styles.section}>
         <Text style={styles.title}>Hoy</Text>
@@ -118,15 +110,6 @@ export function TodayScreen({
         <Text style={styles.progress} testID="today-progress">
           {doneCount} de {total} {total === 1 ? "tema" : "temas"} marcados
         </Text>
-      </View>
-
-      <View style={styles.summary} testID="weekly-summary">
-        <Text style={styles.summaryText}>
-          Últimos 7 días: {summary.actionsCompleted}{" "}
-          {summary.actionsCompleted === 1 ? "paso" : "pasos"} en{" "}
-          {summary.activeDays} {summary.activeDays === 1 ? "día" : "días"}.
-        </Text>
-        <WeekBars days={history.days} />
       </View>
 
       <View style={styles.list}>
@@ -141,6 +124,19 @@ export function TodayScreen({
               action={currentAction(state, habitId)}
               done={done}
               onToggle={() => toggleCheckIn(habitId)}
+              onSimplify={
+                canSimplify(state, habitId)
+                  ? (barrier) =>
+                      onChange(
+                        simplifyHabit(state, habitId, barrier, new Date().toISOString()).state,
+                      )
+                  : undefined
+              }
+              onUndo={
+                isAdapted(state, habitId)
+                  ? () => onChange(undoLastAdaptation(state, habitId))
+                  : undefined
+              }
               testID={`checkin-${habitId}`}
             />
           );
@@ -149,12 +145,33 @@ export function TodayScreen({
 
       <View style={styles.destinations}>
         <Text style={styles.destLabel}>Con Blu</Text>
+        <Text style={styles.destHint}>Blu te lee tu día en voz alta.</Text>
+        <SpeakButton
+          text={listenText}
+          label="Escuchar a Blu"
+          naturalAvailable={naturalAvailable}
+          variant="soft"
+          testID="speak-today"
+        />
+        <Text style={styles.destHint}>Si quieres, conversamos un rato.</Text>
         <ActionButton
           label="Hablar con Blu"
           variant="secondary"
           onPress={onOpenChat}
           testID="open-chat"
         />
+      </View>
+
+      <View style={styles.summary} testID="weekly-summary">
+        <Text style={styles.summaryText}>
+          {summary.actionsCompleted === 0
+            ? "Esta semana aún no hay marcas. Un paso pequeño cuenta, cuando quieras."
+            : `Últimos 7 días: ${summary.actionsCompleted} ${
+                summary.actionsCompleted === 1 ? "paso" : "pasos"
+              } en ${summary.activeDays} ${summary.activeDays === 1 ? "día" : "días"}.`}
+        </Text>
+        <WeekBars days={history.days} />
+        <Text style={styles.summaryNote}>Es un registro tuyo, no una nota.</Text>
       </View>
 
       <OptionsPanel
@@ -177,13 +194,6 @@ export function TodayScreen({
 }
 
 const styles = StyleSheet.create({
-  brand: {
-    fontSize: typeScale.brand,
-    fontFamily: fonts.display,
-    color: colors.ink,
-    textAlign: "center",
-    letterSpacing: -1,
-  },
   section: {
     gap: 6,
     marginTop: 4,
@@ -221,6 +231,17 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: space.gap,
   },
+  destHint: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    marginTop: 4,
+  },
+  summaryNote: {
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.body,
+    color: colors.muted,
+  },
   destLabel: {
     fontSize: typeScale.meta,
     fontFamily: fonts.bodySemi,
@@ -231,6 +252,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: typeScale.tiny,
     fontFamily: fonts.body,
-    color: colors.faint,
+    color: colors.muted,
   },
 });

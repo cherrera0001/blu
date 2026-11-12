@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import type { Barrier } from "blu-core/blu";
 import { colors, fonts, space, type as typeScale } from "../theme";
 
 export interface HabitCheckRowProps {
@@ -6,68 +8,143 @@ export interface HabitCheckRowProps {
   action: string;
   done: boolean;
   onToggle: () => void;
+  /** Presente si existe una versión más pequeña disponible. */
+  onSimplify?: (barrier: Barrier) => void;
+  /** Presente si la persona ya ajustó este hábito y puede volver atrás. */
+  onUndo?: () => void;
   testID?: string;
 }
 
-/** Fila de check-in: el círculo es el control; el resto es lectura. */
+const BARRIERS: { id: Barrier; label: string }[] = [
+  { id: "time", label: "Me faltó tiempo" },
+  { id: "energy", label: "Tenía poca energía" },
+  { id: "remembering", label: "Se me olvidó" },
+  { id: "other", label: "Otra razón" },
+];
+
+/**
+ * Fila de check-in. El bloque superior es el control de marcar; debajo, una vía
+ * discreta para bajar la exigencia sin culpa (paridad web, BLU-1102).
+ */
 export function HabitCheckRow({
   title,
   action,
   done,
   onToggle,
+  onSimplify,
+  onUndo,
   testID,
 }: HabitCheckRowProps) {
+  const [asking, setAsking] = useState(false);
+
   return (
-    <Pressable
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: done }}
-      accessibilityLabel={`${title}. ${done ? "Marcado" : "Pendiente"}. ${action}`}
-      onPress={onToggle}
-      style={({ pressed }) => [
-        styles.row,
-        done && styles.rowDone,
-        pressed && styles.pressed,
-      ]}
-      testID={testID}
-    >
-      <View style={[styles.box, done && styles.boxDone]}>
-        <Text style={[styles.mark, done && styles.markDone]}>{done ? "✓" : ""}</Text>
-      </View>
-      <View style={styles.copy}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.action}>{action}</Text>
-        <Text style={styles.status}>{done ? "Hecho hoy" : "Toca para marcar"}</Text>
-      </View>
-    </Pressable>
+    <View style={[styles.row, done && styles.rowDone]}>
+      <Pressable
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: done }}
+        accessibilityLabel={`${title}. ${done ? "Marcado" : "Pendiente"}. ${action}`}
+        onPress={onToggle}
+        style={({ pressed }) => [styles.check, pressed && styles.pressed]}
+        testID={testID}
+      >
+        <View style={[styles.box, done && styles.boxDone]}>
+          <Text style={styles.mark}>{done ? "✓" : ""}</Text>
+        </View>
+        <View style={styles.copy}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.action}>{action}</Text>
+          <Text style={styles.status}>{done ? "Hecho hoy" : "Toca para marcar"}</Text>
+        </View>
+      </Pressable>
+
+      {!done && (onSimplify || onUndo) ? (
+        <View style={styles.adapt}>
+          {asking && onSimplify ? (
+            <View style={styles.ask} testID={testID ? `${testID}-barriers` : undefined}>
+              <Text style={styles.askTitle}>¿Qué lo hizo difícil? Probamos algo más pequeño.</Text>
+              {BARRIERS.map((b) => (
+                <Pressable
+                  key={b.id}
+                  accessibilityRole="button"
+                  onPress={() => {
+                    setAsking(false);
+                    onSimplify(b.id);
+                  }}
+                  style={({ pressed }) => [styles.barrier, pressed && styles.pressed]}
+                  testID={testID ? `${testID}-barrier-${b.id}` : undefined}
+                >
+                  <Text style={styles.barrierText}>{b.label}</Text>
+                </Pressable>
+              ))}
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setAsking(false)}
+                style={styles.link}
+              >
+                <Text style={styles.linkText}>Ahora no</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.links}>
+              {onSimplify ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityHint="Te propongo una versión más pequeña de este paso"
+                  onPress={() => setAsking(true)}
+                  style={styles.link}
+                  testID={testID ? `${testID}-simplify` : undefined}
+                >
+                  <Text style={styles.linkText}>Se me hace difícil</Text>
+                </Pressable>
+              ) : null}
+              {onUndo ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={onUndo}
+                  style={styles.link}
+                  testID={testID ? `${testID}-undo` : undefined}
+                >
+                  <Text style={styles.linkText}>Volver a la versión anterior</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          )}
+        </View>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: "row",
-    gap: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    minHeight: space.touch + 20,
     borderRadius: 20,
     backgroundColor: colors.cardSolid,
     borderWidth: 2,
     borderColor: colors.cardBorder,
-    alignItems: "flex-start",
+    overflow: "hidden",
   },
   rowDone: {
     borderColor: colors.success,
     backgroundColor: colors.successBg,
   },
+  check: {
+    flexDirection: "row",
+    gap: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    minHeight: space.touch + 20,
+    alignItems: "flex-start",
+  },
   pressed: {
-    opacity: 0.92,
+    opacity: 0.85,
   },
   box: {
     width: 36,
     height: 36,
     borderRadius: 18,
     borderWidth: 3,
-    borderColor: colors.softBorder,
+    // ≥3:1 sobre blanco (WCAG 1.4.11): el control debe verse sin estar marcado.
+    borderColor: colors.cta,
     backgroundColor: colors.cardSolid,
     alignItems: "center",
     justifyContent: "center",
@@ -83,9 +160,6 @@ const styles = StyleSheet.create({
     color: colors.ctaText,
     lineHeight: 22,
   },
-  markDone: {
-    color: colors.ctaText,
-  },
   copy: {
     flex: 1,
     gap: 4,
@@ -98,7 +172,7 @@ const styles = StyleSheet.create({
   action: {
     fontSize: typeScale.meta,
     fontFamily: fonts.body,
-    color: colors.muted,
+    color: colors.inkSoft,
     lineHeight: 24,
   },
   status: {
@@ -106,5 +180,50 @@ const styles = StyleSheet.create({
     fontSize: typeScale.tiny,
     fontFamily: fonts.bodySemi,
     color: colors.inkSoft,
+  },
+  adapt: {
+    borderTopWidth: 1,
+    borderTopColor: colors.cardBorder,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+  },
+  links: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    columnGap: 18,
+  },
+  link: {
+    minHeight: 44,
+    justifyContent: "center",
+  },
+  linkText: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.ctaDeep,
+    textDecorationLine: "underline",
+  },
+  ask: {
+    gap: 8,
+    paddingVertical: 8,
+  },
+  askTitle: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.ink,
+    lineHeight: 24,
+  },
+  barrier: {
+    minHeight: 48,
+    justifyContent: "center",
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: colors.softBorder,
+    backgroundColor: colors.soft,
+  },
+  barrierText: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.ink,
   },
 });
