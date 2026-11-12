@@ -26,7 +26,8 @@ escritura solo de revisores).
 
 Tablas V2: `conversation_memory` (ADR-0008 D-1, #43; owner-only con políticas más estrictas:
 lo caducado o borrado no es visible, retención máxima de 30 días fijada por constraint,
-olvido con `memory_forget()` y purga administrativa; apagada por configuración).
+olvido con `memory_forget()` y purga administrativa; apagada por configuración), y `evidence_embeddings` (ADR-0008 D-2, #58; vectores del catálogo aprobado, sin
+lectura directa: solo vía `match_evidence()`, que re-filtra por estado aprobado; escritura de reviewer).
 
 ## Políticas RLS (bosquejo ejecutable)
 

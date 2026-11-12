@@ -42,8 +42,13 @@ function migrationSql(): string {
 
 /** Tablas V2 (ADR-0008): párrafo "Tablas V2:" de specs/009; tienen su propio test. */
 function specV2Tables(): string[] {
-  const line = specText.split("\n").find((l) => l.startsWith("Tablas V2:")) ?? "";
-  return [...line.matchAll(/`([a-z_]+)`/g)].map((m) => m[1]).filter((n) => !n.includes("memory_forget"));
+  const lines = specText.split("\n");
+  const start = lines.findIndex((l) => l.startsWith("Tablas V2:"));
+  if (start < 0) return [];
+  let paragraph = "";
+  for (let i = start; i < lines.length && lines[i].trim() !== ""; i += 1) paragraph += `${lines[i]} `;
+  // Solo nombres de tabla: las funciones se escriben con paréntesis (`memory_forget()`).
+  return [...paragraph.matchAll(/`([a-z_]+)`/g)].map((m) => m[1]);
 }
 
 /** DDL completo de una tabla (desde `create table` hasta el `;` que cierra). */
