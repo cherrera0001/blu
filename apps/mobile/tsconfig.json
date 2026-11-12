@@ -1,0 +1,11 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "blu-core": ["../../packages/blu-core/src/index.ts"],
+      "blu-core/*": ["../../packages/blu-core/src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

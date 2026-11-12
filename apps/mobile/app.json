@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Blu",
+    "slug": "blu",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#F4F7FB"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "cl.blu.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F4F7FB"
+      },
+      "package": "cl.blu.app"
+    },
+    "plugins": []
+  }
+}

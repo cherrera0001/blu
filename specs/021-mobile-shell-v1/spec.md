@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-12
 
-**Status**: Draft (depende de 020)
+**Status**: Implemented (shell Expo en `apps/mobile`; chat/voz fuera de alcance)
 
 **Input**: Primera app móvil usable: onboarding llano, check-in, resumen, borrado; dominio vía `blu-core`.
 

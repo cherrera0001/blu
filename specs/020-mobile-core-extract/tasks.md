@@ -11,3 +11,4 @@
 - [x] `npm run build` verde; dominio Vitest verde
 - [x] Escaneo anti-DOM estricto en blu-core
 - [x] Scaffold `apps/mobile` + draft spec 021
+- [x] JSON web vía copia (`npm run sync:data`), no symlinks (WSL/Windows)

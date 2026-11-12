@@ -1,1 +1,509 @@
-../../../packages/blu-core/data/onboarding/bank.json
+{
+  "bankVersion": "1.0.0",
+  "locale": "es-CL",
+  "updatedAt": "2026-11-04",
+  "disclaimer": "Autoevaluación orientativa de hábitos. No es un diagnóstico médico ni una escala psicométrica validada.",
+  "principles": [
+    {
+      "id": "movement",
+      "title": "Movimiento natural",
+      "subtitle": "Pequeñas formas de moverte dentro de tu día real.",
+      "questions": [
+        {
+          "id": "mov-01",
+          "type": "single_choice",
+          "text": "¿Cuántos días a la semana caminas o haces alguna actividad física?",
+          "skippable": false,
+          "options": [
+            { "value": 0, "label": "Casi ningún día" },
+            { "value": 1, "label": "1–2 días" },
+            { "value": 2, "label": "3–4 días" },
+            { "value": 3, "label": "5 o más días" }
+          ],
+          "rationale": "Frecuencia base de actividad; punto de partida para sugerir versiones posibles.",
+          "evidence": { "reference": "Guías de actividad física OMS 2020", "status": "pendiente" }
+        },
+        {
+          "id": "mov-02",
+          "type": "likert5",
+          "text": "Durante mi jornada logro levantarme y moverme de vez en cuando.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Captura sedentarismo percibido en palabras no punitivas (formulado en positivo para evitar ítems invertidos).",
+          "evidence": { "reference": "Literatura sobre sedentarismo y pausas activas", "status": "pendiente" }
+        },
+        {
+          "id": "mov-03",
+          "type": "multi_choice",
+          "text": "¿Qué te hace difícil moverte más? Marca lo que apliqué.",
+          "skippable": true,
+          "countsTowardScore": false,
+          "options": [
+            { "value": "time", "label": "Me falta tiempo" },
+            { "value": "energy", "label": "Me falta energía" },
+            { "value": "place", "label": "No sé dónde o cómo" },
+            { "value": "body", "label": "Dolor o limitación física" },
+            { "value": "weather", "label": "El clima o el entorno" },
+            { "value": "none", "label": "Nada, me muevo bien" }
+          ],
+          "rationale": "Barreras declaradas alimentan el motor de hábitos (versión mínima y momento del día).",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "mov-04",
+          "type": "single_choice",
+          "text": "¿Tu entorno te permite caminar para hacer recados o pasear?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "A veces" },
+            { "value": 2, "label": "Con frecuencia" },
+            { "value": 3, "label": "Todos los días" }
+          ],
+          "rationale": "Acceso ambiental al movimiento; conecta con el principio entorno sin asumir infraestructura.",
+          "evidence": { "reference": "Literatura de entorno construido y caminata", "status": "pendiente" }
+        },
+        {
+          "id": "mov-05",
+          "type": "likert5",
+          "text": "Moverme me hace sentir bien, aunque sea poco.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Motivación intrínseca percibida; informa sugerencias sin imponer metas.",
+          "evidence": { "reference": "Teoría de la autodeterminación (contexto)", "status": "pendiente" }
+        }
+      ]
+    },
+    {
+      "id": "nourishment",
+      "title": "Alimentación consciente",
+      "subtitle": "Comer con atención y sin reglas rígidas.",
+      "questions": [
+        {
+          "id": "ali-01",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia incluyes verduras, frutas o legumbres en tus comidas?",
+          "skippable": false,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "1–2 veces por semana" },
+            { "value": 2, "label": "3–5 veces por semana" },
+            { "value": 3, "label": "Casi todos los días" }
+          ],
+          "rationale": "Frecuencia autopercibida de alimentos mínimamente procesados; sin evaluación nutricional individual.",
+          "evidence": { "reference": "Guías alimentarias OMS/FAO", "status": "pendiente" }
+        },
+        {
+          "id": "ali-02",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia consumes alimentos ultraprocesados (snacks, bebidas azucaradas, comida rápida)?",
+          "skippable": true,
+          "options": [
+            { "value": 3, "label": "Varias veces al día" },
+            { "value": 2, "label": "Casi a diario" },
+            { "value": 1, "label": "1–2 veces por semana" },
+            { "value": 0, "label": "Casi nunca" }
+          ],
+          "rationale": "Frecuencia de ultraprocesados; los valores están invertidos para que mayor valor = mejor hábito, consistente con el resto del banco.",
+          "evidence": { "reference": "Clasificación NOVA y literatura asociada", "status": "pendiente" }
+        },
+        {
+          "id": "ali-03",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia comes con atención, sin pantallas ni prisa?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "A veces" },
+            { "value": 2, "label": "Con frecuencia" },
+            { "value": 3, "label": "Casi siempre" }
+          ],
+          "rationale": "Conducta central del principio: atención en la comida, no dieta.",
+          "evidence": { "reference": "Literatura sobre alimentación consciente", "status": "pendiente" }
+        },
+        {
+          "id": "ali-04",
+          "type": "likert5",
+          "text": "Como con tranquilidad y sin culpa.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Relación amable con la comida; evita lenguaje moralizador sobre alimentos.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "ali-05",
+          "type": "multi_choice",
+          "text": "¿Qué influye más en lo que comes? Marca lo que apliqué.",
+          "skippable": true,
+          "countsTowardScore": false,
+          "options": [
+            { "value": "time", "label": "Falta de tiempo" },
+            { "value": "money", "label": "Presupuesto" },
+            { "value": "family", "label": "Costumbres de mi entorno" },
+            { "value": "work", "label": "Trabajo o estudios" },
+            { "value": "info", "label": "No sé qué elegir" },
+            { "value": "none", "label": "Nada en particular" }
+          ],
+          "rationale": "Factores contextuales declarados para personalizar sugerencias sin prescripción.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        }
+      ]
+    },
+    {
+      "id": "rest",
+      "title": "Descanso y calma",
+      "subtitle": "Sueño, pausas y formas de bajar el ritmo.",
+      "questions": [
+        {
+          "id": "des-01",
+          "type": "single_choice",
+          "text": "¿Cuántas horas duermes habitualmente?",
+          "skippable": false,
+          "options": [
+            { "value": 0, "label": "Menos de 6" },
+            { "value": 1, "label": "6–7" },
+            { "value": 2, "label": "7–9" },
+            { "value": 3, "label": "Más de 9 o muy variable" }
+          ],
+          "rationale": "Duración autopercibida del sueño; no evalúa trastornos del sueño.",
+          "evidence": { "reference": "Recomendaciones de sueño para adultos", "status": "pendiente" }
+        },
+        {
+          "id": "des-02",
+          "type": "likert5",
+          "text": "Me despierto sintiéndome descansado/a.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Calidad subjetiva del sueño en positivo.",
+          "evidence": { "reference": "Literatura sobre calidad subjetiva del sueño", "status": "pendiente" }
+        },
+        {
+          "id": "des-03",
+          "type": "likert5",
+          "text": "Tengo formas de bajar el ritmo cuando lo necesito.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Recursos de autorregulación declarados; no mide estrés clínico.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "des-04",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia haces pausas breves durante tu día?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "A veces" },
+            { "value": 2, "label": "1–2 veces al día" },
+            { "value": 3, "label": "Varias veces al día" }
+          ],
+          "rationale": "Frecuencia de pausas; microhábito accionable del principio.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "des-05",
+          "type": "single_choice",
+          "text": "¿Tienes alguna rutina que te ayuda a prepararte para dormir?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "No tengo ninguna" },
+            { "value": 1, "label": "A veces, cuando recuerdo" },
+            { "value": 2, "label": "La mayoría de las noches" },
+            { "value": 3, "label": "Casi todas las noches" }
+          ],
+          "rationale": "Rutina de higiene del sueño autopercibida; sin manejo clínico del insomnio.",
+          "evidence": { "reference": "Higiene del sueño (contexto general)", "status": "pendiente" }
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "title": "Familia y vínculos afectivos",
+      "subtitle": "Tiempo y atención para quienes te importan.",
+      "questions": [
+        {
+          "id": "vin-01",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia compartes tiempo significativo con personas importantes para ti?",
+          "skippable": false,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "Algunas veces al mes" },
+            { "value": 2, "label": "Algunas veces a la semana" },
+            { "value": 3, "label": "Casi todos los días" }
+          ],
+          "rationale": "Frecuencia de contacto significativo; no pregunta por estructura familiar.",
+          "evidence": { "reference": "Literatura sobre relaciones sociales y bienestar", "status": "pendiente" }
+        },
+        {
+          "id": "vin-02",
+          "type": "likert5",
+          "text": "Cuando lo necesito, cuento con apoyo de alguien.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Apoyo percibido; sensible, por eso omisible.",
+          "evidence": { "reference": "Apoyo social percibido (contexto)", "status": "pendiente" }
+        },
+        {
+          "id": "vin-03",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia das señales de cariño (mensajes, llamadas, gestos) a alguien cercano?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "A veces" },
+            { "value": 2, "label": "Con frecuencia" },
+            { "value": 3, "label": "Casi a diario" }
+          ],
+          "rationale": "Conducta expresiva accionable; nunca registra a quién (privacidad de terceros).",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "vin-04",
+          "type": "multi_choice",
+          "text": "¿Qué te dificulta conectar con personas importantes? Marca lo que apliqué.",
+          "skippable": true,
+          "countsTowardScore": false,
+          "options": [
+            { "value": "distance", "label": "La distancia" },
+            { "value": "time", "label": "Falta de tiempo" },
+            { "value": "energy", "label": "Falta de energía" },
+            { "value": "conflict", "label": "Desacuerdos o distanciamiento" },
+            { "value": "alone", "label": "A veces prefiero estar solo/a" },
+            { "value": "none", "label": "Nada en particular" }
+          ],
+          "skipIf": { "question": "vin-01", "in": [3] },
+          "rationale": "Barreras declaradas; se omite automáticamente si ya hay contacto diario (regla de ejemplo del mecanismo de ramificación).",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "vin-05",
+          "type": "likert5",
+          "text": "Mis vínculos cercanos me hacen bien.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Satisfacción con vínculos en positivo.",
+          "evidence": { "reference": "Literatura sobre relaciones sociales y bienestar", "status": "pendiente" }
+        }
+      ]
+    },
+    {
+      "id": "community",
+      "title": "Comunidad y pertenencia",
+      "subtitle": "Sentirte parte de algo, a tu ritmo.",
+      "questions": [
+        {
+          "id": "com-01",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia participas en actividades de grupos (clubes, talleres, reuniones, voluntariado)?",
+          "skippable": false,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "Algunas veces al año" },
+            { "value": 2, "label": "Algunas veces al mes" },
+            { "value": 3, "label": "Semanalmente o más" }
+          ],
+          "rationale": "Participación autopercibida; respeta introversión y ritmo propio.",
+          "evidence": { "reference": "Literatura sobre pertenencia y bienestar", "status": "pendiente" }
+        },
+        {
+          "id": "com-02",
+          "type": "likert5",
+          "text": "Siento que pertenezco a algún grupo o colectivo.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Pertenencia percibida; omisible por sensibilidad.",
+          "evidence": { "reference": "Pertenencia social (contexto)", "status": "pendiente" }
+        },
+        {
+          "id": "com-03",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia conversas o saludas a vecinos o compañeros de trabajo/estudio?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "A veces" },
+            { "value": 2, "label": "Con frecuencia" },
+            { "value": 3, "label": "Casi a diario" }
+          ],
+          "rationale": "Interacción comunitaria cotidiana de bajo umbral.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "com-04",
+          "type": "multi_choice",
+          "text": "¿Qué te acercaría a participar en una comunidad? Marca lo que te tinca.",
+          "skippable": true,
+          "countsTowardScore": false,
+          "options": [
+            { "value": "activities", "label": "Actividades recreativas" },
+            { "value": "sport", "label": "Deporte o movimiento" },
+            { "value": "volunteer", "label": "Voluntariado" },
+            { "value": "learning", "label": "Talleres y aprendizaje" },
+            { "value": "faith", "label": "Espacios de creencia o espiritualidad" },
+            { "value": "later", "label": "Por ahora nada, gracias" }
+          ],
+          "skipIf": { "question": "com-01", "in": [2, 3] },
+          "rationale": "Intereses declarados para sugerir pasos graduados; se omite si ya participa con frecuencia.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "com-05",
+          "type": "single_choice",
+          "text": "¿Qué tan dispuesto/a estarías a probar una actividad comunitaria pequeña este mes?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Prefiero no, gracias" },
+            { "value": 1, "label": "Tal vez, si es algo chico" },
+            { "value": 2, "label": "Sí, me tinca" },
+            { "value": 3, "label": "Sí, con ganas" }
+          ],
+          "rationale": "Disposición declarada; respeta un «no» sin insistencia.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        }
+      ]
+    },
+    {
+      "id": "nature",
+      "title": "Naturaleza y entorno",
+      "subtitle": "Contacto con lo verde y con tu entorno, sea ciudad o campo.",
+      "questions": [
+        {
+          "id": "ent-01",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia visitas espacios naturales (parques, playas, cerros, plazas arboladas)?",
+          "skippable": false,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "Algunas veces al mes" },
+            { "value": 2, "label": "Algunas veces a la semana" },
+            { "value": 3, "label": "Casi todos los días" }
+          ],
+          "rationale": "Frecuencia de contacto con naturaleza autopercibida; no exige áreas verdes grandes.",
+          "evidence": { "reference": "Literatura de naturaleza y bienestar", "status": "pendiente" }
+        },
+        {
+          "id": "ent-02",
+          "type": "likert5",
+          "text": "Mi entorno me facilita caminar o moverme (aceras, cercanía, seguridad).",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Entorno facilitador percibido; sensible por seguridad y recursos.",
+          "evidence": { "reference": "Entorno construido (contexto)", "status": "pendiente" }
+        },
+        {
+          "id": "ent-03",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia pasas un momento al aire libre o junto a una ventana durante el día?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "A veces" },
+            { "value": 2, "label": "Casi a diario" },
+            { "value": 3, "label": "Varias veces al día" }
+          ],
+          "rationale": "Micro-contacto accionable incluso sin salir de casa.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "ent-04",
+          "type": "multi_choice",
+          "text": "¿Qué te lo dificulta? Marca lo que apliqué.",
+          "skippable": true,
+          "countsTowardScore": false,
+          "options": [
+            { "value": "time", "label": "Falta de tiempo" },
+            { "value": "weather", "label": "Clima" },
+            { "value": "mobility", "label": "Movilidad reducida" },
+            { "value": "nogreen", "label": "No hay áreas verdes cerca" },
+            { "value": "safety", "label": "No me siento seguro/a" },
+            { "value": "none", "label": "Nada en particular" }
+          ],
+          "skipIf": { "question": "ent-01", "in": [3] },
+          "rationale": "Barreras ambientales declaradas; se omite si ya hay contacto diario.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "ent-05",
+          "type": "likert5",
+          "text": "Me detengo a notar mi entorno (cielo, calles, sonidos) aunque sea un instante.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Atención al entorno; microhábito de presencia sin requisitos de lugar.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        }
+      ]
+    },
+    {
+      "id": "purpose",
+      "title": "Propósito de vida",
+      "subtitle": "Conectar tus días con lo que te importa.",
+      "questions": [
+        {
+          "id": "pro-01",
+          "type": "likert5",
+          "text": "Tengo objetivos personales que me importan de verdad.",
+          "skippable": false,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Sentido de dirección declarado; no evalúa salud mental.",
+          "evidence": { "reference": "Propósito y bienestar (contexto)", "status": "pendiente" }
+        },
+        {
+          "id": "pro-02",
+          "type": "single_choice",
+          "text": "¿Con qué frecuencia haces algo que consideras significativo (crear, aprender, ayudar, cuidar)?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Casi nunca" },
+            { "value": 1, "label": "Algunas veces al mes" },
+            { "value": 2, "label": "Algunas veces a la semana" },
+            { "value": 3, "label": "Casi todos los días" }
+          ],
+          "rationale": "Frecuencia de actividades significativas autopercibidas.",
+          "evidence": { "reference": "Propósito y bienestar (contexto)", "status": "pendiente" }
+        },
+        {
+          "id": "pro-03",
+          "type": "likert5",
+          "text": "Lo que hago en el día conecta con lo que valoro.",
+          "skippable": true,
+          "likertAnchors": { "low": "No es así", "high": "Totalmente cierto" },
+          "rationale": "Alineación valores-conducta percibida.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "pro-04",
+          "type": "multi_choice",
+          "text": "¿Qué te aporta más sentido hoy? Marca lo que apliqué.",
+          "skippable": true,
+          "countsTowardScore": false,
+          "options": [
+            { "value": "family", "label": "Familia y personas cercanas" },
+            { "value": "work", "label": "Trabajo o estudios" },
+            { "value": "create", "label": "Crear o hacer cosas" },
+            { "value": "learn", "label": "Aprender" },
+            { "value": "help", "label": "Ayudar o cuidar" },
+            { "value": "nature", "label": "Naturaleza" },
+            { "value": "unknown", "label": "Aún no lo sé, y está bien" }
+          ],
+          "rationale": "Fuentes de sentido declaradas; incluye opción explícita de no saber, sin presión.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        },
+        {
+          "id": "pro-05",
+          "type": "single_choice",
+          "text": "¿Qué tan dispuesto/a estarías a dedicar 5 minutos hoy a algo que te importa?",
+          "skippable": true,
+          "options": [
+            { "value": 0, "label": "Ahora no" },
+            { "value": 1, "label": "Tal vez" },
+            { "value": 2, "label": "Sí" },
+            { "value": 3, "label": "Sí, con entusiasmo" }
+          ],
+          "rationale": "Disposición inmediata; conecta el perfil con el primer microhábito sugerido.",
+          "evidence": { "reference": "Diseño propio; sin evidencia externa reclamada", "status": "pendiente" }
+        }
+      ]
+    }
+  ]
+}
