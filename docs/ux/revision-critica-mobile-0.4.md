@@ -88,10 +88,10 @@ a Blu amable de verdad: **«esto me cuesta → probemos algo más pequeño»**.
 | Probar más pequeño + motivo + deshacer (BLU-1102) | ✅ ola A | A | `blu-core/adapt` |
 | «¿Por qué me lo sugiere?» + trazabilidad (BLU-1304) | ✅ ola A | A | «¿Por qué este paso?»; deny-by-default: sin registro de evidencia en el teléfono, nada se rotula como verificado |
 | Exportar datos / retirar consentimiento por propósito | ◐ ola A | A | «Mis datos»: qué se guarda + copia compartible (mismo formato 1.0.0 que la web). En móvil solo existe el propósito operativo: retirarlo equivale a «Borrar mis datos» |
-| Revisión semanal: «¿cómo te sentiste?» → mantener o ajustar (BLU-1202) | ❌ | B | El mejor «volver mañana» sin presión; `review.ts` usa localStorage, hay que moverlo a `blu-core` |
-| Otras versiones del catálogo de microhábitos | ❌ | B | `blu-core/habit-catalog` ya existe |
-| Recordatorio opt-in, máximo 1 al día (BLU-1502) | ❌ | B | Requiere `expo-notifications` y permiso: ADR antes |
-| «¿Te sirvió?» (BLU-1104) | ❌ | B | |
+| Revisión semanal: «¿cómo te sentiste?» → mantener o ajustar (BLU-1202) | ✅ ola B | B | Dominio en `blu-core/review`, compartido con la web; viernes a domingo, se puede saltar |
+| Otras versiones del catálogo de microhábitos | ✅ ola B | B | Dentro de «Se me hace difícil»: hasta 3 según el motivo |
+| Recordatorio opt-in, máximo 1 al día (BLU-1502) | ⏸ | B | ADR-0010 PROPUESTO: notificación local, sin push; espera firma |
+| «¿Te sirvió?» (BLU-1104) | — | C | La web tiene la lógica pero no la muestra; además requiere el consentimiento «mejora», que la app no ofrece. No es una pérdida |
 | Plan semanal con intenciones (BLU-1103) | ❌ | C | Riesgo de carga cognitiva: validar antes |
 | Cuestionario inicial + objetivos sugeridos + retrato | ❌ | C | En móvil puede ser una barrera de entrada: preferir progresivo |
 | Apodo | ❌ | C | |
@@ -112,10 +112,10 @@ almacenamiento como adaptador. Si no, la web y la app volverán a divergir.
 4. ✅ «Mis datos»: qué guarda Blu + compartir una copia.
 
 **B — Claridad de uso (volver sin presión).**
-1. Revisión semanal mínima: 1 pregunta y 2 decisiones, que se pueden saltar.
-2. Otras versiones del catálogo dentro de «Se me hace difícil».
-3. Recordatorio opt-in (ADR + permiso solo cuando la persona lo pida).
-4. Prueba de uso con 3 personas mayores, grabada y sin ayuda.
+1. ✅ Revisión semanal mínima: 1 pregunta y 2 decisiones, que se pueden saltar.
+2. ✅ Otras versiones del catálogo dentro de «Se me hace difícil».
+3. ⏸ Recordatorio opt-in: `docs/adr/0010-recordatorio-movil-opt-in.md` (PROPUESTO).
+4. ⏸ Prueba de uso con 3 personas mayores: guion listo en `docs/ux/prueba-uso-senior.md`; la ejecuta el equipo.
 
 **C — Belleza de marca.**
 1. 3 poses 3D nuevas (H4) y reacción al marcar (H7).
