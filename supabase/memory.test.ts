@@ -23,11 +23,11 @@ describe("conversation_memory — aislamiento y minimización", () => {
     expect(sql).toMatch(/create\s+policy\s+"no_delete"\s+on\s+conversation_memory\s+for\s+delete\s+using\s*\(\s*false\s*\)/i);
   });
 
-  it("lectura solo propia, vigente y no borrada", () => {
+  it("lectura solo propia; sin filtrar deleted_at (rompería el borrado lógico)", () => {
     const select = sql.match(/create\s+policy\s+"owner_select"\s+on\s+conversation_memory[\s\S]*?;/i)![0];
-    expect(select).toMatch(/owner_id\s*=\s*auth\.uid\(\)/);
-    expect(select).toMatch(/deleted_at\s+is\s+null/);
-    expect(select).toMatch(/expires_at\s*>\s*now\(\)/);
+    expect(select).toMatch(/using\s*\(\s*owner_id\s*=\s*auth\.uid\(\)\s*\)/);
+    expect(select).not.toMatch(/deleted_at/);
+    expect(sql).toMatch(/grant\s+select,\s*insert,\s*update\s+on\s+conversation_memory\s+to\s+authenticated/i);
     const insert = sql.match(/create\s+policy\s+"owner_insert"\s+on\s+conversation_memory[\s\S]*?;/i)![0];
     expect(insert).toMatch(/with\s+check\s*\(\s*owner_id\s*=\s*auth\.uid\(\)/);
   });
@@ -54,6 +54,10 @@ describe("conversation_memory — aislamiento y minimización", () => {
     expect(body("memory_purge")).toMatch(/deleted_at\s+is\s+not\s+null\s+or\s+expires_at\s*<=\s*now\(\)/i);
     expect(sql).toMatch(/revoke\s+execute\s+on\s+function\s+memory_purge\(\)\s+from\s+authenticated/i);
     expect(sql).toMatch(/grant\s+execute\s+on\s+function\s+memory_purge\(\)\s+to\s+service_role/i);
+  });
+
+  it("purga programada cada hora con pg_cron cuando existe", () => {
+    expect(sql).toMatch(/cron\.schedule\('blu-memory-purge',\s*'0 \* \* \* \*',\s*'select public\.memory_purge\(\)'\)/);
   });
 
   it("ARCO incluye la memoria en acceso y cancelación", () => {

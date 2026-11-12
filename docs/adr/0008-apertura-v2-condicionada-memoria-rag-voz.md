@@ -22,7 +22,7 @@ Este ADR propone abrir su **construcción** con el mismo patrón ya validado en 
 - Borrado verificable integrado al procedimiento ARCO (extensión de `erase.ts` + purga documentada, espejo de C5).
 - Ningún texto conversacional en logs, telemetría ni exportaciones de investigación.
 
-**Estado de construcción (2026-11-12):** implementada y apagada por configuración (`BLU_MEMORY_ENABLED`). Incluye la migración `0003_conversation_memory.sql` (RLS solo para la dueña; lo caducado o borrado no es visible; retención máxima de 30 días fijada por constraint; `memory_forget()` y `memory_purge()`; ARCO extendido), el cliente `src/lib/memory/` con borrado verificado, y en el chat web el interruptor opt-in y «Borrar conversaciones guardadas». Pruebas: `supabase/memory.test.ts` y `src/lib/memory/memory.test.ts`. La prueba en vivo contra Postgres sigue pendiente, junto con C5.
+**Estado de construcción (2026-11-12):** implementada y apagada por configuración (`BLU_MEMORY_ENABLED`). Incluye la migración `0003_conversation_memory.sql` (RLS solo para la dueña; la app excluye lo caducado o borrado y `pg_cron` lo purga cada hora; retención máxima de 30 días fijada por constraint; `memory_forget()` y `memory_purge()`; ARCO extendido), el cliente `src/lib/memory/` con borrado verificado, y en el chat web el interruptor opt-in y «Borrar conversaciones guardadas». Pruebas: `supabase/memory.test.ts` y `src/lib/memory/memory.test.ts`. Verificado en vivo sobre Postgres real (`supabase/rls-pglite.test.ts`, en CI): esa prueba encontró y corrigió tres defectos antes de activar. Faltaban los `grant`; además, filtrar `deleted_at` en la política de select hacía fallar `memory_forget()`, y con ella `arco_cancel()` también fallaba.
 
 ### D-2 · #58 — RAG solo sobre evidencia aprobada
 
@@ -38,9 +38,11 @@ Este ADR propone abrir su **construcción** con el mismo patrón ya validado en 
 - el BFF agrega la evidencia al prompt remoto, y lo que el guardián frena no sale hacia el proveedor de embeddings;
 - el set de 70 casos ejecutable en CI. La línea base léxica está en `docs/research/rag-eval-resultados.md`; **no firma D3**.
 
-Pendiente antes de activar:
-- un script de indexación con el rol reviewer;
-- la corrida D3 con el recuperador real y anotación independiente.
+Indexación: `npm run rag:index` (simulación por defecto; `--apply` escribe). Usa la sesión de una cuenta reviewer y solo indexa lo que es citable en el registro **y** está aprobado en la base.
+
+Verificación en vivo: `supabase/rls-pglite.test.ts` corre en CI sobre Postgres real (PGlite, con pgvector), sin Docker.
+
+Pendiente antes de activar: la corrida D3 con el recuperador real y anotación independiente.
 
 ### D-3 · #82 — Entrada por voz local (pospuesta)
 

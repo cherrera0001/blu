@@ -12,8 +12,11 @@ describe("evidence_embeddings — RAG solo aprobado", () => {
     expect(sql).toMatch(/alter\s+table\s+evidence_embeddings\s+enable\s+row\s+level\s+security/i);
   });
 
-  it("nadie lee la tabla directo: sin política de select", () => {
-    expect(sql).not.toMatch(/create\s+policy[^;]*on\s+evidence_embeddings\s+for\s+select/i);
+  it("solo reviewer lee la tabla directo (para re-indexar)", () => {
+    const selects = [...sql.matchAll(/create\s+policy[^;]*on\s+evidence_embeddings\s+for\s+select[^;]*;/gi)].map((m) => m[0]);
+    expect(selects).toHaveLength(1);
+    expect(selects[0]).toMatch(/to\s+reviewer\s+using\s*\(\s*true\s*\)/i);
+    expect(sql).not.toMatch(/grant\s+select[^;]*evidence_embeddings[^;]*to\s+(anon|authenticated)/i);
     expect(sql).toMatch(/create\s+policy\s+"no_delete"\s+on\s+evidence_embeddings\s+for\s+delete\s+using\s*\(\s*false\s*\)/i);
   });
 
