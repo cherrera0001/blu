@@ -9,7 +9,7 @@ on:
       tag_name:
         description: "Nombre del release (ej. v0.3.0)"
         required: true
-        default: "v0.6.0"
+        default: "v0.6.1"
 
 permissions:
   contents: write
@@ -136,6 +136,7 @@ jobs:
             - Chat y voz natural vía BFF (con aviso: no es servicio médico)
             - Borrado local de datos y pantalla «Mis datos»
             - Recordatorio amable opcional (local, máximo 1 al día, sin push)
+            - Botón «Volver» visible y botón atrás del teléfono funcionando; la pantalla respeta la barra de estado y la de navegación
             - Idiomas: español, English (US), português (Brasil e Portugal), 中文（简体）
             - `allowBackup=false`, sin cleartext
             - Gate MASTG: Vitest + Semgrep + aapt2/apksigner

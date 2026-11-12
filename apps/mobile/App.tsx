@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  SafeAreaView,
+  BackHandler,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+// El SafeAreaView de react-native no hace nada en Android, y Expo 54 dibuja de
+// borde a borde: sin esto, lo de arriba (p. ej. «Volver») queda bajo la barra
+// de estado y el campo del chat bajo la barra de navegación.
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 // Imports por peso: el índice del paquete arrastra todas las variantes (~40 TTF).
 import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold";
@@ -83,6 +87,23 @@ export default function App() {
     };
   }, []);
 
+  // Botón «atrás» del teléfono: vuelve a Hoy desde el chat o desde «Cambiar
+  // temas», en vez de cerrar la app sin aviso.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (screen === "chat") {
+        setScreen("today");
+        return true;
+      }
+      if (editing) {
+        setEditing(false);
+        return true;
+      }
+      return false;
+    });
+    return () => sub.remove();
+  }, [screen, editing]);
+
   const persist = useCallback(async (next: BluState) => {
     // Cualquier cambio (marcas, hora, apagado) reprograma o cancela el recordatorio.
     const withReminder = next.reminder ? await syncReminder(next, localeT(next)) : next;
@@ -94,12 +115,14 @@ export default function App() {
 
   if (!fontsLoaded || screen === "loading") {
     return (
+      <SafeAreaProvider>
       <SafeAreaView style={styles.safe}>
         <View style={styles.loading}>
           <ActivityIndicator color={colors.cta} size="large" />
           <Text style={styles.loadingText}>{t("Cargando Blu…")}</Text>
         </View>
       </SafeAreaView>
+      </SafeAreaProvider>
     );
   }
 
@@ -110,6 +133,7 @@ export default function App() {
     state.selectedHabitIds.length === 0;
 
   return (
+    <SafeAreaProvider>
     <I18nProvider locale={locale}>
     <ErrorBoundary>
       <SafeAreaView style={styles.safe}>
@@ -129,6 +153,7 @@ export default function App() {
           <OnboardingScreen
             state={state}
             naturalAvailable={naturalAvailable}
+            onCancel={editing ? () => setEditing(false) : undefined}
             onComplete={async (next) => {
               await persist(next);
               setEditing(false);
@@ -170,6 +195,7 @@ export default function App() {
       </SafeAreaView>
     </ErrorBoundary>
     </I18nProvider>
+    </SafeAreaProvider>
   );
 }
 

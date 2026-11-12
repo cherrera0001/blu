@@ -104,8 +104,13 @@ export function OptionsPanel({
                   : t("Inactivo: la voz natural envía el texto al servidor de Blu.")}
               </Text>
             </View>
-            <View style={[styles.switchTrack, deviceVoiceOnly && styles.switchTrackOn]}>
-              <View style={[styles.switchThumb, deviceVoiceOnly && styles.switchThumbOn]} />
+            <View style={styles.switchSide}>
+              <View style={[styles.switchTrack, deviceVoiceOnly && styles.switchTrackOn]}>
+                <View style={[styles.switchThumb, deviceVoiceOnly && styles.switchThumbOn]} />
+              </View>
+              <Text style={[styles.switchState, deviceVoiceOnly && styles.switchStateOn]}>
+                {deviceVoiceOnly ? t("Encendido") : t("Apagado")}
+              </Text>
             </View>
           </Pressable>
           <Pressable
@@ -122,8 +127,13 @@ export function OptionsPanel({
                 {t("Como máximo uno al día. Se programa en este teléfono; nada sale de él.")}
               </Text>
             </View>
-            <View style={[styles.switchTrack, reminderOn && styles.switchTrackOn]}>
-              <View style={[styles.switchThumb, reminderOn && styles.switchThumbOn]} />
+            <View style={styles.switchSide}>
+              <View style={[styles.switchTrack, reminderOn && styles.switchTrackOn]}>
+                <View style={[styles.switchThumb, reminderOn && styles.switchThumbOn]} />
+              </View>
+              <Text style={[styles.switchState, reminderOn && styles.switchStateOn]}>
+                {reminderOn ? t("Encendido") : t("Apagado")}
+              </Text>
             </View>
           </Pressable>
           {reminderDenied ? (
@@ -287,25 +297,43 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemi,
     color: colors.ink,
   },
+  switchSide: {
+    alignItems: "center",
+    gap: 4,
+  },
+  // Apagado = claro con borde; encendido = azul lleno. Antes ambos eran oscuros
+  // y no se distinguía el estado.
   switchTrack: {
-    width: 52,
-    height: 32,
-    borderRadius: 16,
+    width: 60,
+    height: 36,
+    borderRadius: 18,
     padding: 3,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.cardSolid,
+    borderWidth: 2,
+    borderColor: colors.muted,
     justifyContent: "center",
   },
   switchTrackOn: {
     backgroundColor: colors.cta,
+    borderColor: colors.ctaDeep,
   },
   switchThumb: {
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: colors.cardSolid,
+    backgroundColor: colors.muted,
+  },
+  switchState: {
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.bodyBold,
+    color: colors.muted,
+  },
+  switchStateOn: {
+    color: colors.ctaDeep,
   },
   switchThumbOn: {
     alignSelf: "flex-end",
+    backgroundColor: colors.cardSolid,
   },
   hint: {
     fontSize: typeScale.tiny,

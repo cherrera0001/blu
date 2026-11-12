@@ -10,6 +10,7 @@ import { acceptPurpose, emptyConsent, needsReconsent } from "blu-core/consent";
 import { OPERATIVE_NOTICE } from "../content/notice";
 import { readCompanion } from "blu-core/companion";
 import { ActionButton } from "../components/ActionButton";
+import { BackButton } from "../components/BackButton";
 import { BluCompanion } from "../components/BluCompanion";
 import { ScreenShell } from "../components/ScreenShell";
 import { SpeakButton } from "../components/SpeakButton";
@@ -22,12 +23,15 @@ export interface OnboardingScreenProps {
   state: BluState;
   naturalAvailable: boolean;
   onComplete: (next: BluState) => void;
+  /** Presente al cambiar temas desde Hoy: volver sin guardar cambios. */
+  onCancel?: () => void;
 }
 
 export function OnboardingScreen({
   state,
   naturalAvailable,
   onComplete,
+  onCancel,
 }: OnboardingScreenProps) {
   const { t } = useI18n();
   const [draft, setDraft] = useState<HabitId[]>(state.selectedHabitIds);
@@ -84,8 +88,12 @@ export function OnboardingScreen({
 
   return (
     <ScreenShell testID="onboarding-screen">
+      {onCancel ? (
+        <BackButton label={t("Volver sin cambiar")} onPress={onCancel} testID="onboarding-back" />
+      ) : null}
       <Text style={styles.brand}>Blu</Text>
-      <BluCompanion view={companion} size="lg" />
+      {/* md: los temas deben asomar en la primera pantalla, sin tener que adivinar que hay que bajar. */}
+      <BluCompanion view={companion} size="md" />
       <SpeakButton
         text={listenText}
         label={t("Escuchar a Blu")}
@@ -157,10 +165,18 @@ export function OnboardingScreen({
         </Text>
       ) : null}
 
+      {/* Nunca deshabilitado: un botón apagado no explica qué falta. Al tocarlo,
+          el mensaje de arriba dice qué hacer. */}
+      {!canContinue && !message ? (
+        <Text style={styles.pending} testID="continue-pending">
+          {draft.length === 0
+            ? t("Elige al menos un tema para continuar.")
+            : t("Marca el aviso para poder continuar.")}
+        </Text>
+      ) : null}
       <ActionButton
         label={t("Continuar con lo que elegí")}
         variant="primary"
-        disabled={!canContinue}
         onPress={onContinue}
         testID="continue-button"
       />
@@ -297,6 +313,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     color: colors.warn,
     lineHeight: 24,
+  },
+  pending: {
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.inkSoft,
+    lineHeight: 24,
+    textAlign: "center",
   },
   version: {
     marginTop: 16,
