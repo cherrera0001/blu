@@ -1,6 +1,6 @@
 # ADR-0008 — Apertura V2 condicionada: memoria consentida, RAG sobre evidencia aprobada y voz local
 
-**Estado:** PROPUESTO — pendiente de firma del dueño del producto. Mientras no se firme, este ADR no habilita construcción ni activación de nada.
+**Estado:** ACEPTADO (construcción) — firmado por el dueño del producto el 2026-11-12. Habilita **construir y probar con datos sintéticos** D-1 (#43) y D-2 (#58), apagados por configuración. La activación con datos reales sigue condicionada a D1–D3. D-3 (#82) queda pospuesto a post-piloto.
 **Fecha:** 2026-11-06
 **Relaciona:** PRD §8 (gate documental y enmiendas) · ADR-0005 (chat remoto) · ADR-0006 (apertura V1 por fases) · EIPD-V1 · EIPD-V2 (borrador, `docs/EIPD-V2-memoria-rag-voz.md`) · issues #43, #58, #82 · épicas #45 y #60
 
@@ -65,6 +65,6 @@ Regla dura: **sin D1–D3, nada de memoria ni RAG con datos reales.** El código
 
 ## Firmas
 
-- **Producto:** pendiente — la firma de esta línea abre la construcción de #43 y #58.
+- **Producto:** ✅ firmado 2026-11-12 (Cristobal Herrera, dueño del producto). Aprueba D-1 y D-2 para construcción y confirma D-3 pospuesto.
 - **Jurídica/EIPD-V2:** pendiente (D1).
 - **Revisor científico:** pendiente (D3, al ejecutar la evaluación de recuperación).
