@@ -46,7 +46,8 @@ try {
     "run", "-d", "--name", CONTAINER,
     "-e", "POSTGRES_PASSWORD=blu",
     "-p", `${PORT}:5432`,
-    "postgres:18-alpine",
+    // pgvector incluido: la migración 0004 (RAG) lo requiere.
+    "pgvector/pgvector:pg18",
   ]);
 
   let ready = false;
@@ -62,6 +63,12 @@ try {
   psql("postgres", bootstrap);
   psql("postgres", migration1);
   psql("postgres", migration2);
+  const migration3 = readFileSync(ROOT + "migrations/0003_conversation_memory.sql", "utf8");
+  const migration4 = readFileSync(ROOT + "migrations/0004_evidence_embeddings.sql", "utf8");
+  const applied3 = psql("postgres", migration3);
+  const applied4 = psql("postgres", migration4);
+  check("Migración 0003 (memoria) se aplica sin errores", !/ERROR:/.test(applied3), applied3.split("\n").find((l) => l.includes("ERROR")) ?? "");
+  check("Migración 0004 (RAG/pgvector) se aplica sin errores", !/ERROR:/.test(applied4), applied4.split("\n").find((l) => l.includes("ERROR")) ?? "");
 
   // --- Escenario: la cuenta A crea su contenido --------------------------------
   psql("blu_user_a",
@@ -167,6 +174,57 @@ try {
   const recentKept = psql("postgres",
     "select count(*) from habit_plans where owner_id = '11111111-1111-1111-1111-111111111111' and deleted_at is not null;");
   check("Cancelación reciente de A sobrevive a la purga", recentKept === "1", `count=${recentKept}`);
+
+  // --- Memoria conversacional (#43, migración 0003) ------------------------------
+  const memInsert = psql("blu_user_b", "insert into conversation_memory (role, body) values ('user', 'hola');", USER_B);
+  check("Memoria: B guarda sin enviar owner_id (lo fija auth.uid())", memInsert === "INSERT 0 1", memInsert);
+  const memOwner = psql("postgres", `select count(*) from conversation_memory where owner_id = '${USER_B}'`);
+  check("Memoria: la fila quedó a nombre de B", memOwner === "1", `count=${memOwner}`);
+  const memCross = psql("blu_user_a", "select count(*) from conversation_memory;", USER_A);
+  check("Memoria: A no ve la conversación de B (0 filas)", memCross === "0", `count=${memCross}`);
+  const memSteal = psql("blu_user_a",
+    `insert into conversation_memory (owner_id, role, body) values ('${USER_B}', 'user', 'x');`, USER_A);
+  check("Memoria: A no puede escribir a nombre de B (ERROR RLS)", /ERROR:.*row-level security/.test(memSteal), memSteal.split("\n")[0]);
+  const memLong = psql("blu_user_b",
+    "insert into conversation_memory (role, body, expires_at) values ('user', 'x', now() + interval '40 days');", USER_B);
+  check("Memoria: retención > 30 días rechazada por constraint", /ERROR:.*memory_retention_max_30d/.test(memLong), memLong.split("\n")[0]);
+  const memDelete = psql("blu_user_b", "delete from conversation_memory;", USER_B);
+  check("Memoria: borrado físico bloqueado para la dueña", /^(DELETE 0|ERROR:.*permission denied)/.test(memDelete), memDelete.split("\n")[0]);
+  const memForget = psql("blu_user_b", "select memory_forget();", USER_B);
+  check("Memoria: memory_forget() marca 1 fila (sin violar RLS)", memForget === "1", memForget.split("\n")[0]);
+  const memVisible = psql("blu_user_b", "select count(*) from conversation_memory where deleted_at is null;", USER_B);
+  check("Memoria: tras olvidar no queda nada vigente", memVisible === "0", `count=${memVisible}`);
+  psql("blu_user_b", "insert into conversation_memory (role, body) values ('assistant', 'otra');", USER_B);
+  const memAccess = psql("blu_user_b", "select jsonb_array_length(arco_access() -> 'conversation_memory');", USER_B);
+  check("Memoria: ARCO acceso incluye la memoria de B (2 filas)", memAccess === "2", `count=${memAccess}`);
+  const memCancel = psql("blu_user_b", "select count(*) from (select arco_cancel()) c;", USER_B);
+  check("Memoria: ARCO cancelación corre sin violar RLS", memCancel === "1", memCancel.split("\n")[0]);
+  const memPurgeUser = psql("blu_user_b", "select memory_purge();", USER_B);
+  check("Memoria: purga revocada para autenticadas", /ERROR:.*permission denied/.test(memPurgeUser), memPurgeUser.split("\n")[0]);
+  const memPurge = psql("blu_service", "select memory_purge();");
+  check("Memoria: purga de service_role elimina lo marcado (2 filas)", memPurge === "2", memPurge.split("\n")[0]);
+
+  // --- RAG sobre evidencia aprobada (#58, migración 0004) -----------------------
+  const vec = "(select array_fill(0.1::real, array[1536])::vector)";
+  psql("blu_reviewer", `insert into evidence_sources (source_ref, status) values ('doi:10.0000/aprobada', 'approved'), ('doi:10.0000/pendiente', 'pending');`);
+  const embIns = psql("blu_reviewer",
+    `insert into evidence_embeddings (source_id, registry_id, content, embedding)
+     select id, case when status = 'approved' then 'ev-2099-001' else 'ev-2099-002' end, 'texto', ${vec}
+     from evidence_sources where source_ref in ('doi:10.0000/aprobada', 'doi:10.0000/pendiente');`);
+  check("RAG: reviewer indexa vectores (INSERT 0 2)", embIns === "INSERT 0 2", embIns);
+  const embUser = psql("blu_user_a",
+    `insert into evidence_embeddings (source_id, registry_id, content, embedding)
+     select id, 'ev-2099-009', 'x', ${vec} from evidence_sources limit 1;`, USER_A);
+  check("RAG: usuaria autenticada NO indexa (ERROR)", /ERROR:/.test(embUser), embUser.split("\n")[0]);
+  const embRead = psql("blu_user_a", "select count(*) from evidence_embeddings;", USER_A);
+  check("RAG: la tabla no se lee directo (permission denied)", /ERROR:.*permission denied/.test(embRead), embRead.split("\n")[0]);
+  const matchAuth = psql("blu_user_a", `select string_agg(registry_id, ',') from match_evidence(${vec}, 0.5, 5);`, USER_A);
+  check("RAG: match_evidence devuelve solo la fuente aprobada", matchAuth === "ev-2099-001", matchAuth);
+  const matchAnon = psql("blu_anon", `select count(*) from match_evidence(${vec}, 0.1, 50);`);
+  check("RAG: anon (BFF) consulta; umbral y límite acotados por la base", matchAnon === "1", matchAnon);
+  psql("blu_reviewer", "update evidence_sources set status = 'rejected' where source_ref = 'doi:10.0000/aprobada';");
+  const matchAfter = psql("blu_anon", `select count(*) from match_evidence(${vec}, 0.5, 5);`);
+  check("RAG: una fuente que deja de estar aprobada deja de recuperarse", matchAfter === "0", matchAfter);
 
   const failed = results.filter((r) => !r.ok);
   console.log(`\n[rls-live-check] ${results.length - failed.length}/${results.length} casos en verde`);

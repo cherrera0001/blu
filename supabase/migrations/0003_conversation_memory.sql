@@ -5,7 +5,8 @@
 -- Reglas:
 --   1. Solo con consentimiento del propósito «memoria_conversacional» (lo aplica la app).
 --   2. Retención máxima 30 días, fijada en la base: expires_at no puede superar
---      created_at + 30 días, y lo caducado no se devuelve.
+--      created_at + 30 días. Lo caducado o borrado se elimina físicamente cada
+--      hora (pg_cron) y la app lo filtra al leer.
 --   3. Borrado verificable: memory_forget() marca todo lo de la dueña; la purga
 --      física (service_role) elimina lo marcado y lo caducado sin espera.
 --   4. Nada de esto se replica en logs, telemetría ni exportaciones de investigación.
@@ -25,9 +26,11 @@ create table conversation_memory (
 create index conversation_memory_owner_idx on conversation_memory (owner_id, created_at);
 
 alter table conversation_memory enable row level security;
--- Lo caducado o borrado no es visible ni para su dueña.
+-- La lectura es solo de la dueña. NO se filtra deleted_at aquí: Postgres exige
+-- que la fila nueva de un UPDATE siga visible por la política de select, y
+-- filtrar haría fallar memory_forget() y arco_cancel() (borrado lógico).
 create policy "owner_select" on conversation_memory for select
-  using (owner_id = auth.uid() and deleted_at is null and expires_at > now());
+  using (owner_id = auth.uid());
 create policy "owner_insert" on conversation_memory for insert
   with check (owner_id = auth.uid() and deleted_at is null);
 create policy "owner_update" on conversation_memory for update
@@ -72,6 +75,7 @@ begin
 end;
 $$;
 
+grant select, insert, update on conversation_memory to authenticated;
 grant execute on function memory_forget() to authenticated;
 revoke execute on function memory_purge() from public;
 revoke execute on function memory_purge() from authenticated;
@@ -128,3 +132,15 @@ begin
   return affected;
 end;
 $$;
+
+-- ---------------------------------------------------------------------------
+-- Purga programada cada hora donde exista pg_cron (Supabase). En un Postgres
+-- sin pg_cron se omite y la purga queda a cargo del operador (service_role).
+-- ---------------------------------------------------------------------------
+do $$
+begin
+  if exists (select from pg_available_extensions where name = 'pg_cron') then
+    create extension if not exists pg_cron;
+    perform cron.schedule('blu-memory-purge', '0 * * * *', 'select public.memory_purge()');
+  end if;
+end $$;

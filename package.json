@@ -15,16 +15,18 @@
     "sync:data": "node scripts/sync-blu-core-data.mjs",
     "eval:security": "vitest run src/lib/assistant/redteam.test.ts",
     "smoke:api": "node scripts/smoke-api.mjs",
-    "audit:gate": "node scripts/audit-gate.mjs"
+    "audit:gate": "node scripts/audit-gate.mjs",
+    "rag:index": "node scripts/rag-index.mjs"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",
+    "blu-core": "*",
     "next": "16.4.5",
     "react": "19.3.1",
-    "react-dom": "19.3.1",
-    "blu-core": "*"
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.16",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",
     "@types/node": "^26.6.6",

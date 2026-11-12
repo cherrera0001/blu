@@ -16,6 +16,9 @@ $$;
 -- Roles que el entorno Supabase ya provee o que usa Blu.
 do $$
 begin
+  if not exists (select from pg_roles where rolname = 'anon') then
+    create role anon nologin noinherit;
+  end if;
   if not exists (select from pg_roles where rolname = 'authenticated') then
     create role authenticated nologin noinherit;
   end if;
@@ -35,14 +38,18 @@ drop role if exists blu_user_a;
 drop role if exists blu_user_b;
 drop role if exists blu_reviewer;
 drop role if exists blu_service;
+drop role if exists blu_anon;
 create role blu_user_a login password 'blu' inherit;
 create role blu_user_b login password 'blu' inherit;
 create role blu_reviewer login password 'blu' inherit;
 create role blu_service login password 'blu' inherit;
+create role blu_anon login password 'blu' inherit;
 grant authenticated to blu_user_a;
 grant authenticated to blu_user_b;
 grant reviewer to blu_reviewer;
 grant service_role to blu_service;
+grant anon to blu_anon;
+grant usage on schema public to anon;
 
 -- Identidades semilla (las dos cuentas del DoR de BLU-104).
 insert into auth.users (id) values

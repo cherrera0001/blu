@@ -40,7 +40,9 @@ export function createMemoryStore(
   async function readAll(): Promise<MemoryMessage[] | null> {
     try {
       const res = await fetchImpl(
-        `${table}?select=role,body&order=created_at.desc&limit=${MEMORY_MAX_MESSAGES}`,
+        // Lo borrado o caducado se excluye aquí; la purga horaria lo elimina físicamente.
+        `${table}?select=role,body&deleted_at=is.null&expires_at=gt.${encodeURIComponent(new Date().toISOString())}` +
+          `&order=created_at.desc&limit=${MEMORY_MAX_MESSAGES}`,
         { method: "GET", headers },
       );
       if (!res.ok) return null;

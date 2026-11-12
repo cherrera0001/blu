@@ -6,9 +6,10 @@
 --   1. Indexar solo fuentes aprobadas: la RPC vuelve a filtrar por estado
 --      aprobado al buscar (si una fuente se retira, deja de recuperarse aunque
 --      su vector siga ahí).
---   2. La tabla no se lee directo: solo vía match_evidence (security definer,
---      search_path fijo, límite de resultados).
---   3. Escritura solo del rol reviewer, como evidence_sources.
+--   2. Las usuarias no leen la tabla directo: solo vía match_evidence (security
+--      definer, search_path fijo, límite de resultados).
+--   3. Lectura y escritura solo del rol reviewer (re-indexar exige SELECT:
+--      UPDATE ... WHERE y upsert lo necesitan).
 
 create extension if not exists vector;
 
@@ -23,11 +24,12 @@ create table evidence_embeddings (
 create index evidence_embeddings_hnsw on evidence_embeddings using hnsw (embedding vector_cosine_ops);
 
 alter table evidence_embeddings enable row level security;
--- Sin política de select: nadie lee la tabla directo.
+-- Select solo para reviewer (re-indexar); autenticadas y anon no leen directo.
+create policy "reviewer_select" on evidence_embeddings for select to reviewer using (true);
 create policy "reviewer_insert" on evidence_embeddings for insert to reviewer with check (true);
 create policy "reviewer_update" on evidence_embeddings for update to reviewer using (true) with check (true);
 create policy "no_delete" on evidence_embeddings for delete using (false);
-grant insert, update on evidence_embeddings to reviewer;
+grant select, insert, update on evidence_embeddings to reviewer;
 
 create or replace function match_evidence(query_embedding vector(1536), match_threshold float, match_count integer)
 returns table (registry_id text, similarity float)

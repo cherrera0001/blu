@@ -66,6 +66,7 @@ describe("memoria conversacional — store", () => {
       { role: "assistant", body: "dos" },
     ]);
     expect(calls[0].url).toContain("order=created_at.desc&limit=40");
+    expect(calls[0].url).toContain("deleted_at=is.null&expires_at=gt.");
   });
 
   it("olvidar se verifica con una lectura nueva vacía", async () => {
