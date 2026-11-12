@@ -29,9 +29,5 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     environment: "jsdom",
-    environmentMatchGlobs: [
-      ["apps/mobile/**", "node"],
-      ["packages/**", "node"],
-    ],
   },
 });

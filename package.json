@@ -14,7 +14,8 @@
     "mobile": "npm run start -w blu-mobile",
     "sync:data": "node scripts/sync-blu-core-data.mjs",
     "eval:security": "vitest run src/lib/assistant/redteam.test.ts",
-    "smoke:api": "node scripts/smoke-api.mjs"
+    "smoke:api": "node scripts/smoke-api.mjs",
+    "audit:gate": "node scripts/audit-gate.mjs"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",
@@ -45,5 +46,10 @@
   ],
   "allowScripts": {
     "esbuild@0.28.2": true
+  },
+  "overrides": {
+    "@expo/metro-config": {
+      "postcss": "^8.5.23"
+    }
   }
 }
