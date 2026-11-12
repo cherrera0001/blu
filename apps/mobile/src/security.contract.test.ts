@@ -169,10 +169,12 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
 function sourceFilesForReminder(): [string, string][] {
   const out: [string, string][] = [];
   const walk = (dir: string) => {
-    for (const name of readdirSync(dir)) {
-      const path = join(dir, name);
-      if (statSync(path).isDirectory()) walk(path);
-      else if (/\.tsx?$/.test(name) && !/\.test\./.test(name)) out.push([path, readFileSync(path, "utf8")]);
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (/\.tsx?$/.test(entry.name) && !/\.test\./.test(entry.name)) {
+        out.push([path, readFileSync(path, "utf8")]);
+      }
     }
   };
   walk(join(mobileRoot, "src"));
