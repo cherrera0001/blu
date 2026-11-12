@@ -24,6 +24,10 @@ Tablas V1: `profiles`, `consent_records`, `habit_plans`, `check_ins`, `adaptatio
 `reviews`, `goal_decisions`, `evidence_sources` (esta última de solo lectura para usuarios;
 escritura solo de revisores).
 
+Tablas V2: `conversation_memory` (ADR-0008 D-1, #43; owner-only con políticas más estrictas:
+lo caducado o borrado no es visible, retención máxima de 30 días fijada por constraint,
+olvido con `memory_forget()` y purga administrativa; apagada por configuración).
+
 ## Políticas RLS (bosquejo ejecutable)
 
 ```sql

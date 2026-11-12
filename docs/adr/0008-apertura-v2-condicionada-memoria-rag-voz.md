@@ -22,6 +22,8 @@ Este ADR propone abrir su **construcción** con el mismo patrón ya validado en 
 - Borrado verificable integrado al procedimiento ARCO (extensión de `erase.ts` + purga documentada, espejo de C5).
 - Ningún texto conversacional en logs, telemetría ni exportaciones de investigación.
 
+**Estado de construcción (2026-11-12):** implementada y apagada por configuración (`BLU_MEMORY_ENABLED`). Incluye la migración `0003_conversation_memory.sql` (RLS solo para la dueña; lo caducado o borrado no es visible; retención máxima de 30 días fijada por constraint; `memory_forget()` y `memory_purge()`; ARCO extendido), el cliente `src/lib/memory/` con borrado verificado, y en el chat web el interruptor opt-in y «Borrar conversaciones guardadas». Pruebas: `supabase/memory.test.ts` y `src/lib/memory/memory.test.ts`. La prueba en vivo contra Postgres sigue pendiente, junto con C5.
+
 ### D-2 · #58 — RAG solo sobre evidencia aprobada
 
 - Infraestructura: **pgvector sobre la misma instancia Postgres gestionada (Supabase) de V1**. No introduce proveedor nuevo ni superficie contractual adicional a C2.

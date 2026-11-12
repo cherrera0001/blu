@@ -40,6 +40,12 @@ function migrationSql(): string {
   return files.map((f) => readFileSync(migrationsDir + f, "utf8")).join("\n");
 }
 
+/** Tablas V2 (ADR-0008): párrafo "Tablas V2:" de specs/009; tienen su propio test. */
+function specV2Tables(): string[] {
+  const line = specText.split("\n").find((l) => l.startsWith("Tablas V2:")) ?? "";
+  return [...line.matchAll(/`([a-z_]+)`/g)].map((m) => m[1]).filter((n) => !n.includes("memory_forget"));
+}
+
 /** DDL completo de una tabla (desde `create table` hasta el `;` que cierra). */
 function tableDdl(sql: string, table: string): string {
   const start = sql.search(new RegExp(`create\\s+table\\s+${table}\\s*\\(`, "i"));
@@ -54,7 +60,7 @@ describe("migraciones V1 — catálogo de tablas (specs/009)", () => {
 
   it("crea exactamente las tablas del catálogo canónico, sin extras", () => {
     const created = [...sql.matchAll(/create\s+table\s+([a-z_]+)\s*\(/gi)].map((m) => m[1]);
-    expect(created.sort()).toEqual([...personal, ...catalog].sort());
+    expect(created.sort()).toEqual([...personal, ...catalog, ...specV2Tables()].sort());
   });
 
   it("los archivos siguen la convención de nombre numerado", () => {

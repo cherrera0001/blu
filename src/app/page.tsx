@@ -1,4 +1,6 @@
 import BluApp from "./BluApp";
+import { getMemoryConfig } from "@/lib/memory/policy";
+import { getV1Config } from "@/lib/v1/config";
 import { SkipLink } from "./SkipLink";
 
 export default function Page() {
@@ -6,7 +8,7 @@ export default function Page() {
     <>
       <SkipLink />
       <main id="contenido-principal">
-        <BluApp />
+        <BluApp memory={getMemoryConfig(getV1Config())} />
       </main>
     </>
   );

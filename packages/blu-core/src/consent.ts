@@ -4,7 +4,8 @@
  */
 export const CONSENT_VERSION = "2.2.0";
 
-export type PurposeId = "operativo" | "mejora" | "investigacion";
+/** memoria_conversacional: opcional, solo con cuenta V1 y memoria activada (ADR-0008 D-1). */
+export type PurposeId = "operativo" | "mejora" | "investigacion" | "memoria_conversacional";
 
 export interface PurposeAcceptance {
   acceptedAt: string;
@@ -61,7 +62,7 @@ export function isConsentState(value: unknown): value is ConsentState {
   if (typeof v.purposes !== "object" || v.purposes === null || Array.isArray(v.purposes)) return false;
   const purposes = v.purposes as Record<string, unknown>;
   for (const [key, acceptance] of Object.entries(purposes)) {
-    if (key !== "operativo" && key !== "mejora" && key !== "investigacion") return false;
+    if (key !== "operativo" && key !== "mejora" && key !== "investigacion" && key !== "memoria_conversacional") return false;
     if (typeof acceptance !== "object" || acceptance === null) return false;
     if (typeof (acceptance as Record<string, unknown>).acceptedAt !== "string") return false;
   }

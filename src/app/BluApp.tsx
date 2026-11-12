@@ -96,6 +96,9 @@ import {
   updateBluState,
 } from "@/lib/storage";
 
+import { MEMORY_PURPOSE, type MemoryConfig } from "@/lib/memory/policy";
+import { useConversationMemory } from "./useConversationMemory";
+
 type ChatMessage = { role: "blu" | "you"; text: string };
 
 let reminderSnapshotCache: {
@@ -125,13 +128,13 @@ function getReminderSnapshot(version: number) {
   return reminderSnapshotCache;
 }
 
-export default function Home() {
+export default function Home({ memory: memoryConfig = null }: { memory?: MemoryConfig | null } = {}) {
   const snapshot = useSyncExternalStore(subscribeToBlu, getBluSnapshot, getServerBluSnapshot);
   const clockMinute = useSyncExternalStore(subscribeToClock, getClockSnapshot, getServerClockSnapshot);
   const locale = useSyncExternalStore(subscribeLocale, getLocale, () => "es" as Locale);
   const portrait = useSyncExternalStore(subscribePortrait, getPortraitSnapshot, getServerPortraitSnapshot);
   const state = snapshot.state;
-  const [purposeDraft, setPurposeDraft] = useState<Record<PurposeId, boolean>>({
+  const [purposeDraft, setPurposeDraft] = useState<Record<FormPurposeId, boolean>>({
     operativo: false,
     mejora: false,
     investigacion: false,
@@ -258,6 +261,51 @@ export default function Home() {
     }
   }, [locale, screenSpeech, azureVoiceEnabled, naturalVoiceReady]);
   const refined = refinePortrait(portrait, state, today);
+  const memory = useConversationMemory(memoryConfig, state.consent);
+  const [memoryNotice, setMemoryNotice] = useState("");
+
+  // Conversación recordada (opt-in): se antepone mientras la sesión no tenga mensajes propios.
+  function withRestored(messages: ChatMessage[]): ChatMessage[] {
+    const restored = memory.restored;
+    if (!restored || restored.length === 0 || messages.length > 1) return messages;
+    return [
+      ...messages,
+      ...restored.map((m): ChatMessage => ({ role: m.role === "user" ? "you" : "blu", text: m.body })),
+    ].slice(-40);
+  }
+  const shownChatMessages = withRestored(chatMessages);
+
+  async function toggleMemory(enable: boolean) {
+    const now = new Date().toISOString();
+    if (enable) {
+      updateBluState((current) => ({ ...current, consent: acceptPurpose(current.consent, MEMORY_PURPOSE, now) }));
+      setMemoryNotice(translate(locale, "Blu recordará esta conversación durante 30 días. Puedes borrarla cuando quieras."));
+      return;
+    }
+    // Retirar el consentimiento borra lo guardado y verifica que no quede nada.
+    const result = await memory.forget();
+    updateBluState((current) => ({ ...current, consent: withdrawPurpose(current.consent, MEMORY_PURPOSE, now) }));
+    setMemoryNotice(
+      translate(
+        locale,
+        result.verified
+          ? "Borré las conversaciones guardadas. Comprobé que no queda ninguna."
+          : "No pude confirmar el borrado. Inténtalo de nuevo con conexión.",
+      ),
+    );
+  }
+
+  async function forgetMemory() {
+    const result = await memory.forget();
+    setMemoryNotice(
+      translate(
+        locale,
+        result.verified
+          ? "Borré las conversaciones guardadas. Comprobé que no queda ninguna."
+          : "No pude confirmar el borrado. Inténtalo de nuevo con conexión.",
+      ),
+    );
+  }
   const consentReady = hasPurpose(state.consent, "operativo") && !needsReconsent(state.consent);
   const showConsentEditor = !consentReady || managingConsent;
 
@@ -270,7 +318,7 @@ export default function Home() {
       if (purposeDraft.mejora) consent = acceptPurpose(consent, "mejora", now);
       if (purposeDraft.investigacion) consent = acceptPurpose(consent, "investigacion", now);
     } else {
-      for (const purpose of ["mejora", "investigacion"] as PurposeId[]) {
+      for (const purpose of ["mejora", "investigacion"] as FormPurposeId[]) {
         if (hasPurpose(consent, purpose) && !purposeDraft[purpose]) {
           consent = withdrawPurpose(consent, purpose, now);
         }
@@ -638,8 +686,12 @@ export default function Home() {
     const userMessage: ChatMessage = { role: "you", text };
     const bluMessage: ChatMessage = { role: "blu", text: result.text };
     setChatMessages((messages) =>
-      [...messages, userMessage, bluMessage].slice(-40),
+      [...withRestored(messages), userMessage, bluMessage].slice(-40),
     );
+    memory.append([
+      { role: "user", body: text },
+      { role: "assistant", body: result.text },
+    ]);
     setChatInput("");
   }
 
@@ -652,6 +704,8 @@ export default function Home() {
     ) {
       return;
     }
+    // Si hay memoria en el servidor, «borrar todo» también la olvida.
+    if (memory.available) void memory.forget();
     const erased = eraseAllLocalData();
     if (erased.ok) {
       setEditingSelection(false);
@@ -1528,13 +1582,13 @@ export default function Home() {
               {azureVoiceNotice && <p className="chat-voice-status" role="status">{azureVoiceNotice}</p>}
             </details>
             <div aria-live="polite" className="chat-messages" role="log">
-              {chatMessages.map((message, index) => (
+              {shownChatMessages.map((message, index) => (
                 <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
                   {message.role === "blu" && (
                     <BluPresence
                       pose="companion"
                       size="sm"
-                      state={index === chatMessages.length - 1 ? chatPresence : "idle"}
+                      state={index === shownChatMessages.length - 1 ? chatPresence : "idle"}
                     />
                   )}
                   <div className="chat-bubble-body">
@@ -1567,6 +1621,30 @@ export default function Home() {
               </button>
             </form>
             <p className="chat-privacy">{translate(locale, "No incluyas datos personales ni información médica.")}</p>
+            {memory.available ? (
+              <div className="chat-memory" data-testid="chat-memory">
+                <label className="chat-voice-control">
+                  <input
+                    checked={memory.active}
+                    onChange={(event) => void toggleMemory(event.target.checked)}
+                    type="checkbox"
+                  />{" "}
+                  {translate(locale, "Recordar nuestras conversaciones durante 30 días (opcional)")}
+                </label>
+                <p className="chat-voice-hint">
+                  {translate(
+                    locale,
+                    "Se guardan en tu cuenta, solo para ti. No se usan para investigación ni aparecen en registros. Si lo desactivas, se borran.",
+                  )}
+                </p>
+                {memory.active ? (
+                  <button className="secondary" onClick={() => void forgetMemory()} type="button">
+                    {translate(locale, "Borrar conversaciones guardadas")}
+                  </button>
+                ) : null}
+                {memoryNotice ? <p role="status">{memoryNotice}</p> : null}
+              </div>
+            ) : null}
             <section className="principle-card" aria-label={translate(locale, "Una idea para acompañarte")}>
               <span className="eyebrow">{translate(locale, "UNA IDEA PARA HOY")}</span>
               <p>
@@ -1650,7 +1728,10 @@ function getServerClockSnapshot(): number {
   return 0;
 }
 
-const PURPOSES: Array<{ id: PurposeId; label: string }> = [
+/** Propósitos del formulario de consentimiento; la memoria se ofrece aparte, en el chat. */
+type FormPurposeId = Exclude<PurposeId, "memoria_conversacional">;
+
+const PURPOSES: Array<{ id: FormPurposeId; label: string }> = [
   {
     id: "operativo",
     label:

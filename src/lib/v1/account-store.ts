@@ -104,6 +104,15 @@ function mapAuthError(status: number, body: unknown, context: "signin" | "signup
   return "red_no_disponible";
 }
 
+/** Token de acceso vigente (para la memoria, #43); null si no hay sesión o caducó. */
+export function currentAccessToken(now = Date.now()): string | null {
+  if (typeof window === "undefined") return null;
+  const session = readStoredSession();
+  if (!session) return null;
+  if (session.expiresAt !== undefined && session.expiresAt <= now) return null;
+  return session.accessToken;
+}
+
 export function createAccountStore(config: V1Config | null): AccountStore {
   if (!config) {
     const disabled: AccountResult = { ok: false, error: "no_configurado" };
