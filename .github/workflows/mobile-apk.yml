@@ -30,8 +30,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          # RN/Expo codegen es más estable en Node 20 LTS que en 24.
-          node-version: 20
+          # Node 22 LTS: undici 8 (vía jsdom) exige >=22.19 (zlib zstd) y RN 0.81/Expo 54
+          # lo soportan. Con Node 20 el gate MASTG de v0.4.3 no pudo arrancar los tests.
+          node-version: 22
           cache: npm
 
       - name: Setup Java
