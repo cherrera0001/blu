@@ -39,7 +39,7 @@ jobs:
         run: npm run eval:security
 
       - name: Auditoría de dependencias
-        run: npm audit --audit-level=high
+        run: npm run audit:gate
 
       - name: Build de producción
         run: npm run build

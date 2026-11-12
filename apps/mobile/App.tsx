@@ -7,8 +7,17 @@ import {
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
+// Imports por peso: el índice del paquete arrastra todas las variantes (~40 TTF).
+import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold";
+import { Fraunces_700Bold } from "@expo-google-fonts/fraunces/700Bold";
+import { Nunito_500Medium } from "@expo-google-fonts/nunito/500Medium";
+import { Nunito_600SemiBold } from "@expo-google-fonts/nunito/600SemiBold";
+import { Nunito_700Bold } from "@expo-google-fonts/nunito/700Bold";
 import { createInitialState, type BluState } from "blu-core/blu";
 import { ErrorBoundary } from "./src/ErrorBoundary";
+import { BLU_HERMES_HARDENED } from "./src/polyfill";
+import { ChatScreen } from "./src/screens/ChatScreen";
 import { OnboardingScreen } from "./src/screens/OnboardingScreen";
 import { TodayScreen } from "./src/screens/TodayScreen";
 import {
@@ -16,14 +25,28 @@ import {
   loadBluSnapshot,
   saveBluState,
 } from "./src/storage";
+import { colors } from "./src/theme";
 
-type Screen = "loading" | "onboarding" | "today";
+// Ancla el polyfill Hermes en el grafo de módulos de la UI.
+void BLU_HERMES_HARDENED;
+
+type Screen = "loading" | "onboarding" | "today" | "chat";
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Fraunces_600SemiBold,
+    Fraunces_700Bold,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
   const [screen, setScreen] = useState<Screen>("loading");
   const [state, setState] = useState<BluState>(createInitialState());
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
+  // ElevenLabs vía BFF de producción salvo que la persona elija solo voz del teléfono.
+  // No sondear en el arranque (evita crash Hermes/fetch).
+  const naturalAvailable = state.voicePreference !== "device";
 
   useEffect(() => {
     let cancelled = false;
@@ -49,11 +72,11 @@ export default function App() {
     return snapshot;
   }, []);
 
-  if (screen === "loading") {
+  if (!fontsLoaded || screen === "loading") {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.loading}>
-          <ActivityIndicator color="#1B3A4B" size="large" />
+          <ActivityIndicator color={colors.cta} size="large" />
           <Text style={styles.loadingText}>Cargando Blu…</Text>
         </View>
       </SafeAreaView>
@@ -75,9 +98,16 @@ export default function App() {
             {error}
           </Text>
         ) : null}
-        {showOnboarding ? (
+        {screen === "chat" && !showOnboarding ? (
+          <ChatScreen
+            state={state}
+            naturalAvailable={naturalAvailable}
+            onBack={() => setScreen("today")}
+          />
+        ) : showOnboarding ? (
           <OnboardingScreen
             state={state}
+            naturalAvailable={naturalAvailable}
             onComplete={async (next) => {
               await persist(next);
               setEditing(false);
@@ -87,6 +117,7 @@ export default function App() {
         ) : (
           <TodayScreen
             state={state}
+            naturalAvailable={naturalAvailable}
             onChange={async (next) => {
               await persist(next);
             }}
@@ -98,6 +129,7 @@ export default function App() {
               setScreen("onboarding");
             }}
             onEditSelection={() => setEditing(true)}
+            onOpenChat={() => setScreen("chat")}
           />
         )}
       </SafeAreaView>
@@ -108,7 +140,7 @@ export default function App() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#F4F7FB",
+    backgroundColor: colors.bgMid,
   },
   loading: {
     flex: 1,
@@ -118,7 +150,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 18,
-    color: "#334E5C",
+    color: colors.inkSoft,
   },
   error: {
     marginHorizontal: 24,
@@ -126,7 +158,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     backgroundColor: "#F8E8E8",
-    color: "#8B2E2E",
+    color: colors.danger,
     fontSize: 15,
   },
 });

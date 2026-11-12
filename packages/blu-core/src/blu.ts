@@ -1,4 +1,5 @@
 import { emptyConsent, isConsentState, migrateLegacy, type ConsentState } from "./consent";
+import { decodeReview, MAX_REVIEWS, type WeeklyReview } from "./review";
 
 export const HABITS = [
   {
@@ -73,12 +74,19 @@ export interface Adaptation {
   at: string;
 }
 
+/** «device»: solo voz local del teléfono; ningún texto sale hacia /api/voice. */
+export type VoicePreference = "natural" | "device";
+
 export interface BluState {
   consentAcceptedAt: string | null;
   consent: ConsentState;
   selectedHabitIds: HabitId[];
   checkInsByDate: Record<string, HabitId[]>;
   adaptations: Adaptation[];
+  /** Opcional: ausente = voz natural por defecto (specs/026). */
+  voicePreference?: VoicePreference;
+  /** Opcional (móvil): revisiones semanales; la web las guarda aparte (blu.review.v1). */
+  weeklyReviews?: WeeklyReview[];
 }
 
 export interface WeeklySummary {
@@ -161,13 +169,28 @@ export function decodeState(raw: string | null): BluState {
     };
   });
 
+  const voice = value.voicePreference;
+  const reviews = decodeReviewsLenient(value.weeklyReviews);
   return {
     consentAcceptedAt: consent,
     consent: resolveConsent(value.consent, consent),
     selectedHabitIds: [...selected],
     checkInsByDate: parsedCheckIns,
     adaptations: parsedAdaptations,
+    // Valores desconocidos se ignoran: una preferencia nunca invalida los datos.
+    ...(voice === "natural" || voice === "device" ? { voicePreference: voice } : {}),
+    ...(reviews ? { weeklyReviews: reviews } : {}),
   };
+}
+
+/** Una revisión dañada nunca invalida los hábitos: se descarta el bloque completo. */
+function decodeReviewsLenient(raw: unknown): WeeklyReview[] | null {
+  if (!Array.isArray(raw)) return null;
+  try {
+    return raw.slice(0, MAX_REVIEWS).map(decodeReview);
+  } catch {
+    return null;
+  }
 }
 
 function resolveConsent(raw: unknown, consentAcceptedAt: string | null): ConsentState {

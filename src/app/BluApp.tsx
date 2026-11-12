@@ -1654,7 +1654,7 @@ const PURPOSES: Array<{ id: PurposeId; label: string }> = [
   {
     id: "operativo",
     label:
-      "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. (requerido)",
+      "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. Si uso el chat o la voz natural, ese texto pasa por el servidor de Blu y no se guarda. (requerido)",
   },
   {
     id: "mejora",

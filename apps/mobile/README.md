@@ -1,4 +1,4 @@
-# Blu Mobile (Expo) — v0.3.1
+# Blu Mobile (Expo) — v0.4.3
 
 Shell Expo según ADR-0009, `specs/021-mobile-shell-v1` y endurecimiento `specs/022-mobile-mastg-tdd`.
 
@@ -32,13 +32,13 @@ Cubre: 7 temas / máx 4, persistencia local, borrado, contratos MASVS (sin DOM/f
 
 ```bash
 # tras descargar el APK (con Android SDK en PATH)
-npm run mastg:apk -- blu-android-0.3.1.apk
+npm run mastg:apk -- blu-android-0.4.3.apk
 ```
 
 ### 3. Humo en dispositivo
 
 ```bash
-adb install -r blu-android-0.3.1.apk
+adb install -r blu-android-0.4.3.apk
 maestro test apps/mobile/maestro/smoke-onboarding.yaml
 ```
 
@@ -54,5 +54,6 @@ npm run test:mobile
 ## Notas de producto
 
 - Local-first: datos en AsyncStorage (`blu.local.v1`), sin cuentas.
-- Preview firmada en debug; no es firma Play Store.
-- Chat/voz: specs 025/026.
+- Preview: APK **release** firmado con keystore de debug (embebe JS; sin Metro). No es firma Play Store.
+- En v0.4.0+: diseño de marca (Fraunces/Nunito + atmósfera), avatar animado / poses oficiales, historial 7 días, educación por hábito, **Escuchar** (voz natural ElevenLabs vía BFF + respaldo local), chat móvil contra `/api/assistant` con origen de cada respuesta (specs/025), y opción «Usar solo la voz del teléfono» (specs/026).
+- Chat y voz natural: `specs/025-mobile-chat-bff` y `specs/026-mobile-voice-natural`. Avisos en contexto: el texto va al servidor de Blu y no se guarda.

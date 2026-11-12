@@ -2,7 +2,7 @@
   "expo": {
     "name": "Blu",
     "slug": "blu",
-    "version": "0.3.1",
+    "version": "0.4.3",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
@@ -10,27 +10,35 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#F4F7FB"
+      "backgroundColor": "#D4ECFC"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "cl.blu.app",
-      "buildNumber": "4"
+      "buildNumber": "9"
     },
     "android": {
       "package": "cl.blu.app",
-      "versionCode": 4,
+      "versionCode": 9,
       "allowBackup": false,
       "usesCleartextTraffic": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#F4F7FB"
+        "backgroundColor": "#D4ECFC"
       },
       "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": []
+    "plugins": [
+      "expo-font",
+      [
+        "expo-av",
+        {
+          "microphonePermission": false
+        }
+      ]
+    ]
   }
 }

@@ -302,9 +302,9 @@ const DICTIONARY: Record<string, Partial<Record<Exclude<Locale, "es">, string>>>
     "en-US": "Blu is a wellbeing prototype: it accompanies habits. It does not diagnose or treat.",
     "zh-CN": "Blu 是一个健康习惯原型：它陪伴习惯，不诊断，也不治疗。",
   },
-  "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. (requerido)": {
-    "en-US": "I understand this is a prototype. I keep my habits and records only in this browser, without encryption or sync, and I can delete them from Blu. (required)",
-    "zh-CN": "我明白这是一个原型。我的习惯和记录只保存在这个浏览器里，没有加密，也不会同步，而且我可以在 Blu 里删除它们。（必选）",
+  "Entiendo que esto es un prototipo. Guardo mis hábitos y registros solo en este navegador, sin cifrado ni sincronización, y puedo borrarlos desde Blu. Si uso el chat o la voz natural, ese texto pasa por el servidor de Blu y no se guarda. (requerido)": {
+    "en-US": "I understand this is a prototype. I keep my habits and records only in this browser, without encryption or sync, and I can delete them from Blu. If I use the chat or the natural voice, that text goes through Blu's server and is not stored. (required)",
+    "zh-CN": "我明白这是一个原型。我的习惯和记录只保存在这个浏览器里，没有加密，也不会同步，而且我可以在 Blu 里删除它们。如果我使用聊天或自然语音，这些文字会经过 Blu 的服务器，但不会被保存。（必选）",
   },
   "Acepto que datos agregados y anónimos orienten la mejora del producto. (opcional)": {
     "en-US": "I agree that aggregated, anonymous data may guide product improvements. (optional)",

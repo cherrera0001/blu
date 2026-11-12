@@ -8,6 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./blu": "./src/blu.ts",
+    "./adapt": "./src/adapt.ts",
+    "./review": "./src/review.ts",
     "./consent": "./src/consent.ts",
     "./companion": "./src/companion.ts",
     "./history": "./src/history.ts",

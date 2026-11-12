@@ -6,6 +6,8 @@ appId: cl.blu.app
 ---
 - launchApp
 - assertVisible: "Blu"
+- assertVisible:
+    id: "blu-companion"
 - assertVisible: "Hay 7 temas"
 - tapOn:
     id: "habit-movement"
@@ -15,4 +17,45 @@ appId: cl.blu.app
     id: "continue-button"
 - assertVisible: "Hoy"
 - assertVisible:
-    id: "weekly-summary"
+    id: "blu-companion"
+- tapOn:
+    id: "checkin-movement-simplify"
+- tapOn:
+    id: "checkin-movement-barrier-energy"
+- tapOn:
+    id: "checkin-movement-option-0"
+- assertVisible: "Hacer una pausa de dos minutos para cambiar de postura."
+- assertVisible:
+    id: "checkin-movement-undo"
+- tapOn:
+    id: "checkin-movement-undo"
+- assertVisible: "Elegir una pausa breve para moverte."
+- tapOn:
+    id: "checkin-movement-why"
+- assertVisible: ".*sin evidencia verificada.*"
+- scrollUntilVisible:
+    element:
+      id: "speak-today"
+- scrollUntilVisible:
+    element:
+      id: "open-chat"
+- scrollUntilVisible:
+    element:
+      id: "weekly-summary"
+- scrollUntilVisible:
+    element:
+      id: "week-bars"
+- scrollUntilVisible:
+    element:
+      id: "options-toggle"
+- tapOn:
+    id: "options-toggle"
+- scrollUntilVisible:
+    element:
+      id: "my-data"
+- assertVisible: ".*Las conversaciones con Blu no se guardan.*"
+- assertVisible:
+    id: "export-data"
+- scrollUntilVisible:
+    element:
+      id: "edit-selection"

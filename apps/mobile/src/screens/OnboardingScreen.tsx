@@ -1,32 +1,47 @@
-import { useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { useMemo, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   HABITS,
   MAX_SELECTED_HABITS,
   type HabitId,
   type BluState,
 } from "blu-core/blu";
-import { acceptPurpose, emptyConsent } from "blu-core/consent";
+import { acceptPurpose, emptyConsent, needsReconsent } from "blu-core/consent";
+import { OPERATIVE_NOTICE } from "../content/notice";
+import { readCompanion } from "blu-core/companion";
+import { ActionButton } from "../components/ActionButton";
+import { BluCompanion } from "../components/BluCompanion";
+import { ScreenShell } from "../components/ScreenShell";
+import { SpeakButton } from "../components/SpeakButton";
 import { toggleHabitSelection } from "../selection";
+import { colors, fonts, space, type as typeScale } from "../theme";
 import { APP_VERSION } from "../version";
 
 export interface OnboardingScreenProps {
   state: BluState;
+  naturalAvailable: boolean;
   onComplete: (next: BluState) => void;
 }
 
-export function OnboardingScreen({ state, onComplete }: OnboardingScreenProps) {
+export function OnboardingScreen({
+  state,
+  naturalAvailable,
+  onComplete,
+}: OnboardingScreenProps) {
   const [draft, setDraft] = useState<HabitId[]>(state.selectedHabitIds);
+  // Con un aviso nuevo (otra versión), hay que volver a marcarlo.
   const [noticeAccepted, setNoticeAccepted] = useState(
-    Boolean(state.consentAcceptedAt),
+    Boolean(state.consentAcceptedAt) && !needsReconsent(state.consent),
   );
   const [message, setMessage] = useState("");
+  const companion = useMemo(
+    () => readCompanion({ ...state, selectedHabitIds: draft }, new Date()),
+    [state, draft],
+  );
+
+  const listenText = useMemo(() => {
+    return `Blu. ${companion.line} Hay ${HABITS.length} temas. Elige hasta ${MAX_SELECTED_HABITS}. ${message || "Cuando termines, continúa con lo que elegiste."}`;
+  }, [companion.line, message]);
 
   function onToggle(habitId: HabitId) {
     const result = toggleHabitSelection(draft, habitId);
@@ -57,18 +72,29 @@ export function OnboardingScreen({ state, onComplete }: OnboardingScreenProps) {
     });
   }
 
-  return (
-    <ScrollView contentContainerStyle={styles.container} testID="onboarding-screen">
-      <Text style={styles.brand}>Blu</Text>
-      <Text style={styles.title}>Empezamos con una elección sencilla</Text>
-      <Text style={styles.lead}>
-        Verás siete temas. Elige entre 1 y 4. Después podrás marcar cada día lo
-        que hiciste.
-      </Text>
+  const canContinue = draft.length > 0 && noticeAccepted;
 
-      <Text style={styles.count} testID="topics-available-count">
-        Hay {HABITS.length} temas · elige hasta {MAX_SELECTED_HABITS}
-      </Text>
+  return (
+    <ScreenShell testID="onboarding-screen">
+      <Text style={styles.brand}>Blu</Text>
+      <BluCompanion view={companion} size="lg" />
+      <SpeakButton
+        text={listenText}
+        label="Escuchar a Blu"
+        naturalAvailable={naturalAvailable}
+        variant="soft"
+        testID="speak-onboarding"
+      />
+
+      <View style={styles.section}>
+        <Text style={styles.title}>Elige hasta 4 temas</Text>
+        <Text style={styles.lead}>
+          Un toque para elegir. Después, cada día marcas solo lo que pudiste hacer.
+        </Text>
+        <Text style={styles.count} testID="topics-available-count">
+          Hay {HABITS.length} temas · elegidos {draft.length} de {MAX_SELECTED_HABITS}
+        </Text>
+      </View>
 
       <View style={styles.grid} testID="habit-options-grid">
         {HABITS.map((habit) => {
@@ -79,22 +105,26 @@ export function OnboardingScreen({ state, onComplete }: OnboardingScreenProps) {
               accessibilityState={{ selected }}
               key={habit.id}
               onPress={() => onToggle(habit.id)}
-              style={[styles.option, selected && styles.optionSelected]}
+              style={({ pressed }) => [
+                styles.option,
+                selected && styles.optionSelected,
+                pressed && styles.optionPressed,
+              ]}
               testID={`habit-${habit.id}`}
             >
+              <View style={[styles.chip, selected && styles.chipOn]}>
+                <Text style={[styles.chipText, selected && styles.chipTextOn]}>
+                  {selected ? "Elegido" : "Elegir"}
+                </Text>
+              </View>
               <View style={styles.optionCopy}>
                 <Text style={styles.optionTitle}>{habit.title}</Text>
                 <Text style={styles.optionDesc}>{habit.description}</Text>
               </View>
-              <Text style={styles.marker}>{selected ? "✓" : "+"}</Text>
             </Pressable>
           );
         })}
       </View>
-
-      <Text style={styles.selection} testID="selection-count">
-        Elegidos: {draft.length} de {MAX_SELECTED_HABITS}
-      </Text>
 
       <Pressable
         accessibilityRole="checkbox"
@@ -103,11 +133,10 @@ export function OnboardingScreen({ state, onComplete }: OnboardingScreenProps) {
         style={styles.consentRow}
         testID="consent-operativo"
       >
-        <Text style={styles.consentBox}>{noticeAccepted ? "☑" : "☐"}</Text>
-        <Text style={styles.consentLabel}>
-          Guardo mis elecciones solo en este dispositivo. Blu no es un servicio
-          médico.
-        </Text>
+        <View style={[styles.consentBox, noticeAccepted && styles.consentBoxOn]}>
+          <Text style={styles.consentMark}>{noticeAccepted ? "✓" : ""}</Text>
+        </View>
+        <Text style={styles.consentLabel}>{OPERATIVE_NOTICE}</Text>
       </Pressable>
 
       {message ? (
@@ -116,141 +145,152 @@ export function OnboardingScreen({ state, onComplete }: OnboardingScreenProps) {
         </Text>
       ) : null}
 
-      <Pressable
-        accessibilityRole="button"
-        disabled={draft.length === 0 || !noticeAccepted}
+      <ActionButton
+        label="Continuar con lo que elegí"
+        variant="primary"
+        disabled={!canContinue}
         onPress={onContinue}
-        style={[
-          styles.cta,
-          (draft.length === 0 || !noticeAccepted) && styles.ctaDisabled,
-        ]}
         testID="continue-button"
-      >
-        <Text style={styles.ctaText}>Continuar con lo que elegí</Text>
-      </Pressable>
+      />
 
       <Text style={styles.version} testID="app-version">
         Blu {APP_VERSION}
       </Text>
-    </ScrollView>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    paddingBottom: 48,
-    backgroundColor: "#F4F7FB",
-    gap: 12,
-  },
   brand: {
-    fontSize: 36,
-    fontWeight: "700",
-    color: "#1B3A4B",
-    letterSpacing: -0.5,
+    fontSize: typeScale.brand,
+    fontFamily: fonts.display,
+    color: colors.ink,
+    textAlign: "center",
+    letterSpacing: -1,
+  },
+  section: {
+    gap: 6,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "600",
-    color: "#1B3A4B",
-    lineHeight: 34,
+    fontSize: typeScale.title,
+    fontFamily: fonts.displaySoft,
+    color: colors.ink,
+    lineHeight: 38,
   },
   lead: {
-    fontSize: 18,
-    color: "#334E5C",
-    lineHeight: 28,
+    fontSize: typeScale.lead,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    lineHeight: 30,
   },
   count: {
-    fontSize: 16,
-    color: "#4A6673",
-    marginTop: 8,
+    fontSize: typeScale.meta,
+    fontFamily: fonts.bodySemi,
+    color: colors.ctaDeep,
   },
   grid: {
-    gap: 10,
-    marginTop: 4,
+    gap: 12,
   },
   option: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
+    gap: 10,
     padding: 16,
-    minHeight: 64,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
+    minHeight: space.touch + 16,
+    borderRadius: 18,
+    backgroundColor: colors.cardSolid,
     borderWidth: 2,
-    borderColor: "#D7E2EA",
+    borderColor: colors.cardBorder,
   },
   optionSelected: {
-    borderColor: "#1B3A4B",
-    backgroundColor: "#E8F1F6",
+    borderColor: colors.cta,
+    backgroundColor: colors.tint,
+  },
+  optionPressed: {
+    opacity: 0.92,
+  },
+  chip: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: colors.soft,
+    borderWidth: 1,
+    borderColor: colors.softBorder,
+  },
+  chipOn: {
+    backgroundColor: colors.cta,
+    borderColor: colors.ctaDeep,
+  },
+  chipText: {
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.bodyBold,
+    color: colors.ctaDeep,
+  },
+  chipTextOn: {
+    color: colors.ctaText,
   },
   optionCopy: {
-    flex: 1,
     gap: 4,
   },
   optionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1B3A4B",
+    fontSize: typeScale.body,
+    fontFamily: fonts.bodyBold,
+    color: colors.ink,
   },
   optionDesc: {
-    fontSize: 15,
-    color: "#4A6673",
-    lineHeight: 22,
-  },
-  marker: {
-    fontSize: 22,
-    color: "#1B3A4B",
-    width: 28,
-    textAlign: "center",
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.muted,
+    lineHeight: 24,
   },
   selection: {
-    fontSize: 17,
-    color: "#1B3A4B",
-    fontWeight: "500",
+    fontSize: typeScale.body,
+    fontFamily: fonts.bodySemi,
+    color: colors.ink,
   },
   consentRow: {
     flexDirection: "row",
     gap: 12,
     alignItems: "flex-start",
-    paddingVertical: 8,
+    paddingVertical: 10,
+    minHeight: space.touch,
   },
   consentBox: {
-    fontSize: 22,
-    lineHeight: 28,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    borderWidth: 3,
+    borderColor: colors.softBorder,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.cardSolid,
+  },
+  consentBoxOn: {
+    backgroundColor: colors.cta,
+    borderColor: colors.ctaDeep,
+  },
+  consentMark: {
+    color: colors.ctaText,
+    fontFamily: fonts.bodyBold,
+    fontSize: 16,
   },
   consentLabel: {
     flex: 1,
-    fontSize: 16,
-    color: "#334E5C",
-    lineHeight: 24,
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.inkSoft,
+    lineHeight: 26,
   },
   message: {
-    fontSize: 16,
-    color: "#8A4B12",
+    fontSize: typeScale.meta,
+    fontFamily: fonts.body,
+    color: colors.warn,
     lineHeight: 24,
-  },
-  cta: {
-    marginTop: 8,
-    backgroundColor: "#1B3A4B",
-    paddingVertical: 16,
-    minHeight: 52,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  ctaDisabled: {
-    opacity: 0.4,
-  },
-  ctaText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "600",
   },
   version: {
     marginTop: 16,
     textAlign: "center",
-    fontSize: 14,
-    color: "#7A909C",
+    fontSize: typeScale.tiny,
+    fontFamily: fonts.body,
+    color: colors.faint,
   },
 });

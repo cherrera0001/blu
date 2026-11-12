@@ -66,6 +66,78 @@ describe("MASTG/MASVS contratos — Blu móvil", () => {
     }
   });
 
+  it("MASVS-NETWORK (specs/025-026): red solo vía httpJson al BFF https, nunca fetch directo", () => {
+    const files = walkTsFiles(join(mobileRoot, "src")).concat(
+      join(mobileRoot, "App.tsx"),
+    );
+    const callers: string[] = [];
+    for (const file of files) {
+      const src = readFileSync(file, "utf8");
+      if (!file.endsWith("polyfill.ts")) {
+        expect(src, file).not.toMatch(/\bfetch\s*\(/);
+      }
+      if (/\bhttpJson\s*[<(]/.test(src) && !file.endsWith(join("net", "http.ts"))) {
+        callers.push(file);
+        // Toda llamada apunta a la base configurada del BFF, nunca a un host literal.
+        for (const m of src.matchAll(/httpJson(?:<[^>]*>)?\(\s*([^,]+),/g)) {
+          expect(m[1].trim(), file).toMatch(/^`\$\{BLU_API_BASE\}\/api\/(assistant|voice)`$/);
+        }
+      }
+    }
+    expect(callers.map((f) => f.split(/[\\/]/).pop()).sort()).toEqual([
+      "ChatScreen.tsx",
+      "speak.ts",
+    ]);
+    const config = readFileSync(join(mobileRoot, "src/config.ts"), "utf8");
+    expect(config).toMatch(/"https:\/\/[^"]+"/);
+  });
+
+  it("transparencia (specs/025-026): chat y voz natural avisan que el texto va al servidor", () => {
+    const chat = readFileSync(join(mobileRoot, "src/screens/ChatScreen.tsx"), "utf8");
+    expect(chat).toContain('testID="chat-privacy-notice"');
+    expect(chat).toMatch(/servidor de Blu[^"]*no se guardan/);
+    const speak = readFileSync(join(mobileRoot, "src/components/SpeakButton.tsx"), "utf8");
+    expect(speak).toMatch(/envía este texto al servidor de Blu; no se guarda/);
+  });
+
+  it("specs/026 FR-005: «solo voz del teléfono» corta la llamada a /api/voice", () => {
+    const app = readFileSync(join(mobileRoot, "App.tsx"), "utf8");
+    expect(app).toMatch(/naturalAvailable = state\.voicePreference !== "device"/);
+    const button = readFileSync(join(mobileRoot, "src/components/SpeakButton.tsx"), "utf8");
+    expect(button).toMatch(/preferNatural: preferNatural && naturalAvailable/);
+    const speak = readFileSync(join(mobileRoot, "src/voice/speak.ts"), "utf8");
+    // La única llamada de red está dentro del bloque if (preferNatural).
+    const gate = speak.indexOf("if (preferNatural) {");
+    expect(gate).toBeGreaterThan(-1);
+    expect(speak.indexOf("httpJson(")).toBeGreaterThan(gate);
+  });
+
+  it("consentimiento 2.1.0 (H5): el aviso inicial declara qué pasa por el servidor y se renueva sin bloquear", async () => {
+    const { CONSENT_VERSION } = await import("blu-core/consent");
+    const { OPERATIVE_NOTICE } = await import("./content/notice");
+    expect(CONSENT_VERSION).toBe("2.1.0");
+    expect(OPERATIVE_NOTICE).toMatch(/solo en este teléfono/);
+    expect(OPERATIVE_NOTICE).toMatch(/chat o la voz natural.*servidor de Blu y no se guarda/);
+    expect(OPERATIVE_NOTICE).toMatch(/no es un servicio médico/);
+    const onboarding = readFileSync(join(mobileRoot, "src/screens/OnboardingScreen.tsx"), "utf8");
+    expect(onboarding).toContain("{OPERATIVE_NOTICE}");
+    expect(onboarding).toMatch(/!needsReconsent\(state\.consent\)/);
+    const today = readFileSync(join(mobileRoot, "src/screens/TodayScreen.tsx"), "utf8");
+    expect(today).toContain('testID="consent-renew"');
+  });
+
+  it("MASVS-PLATFORM: sin permisos Android ni micrófono", () => {
+    const app = JSON.parse(readFileSync(join(mobileRoot, "app.json"), "utf8")) as {
+      expo: { android: { permissions?: string[] }; plugins?: unknown[] };
+    };
+    expect(app.expo.android.permissions).toEqual([]);
+    const av = app.expo.plugins?.find(
+      (p): p is [string, { microphonePermission?: unknown }] =>
+        Array.isArray(p) && p[0] === "expo-av",
+    );
+    expect(av?.[1].microphonePermission).toBe(false);
+  });
+
   it("app.json endurece cleartext y backup", () => {
     const app = JSON.parse(readFileSync(join(mobileRoot, "app.json"), "utf8")) as {
       expo: { android: { allowBackup?: boolean; usesCleartextTraffic?: boolean } };
