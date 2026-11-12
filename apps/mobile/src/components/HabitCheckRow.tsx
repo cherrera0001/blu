@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   rowDone: {
-    borderColor: colors.success,
-    backgroundColor: colors.successBg,
+    borderColor: colors.warm,
+    backgroundColor: colors.warmBg,
   },
   check: {
     flexDirection: "row",
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   boxDone: {
-    borderColor: colors.success,
-    backgroundColor: colors.success,
+    borderColor: colors.warm,
+    backgroundColor: colors.warm,
   },
   mark: {
     fontSize: 18,

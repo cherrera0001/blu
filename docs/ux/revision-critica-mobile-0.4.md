@@ -74,7 +74,7 @@ a Blu amable de verdad: **«esto me cuesta → probemos algo más pequeño»**.
 - **Cambio mínimo:** «¿Por qué?» plegable por hábito (`blu-core/habit-education` ya existe).
 - **Qué NO hacer:** citas largas o lenguaje clínico.
 
-### H7 — Media · Presencia · Blu no responde cuando marcas
+### H7 — Media · Presencia · Blu no responde cuando marcas *(corregido en ola C)*
 - **Qué falla:** el ánimo de Blu cambia al marcar, pero sin transición visible. Solo hay una respiración constante.
 - **Por qué duele:** el momento de «lo hice» es el único refuerzo del día. Si nadie lo nota, se pierde.
 - **Contraprueba:** al marcar, Blu hace un gesto breve (≤ 600 ms) y su frase cambia con un fundido. Se respeta «reducir movimiento».
@@ -118,8 +118,8 @@ almacenamiento como adaptador. Si no, la web y la app volverán a divergir.
 4. ⏸ Prueba de uso con 3 personas mayores: guion listo en `docs/ux/prueba-uso-senior.md`; la ejecuta el equipo.
 
 **C — Belleza de marca.**
-1. 3 poses 3D nuevas (H4) y reacción al marcar (H7).
-2. Acento cálido en la paleta (p. ej. un ámbar suave para «hecho hoy») validado con contraste.
+1. ⏸ 3 poses 3D nuevas (H4): encargo listo en `docs/ux/encargo-poses-blu.md`, necesita arte. ✅ Reacción al marcar (H7): salto ≤ 560 ms y fundido de la frase, respetando «reducir movimiento».
+2. ✅ Acento cálido: ámbar `#B4610B` sobre crema `#FFF3E2` para «hecho» (filas y barras de la semana). Las barras azules anteriores no llegaban a 3:1.
 3. Plan semanal / onboarding progresivo solo si B muestra que hace falta.
 
 ## Tentaciones a rechazar

@@ -12,8 +12,12 @@ export const colors = {
   cardSolid: "#FFFFFF",
   cardBorder: "#B7DCF5",
   tint: "#CCE8FB",
-  success: "#1F7A4D",
-  successBg: "#E7F7EE",
+  /**
+   * Acento cálido para «hecho»: abriga sin infantilizar. #B4610B ≥4,5:1 sobre
+   * blanco y ≥3,7:1 sobre el fondo celeste (WCAG 1.4.11); ✓ blanco encima 4,5:1.
+   */
+  warm: "#B4610B",
+  warmBg: "#FFF3E2",
   warn: "#8A4B12",
   danger: "#A33B3B",
   dangerBg: "#FBECEC",

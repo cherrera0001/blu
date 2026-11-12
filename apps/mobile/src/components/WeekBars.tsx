@@ -30,7 +30,7 @@ export function WeekBars({ days }: { days: DayCount[] }) {
                   styles.bar,
                   {
                     height: heightPx,
-                    backgroundColor: day.count > 0 ? colors.bluDrop : "#C9D7E2",
+                    backgroundColor: day.count > 0 ? colors.warm : "#C9D7E2",
                   },
                 ]}
               />

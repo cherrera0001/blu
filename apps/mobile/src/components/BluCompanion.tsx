@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  AccessibilityInfo,
   Animated,
   Easing,
   Image,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 import type { CompanionView } from "blu-core/companion";
+import { HOP_MS, reactionFor } from "../content/companion-motion";
 import { colors, fonts, type as typeScale } from "../theme";
 import NEWSPAPER from "../../assets/blu-newspaper.png";
 import BUILDER from "../../assets/blu-builder.png";
@@ -37,8 +38,64 @@ export function BluCompanion({
 }) {
   const dim = size === "lg" ? 260 : size === "md" ? 170 : 120;
   const [breathe] = useState(() => new Animated.Value(0));
+  const [hop] = useState(() => new Animated.Value(0));
+  const [lineOpacity] = useState(() => new Animated.Value(1));
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const prevMood = useRef<CompanionView["mood"] | null>(null);
+
+  // «Reducir movimiento» del sistema: sin respiración ni saltos.
+  useEffect(() => {
+    let alive = true;
+    void AccessibilityInfo.isReduceMotionEnabled()
+      .then((on) => alive && setReduceMotion(on))
+      .catch(() => undefined);
+    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", setReduceMotion);
+    return () => {
+      alive = false;
+      sub.remove();
+    };
+  }, []);
+
+  // Reacción al cambiar de ánimo (H7): gesto breve al dar un paso; fundido de la frase.
+  useEffect(() => {
+    const reaction = reactionFor(prevMood.current, view.mood);
+    prevMood.current = view.mood;
+    if (!reaction || reduceMotion) return;
+    lineOpacity.setValue(0.25);
+    const fade = Animated.timing(lineOpacity, {
+      toValue: 1,
+      duration: 320,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    });
+    if (reaction === "hop") {
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(hop, {
+            toValue: 1,
+            duration: HOP_MS * 0.4,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.timing(hop, {
+            toValue: 0,
+            duration: HOP_MS * 0.6,
+            easing: Easing.out(Easing.back(1.6)),
+            useNativeDriver: true,
+          }),
+        ]),
+        fade,
+      ]).start();
+    } else {
+      fade.start();
+    }
+  }, [view.mood, reduceMotion, hop, lineOpacity]);
 
   useEffect(() => {
+    if (reduceMotion) {
+      breathe.setValue(0);
+      return;
+    }
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(breathe, {
@@ -57,16 +114,16 @@ export function BluCompanion({
     );
     loop.start();
     return () => loop.stop();
-  }, [breathe]);
+  }, [breathe, reduceMotion]);
 
   const scale = breathe.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 1.035],
   });
-  const lift = breathe.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -4],
-  });
+  const lift = Animated.add(
+    breathe.interpolate({ inputRange: [0, 1], outputRange: [0, -4] }),
+    hop.interpolate({ inputRange: [0, 1], outputRange: [0, -14] }),
+  );
 
   return (
     <View
@@ -92,9 +149,13 @@ export function BluCompanion({
           />
         </Animated.View>
       </View>
-      <Text style={[styles.line, size !== "sm" && styles.lineHero]} testID="companion-line">
+      <Animated.Text
+        accessibilityLiveRegion="polite"
+        style={[styles.line, size !== "sm" && styles.lineHero, { opacity: lineOpacity }]}
+        testID="companion-line"
+      >
         {view.line}
-      </Text>
+      </Animated.Text>
     </View>
   );
 }
