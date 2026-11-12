@@ -1,6 +1,6 @@
 # ADR-0010 — Recordatorio móvil opt-in (notificación local)
 
-**Estado:** PROPUESTO · **Fecha:** 2026-11-12 · **Decisor:** dueño del producto
+**Estado:** ACEPTADO · **Fecha:** 2026-11-12 · **Decisor:** dueño del producto (firmado 2026-11-12)
 **Relacionadas:** BLU-1502 (#68), ADR-0009, `docs/ux/revision-critica-mobile-0.4.md` (ola B)
 
 ## Contexto
@@ -40,3 +40,7 @@ Hoy la app declara `android.permissions: []` y un contrato MASVS lo verifica. Un
 ## Para aceptar
 
 Firma del dueño en este documento (cambiar Estado a ACEPTADO) y validación del copy del punto 3.
+
+## Firma
+
+- **Producto:** ✅ firmado 2026-11-12 (Cristobal Herrera). Acepta la opción B con las reglas 1–7 y el copy del punto 3 tal como está escrito.
